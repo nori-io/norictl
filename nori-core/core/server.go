@@ -16,21 +16,38 @@
 package core
 
 import (
+	"errors"
 	"net"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	"github.com/secure2work/nori-cli/proto"
-	"github.com/secure2work/nori/core/registry"
+	"github.com/secure2work/nori/core/plugins/manager"
 )
 
+var NotSecure = errors.New("Need safe gRPC connect")
+
 type Server struct {
-	pluginDirs    []string
-	gRPCAddress   string
-	gRPCEnable    bool
-	pluginManager registry.PluginManager
+	pluginDirs  []string
+	gRPCAddress string
+	gRPCEnable  bool
+
+	pemFile string
+	keyFile string
+
+	pluginManager manager.PluginManager
+	passkey       *Passkey
+	grpcServer    *grpc.Server
+	listener      net.Listener
+	secure        bool
+	done          bool
 }
 
 func NewServer(dirs []string, addr string, enable bool) *Server {
@@ -41,27 +58,73 @@ func NewServer(dirs []string, addr string, enable bool) *Server {
 	}
 }
 
+func (s *Server) SetCertificates(pem, key string) {
+	s.pemFile = pem
+	s.keyFile = key
+}
+
 func (s *Server) Run() error {
-	lis, err := net.Listen("tcp", s.gRPCAddress)
+	var err error
+	s.listener, err = net.Listen("tcp", s.gRPCAddress)
 	if err != nil {
 		return err
 	}
 
 	log := logrus.New()
 
-	s.pluginManager = registry.GetPluginManager(log)
+	s.pluginManager = manager.GetPluginManager(log)
 
 	for _, dir := range s.pluginDirs {
 		s.pluginManager.Load(dir)
 	}
 
-	srv := grpc.NewServer()
-	commands.RegisterCommandsServer(srv, s)
-	logrus.Infof("Starting gRPC server on %s", s.gRPCAddress)
-	return srv.Serve(lis)
+	s.passkey, err = NewPasskey()
+	if err != nil {
+		return err
+	}
+
+	logrus.Infof("Passkey: %s", s.passkey)
+
+	wg := new(sync.WaitGroup)
+
+	wg.Add(1)
+	go func(s *Server) {
+		defer wg.Done()
+		for !s.done {
+			var opts []grpc.ServerOption
+
+			if opt, err := s.CheckTLS(); err == nil {
+				opts = append(opts, opt)
+				s.secure = true
+			}
+			s.grpcServer = grpc.NewServer(opts...)
+			commands.RegisterCommandsServer(s.grpcServer, s)
+			logrus.WithField("Secure", s.secure).Infof("Starting gRPC server on %s", s.gRPCAddress)
+			s.grpcServer.Serve(s.listener)
+		}
+	}(s)
+
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
+
+	go func(s *Server) {
+		select {
+		case sig := <-signalCh:
+			s.done = true
+			logrus.Infof("Graceful stop gRPC server with signal: %s", sig)
+			s.grpcServer.GracefulStop()
+		}
+	}(s)
+
+	wg.Wait()
+
+	return nil
 }
 
 func (s Server) ListCommand(_ context.Context, _ *commands.ListRequest) (*commands.ListReply, error) {
+	if !s.secure {
+		return nil, NotSecure
+	}
 	reply := new(commands.ListReply)
 	reply.Data = make([]*commands.List, 0)
 
@@ -76,6 +139,9 @@ func (s Server) ListCommand(_ context.Context, _ *commands.ListRequest) (*comman
 }
 
 func (s Server) GetCommand(_ context.Context, c *commands.GetRequest) (*commands.ErrorReply, error) {
+	if !s.secure {
+		return nil, NotSecure
+	}
 	toolchain, err := SetupToolChain()
 	if err != nil {
 		return &commands.ErrorReply{
@@ -109,4 +175,95 @@ func (s Server) EnableCommand(_ context.Context, c *commands.EnableRequest) (*co
 
 func (s Server) DisableCommand(_ context.Context, c *commands.DisableRequest) (*commands.ErrorReply, error) {
 	return nil, nil
+}
+
+func (s Server) UploadCommand(_ context.Context, c *commands.UploadRequest) (*commands.ErrorReply, error) {
+	return nil, nil
+}
+
+func (s Server) UploadCertsCommand(_ context.Context, c *commands.UploadCertsRequest) (*commands.ErrorReply, error) {
+	size := int(c.Key[:1][0])
+	hmac := c.Key[1:size]
+	c.Key = c.Key[size+1:]
+	keyBody, err := s.passkey.Decrypt(c.Key, hmac)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+
+	size = int(c.Pem[:1][0])
+	hmac = c.Pem[1:size]
+	c.Pem = c.Pem[size+1:]
+	pemBody, err := s.passkey.Decrypt(c.Pem, hmac)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+
+	fKey, err := os.Create(s.keyFile)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+	defer fKey.Close()
+
+	_, err = fKey.Write(keyBody)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+
+	fPem, err := os.Create(s.pemFile)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+	defer fPem.Close()
+
+	_, err = fPem.Write(pemBody)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+
+	s.grpcServer.GracefulStop()
+
+	return &commands.ErrorReply{
+		Status: true,
+		Error:  "",
+	}, nil
+}
+
+func (s Server) CheckTLS() (grpc.ServerOption, error) {
+	if len(s.pemFile) > 0 && len(s.keyFile) > 0 &&
+		fileExists(s.pemFile) && fileExists(s.keyFile) {
+		creds, err := credentials.NewServerTLSFromFile(s.pemFile, s.keyFile)
+		if err != nil {
+			return nil, err
+		} else {
+			return grpc.Creds(creds), nil
+		}
+	}
+	return nil, errors.New("Bad certs")
+}
+
+func fileExists(name string) bool {
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
 }

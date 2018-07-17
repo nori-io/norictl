@@ -33,6 +33,7 @@ var serverCmd = &cobra.Command{
 		addr := viper.GetString("grpc-address")
 
 		server := core.NewServer([]string{"../plugins"}, addr, enable)
+		server.SetCertificates(viper.GetString("pem"), viper.GetString("key"))
 		err := server.Run()
 		if err != nil {
 			log.Fatal(err)
@@ -45,7 +46,11 @@ func init() {
 
 	serverCmd.Flags().Bool("grpc-enable", true, "use gRPC")
 	serverCmd.Flags().String("grpc-address", "localhost:12345", "gRPC host and port")
+	serverCmd.Flags().String("pem", "server.pem", "path to pem file")
+	serverCmd.Flags().String("key", "server.key", "path to key file")
 
 	viper.BindPFlag("grpc-enable", serverCmd.Flags().Lookup("grpc-enable"))
 	viper.BindPFlag("grpc-address", serverCmd.Flags().Lookup("grpc-address"))
+	viper.BindPFlag("pem", serverCmd.Flags().Lookup("pem"))
+	viper.BindPFlag("key", serverCmd.Flags().Lookup("key"))
 }

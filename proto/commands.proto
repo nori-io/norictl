@@ -40,10 +40,24 @@ message DisableRequest {
 	string name = 2;
 }
 
+message UploadRequest {
+	bytes pem = 1;
+	bytes key = 2;
+}
+
+// []bs = {len_hmac(1 byte), hmac..., body_file...}
+message UploadCertsRequest {
+	bytes pem = 1;
+	bytes key = 2;
+}
+
 service Commands {
 	rpc ListCommand (ListRequest) returns (ListReply) {}
 	rpc GetCommand (GetRequest) returns (ErrorReply) {}
 	rpc RemoveCommand (RemoveRequest) returns (ErrorReply) {}
 	rpc EnableCommand (EnableRequest) returns (ErrorReply) {}
 	rpc DisableCommand (DisableRequest) returns (ErrorReply) {}
+	rpc UploadCommand (UploadRequest) returns (ErrorReply) {}
+
+	rpc UploadCertsCommand(UploadCertsRequest) returns (ErrorReply) {}
 }
