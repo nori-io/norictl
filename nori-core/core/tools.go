@@ -44,6 +44,7 @@ func SetupToolChain() (*ToolChain, error) {
 		return nil, err
 	}
 
+	// FIXME add filepath.SplitList()
 	tc.gopath = os.Getenv("GOPATH")
 	if tc.gopath == "" {
 		tc.gopath = build.Default.GOPATH
