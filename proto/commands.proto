@@ -41,8 +41,8 @@ message DisableRequest {
 }
 
 message UploadRequest {
-	bytes pem = 1;
-	bytes key = 2;
+	string name = 1;
+	bytes so = 2;
 }
 
 // []bs = {len_hmac(1 byte), hmac..., body_file...}

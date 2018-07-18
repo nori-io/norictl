@@ -20,6 +20,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"sync"
 	"syscall"
 
@@ -46,6 +47,7 @@ type Server struct {
 	passkey       *Passkey
 	grpcServer    *grpc.Server
 	listener      net.Listener
+	logger        *logrus.Logger
 	secure        bool
 	done          bool
 }
@@ -70,9 +72,9 @@ func (s *Server) Run() error {
 		return err
 	}
 
-	log := logrus.New()
+	s.logger = logrus.New()
 
-	s.pluginManager = manager.GetPluginManager(log)
+	s.pluginManager = manager.GetPluginManager(s.logger)
 
 	for _, dir := range s.pluginDirs {
 		s.pluginManager.Load(dir)
@@ -178,7 +180,28 @@ func (s Server) DisableCommand(_ context.Context, c *commands.DisableRequest) (*
 }
 
 func (s Server) UploadCommand(_ context.Context, c *commands.UploadRequest) (*commands.ErrorReply, error) {
-	return nil, nil
+	path := filepath.Join(s.pluginDirs[0], c.Name)
+	if fileExists(path) {
+		s.logger.Info("File exist, overwrites")
+	}
+
+	f, err := os.Create(path)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+
+	f.Write(c.So)
+	f.Close()
+
+	//s.pluginManager.Load(path)
+
+	return &commands.ErrorReply{
+		Status: true,
+		Error:  "",
+	}, nil
 }
 
 func (s Server) UploadCertsCommand(_ context.Context, c *commands.UploadCertsRequest) (*commands.ErrorReply, error) {
