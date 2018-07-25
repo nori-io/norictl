@@ -46,9 +46,10 @@ func SetupToolChain() (*ToolChain, error) {
 		return nil, err
 	}
 
-	// FIXME add filepath.SplitList()
-	tc.gopath = os.Getenv("GOPATH")
-	if tc.gopath == "" {
+	gopathList := filepath.SplitList(os.Getenv("GOPATH"))
+	if len(gopathList) > 0 {
+		tc.gopath = gopathList[0]
+	} else {
 		tc.gopath = build.Default.GOPATH
 	}
 
@@ -57,7 +58,7 @@ func SetupToolChain() (*ToolChain, error) {
 		if err.(*exec.Error).Err == exec.ErrNotFound {
 			// try install dep
 			cmd := exec.Command(tc.gobin, "get", packageManagerPath)
-			err = cmd.Run()
+			err = cmdRun(cmd)
 			if err != nil {
 				return nil, err
 			}
