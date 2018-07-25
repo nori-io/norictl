@@ -35,6 +35,10 @@ import (
 
 var NotSecure = errors.New("Need safe gRPC connect")
 
+const (
+	MaxMessageSize int = 100 * 1024 * 1024
+)
+
 type Server struct {
 	pluginDirs  []string
 	gRPCAddress string
@@ -93,6 +97,8 @@ func (s *Server) Run() error {
 			listener, _ := net.Listen("tcp", s.gRPCAddress)
 
 			var opts []grpc.ServerOption
+
+			opts = append(opts, grpc.MaxMsgSize(MaxMessageSize))
 
 			if opt, err := s.CheckTLS(); err == nil {
 				opts = append(opts, opt)
@@ -186,6 +192,14 @@ func (s Server) UploadCommand(_ context.Context, c *commands.UploadRequest) (*co
 	path := filepath.Join(s.pluginDirs[0], c.Name)
 	if fileExists(path) {
 		s.logger.Info("File exist, overwrites")
+	}
+
+	err := os.MkdirAll(s.pluginDirs[0], os.ModePerm)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
 	}
 
 	f, err := os.Create(path)
