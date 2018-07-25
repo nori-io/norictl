@@ -29,7 +29,7 @@ var installCmd = &cobra.Command{
 
 		reply, err := client.GetCommand(context.Background(), &commands.GetRequest{
 			Uri:                 path,
-			InstallDependencies: viper.GetBool("dep-install"),
+			InstallDependencies: viper.GetBool("dependencies"),
 		})
 
 		close(closeCh)
@@ -47,7 +47,4 @@ var installCmd = &cobra.Command{
 
 func init() {
 	pluginCmd.AddCommand(installCmd)
-
-	installCmd.Flags().Bool("dep-install", true, "install dependencies")
-	viper.BindPFlag("dep-install", installCmd.Flags().Lookup("dep-install"))
 }

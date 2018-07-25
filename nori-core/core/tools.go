@@ -90,10 +90,11 @@ func (tc ToolChain) Do(path string) error {
 	}
 
 	pluginName := filepath.Base(path)
-	pluginName = filepath.Join("plugin", pluginName) + ".so"
+	pluginName = filepath.Join(os.Getenv("PWD"), "plugin", pluginName) + ".so"
 
 	// build plugin
 	cmd = exec.Command(tc.gobin, "build", "-buildmode=plugin", "-o", pluginName)
+	cmd.Dir = filepath.Join(tc.gopath, "src", path)
 	err = cmdRun(cmd) // TODO remove debug info
 	if err != nil {
 		return err

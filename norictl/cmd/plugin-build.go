@@ -38,7 +38,4 @@ var buildCmd = &cobra.Command{
 
 func init() {
 	pluginCmd.AddCommand(buildCmd)
-
-	buildCmd.Flags().Bool("dependencies", true, "install dependencies")
-	viper.BindPFlag("dependencies", buildCmd.Flags().Lookup("dependencies"))
 }
