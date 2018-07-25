@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -12,11 +15,12 @@ import (
 	"github.com/secure2work/nori-cli/proto"
 )
 
-var installCmd = &cobra.Command{
-	Use:   "get",
-	Short: "downloading and installing plugin",
+var uploadCmd = &cobra.Command{
+	Use:   "upload",
+	Short: "downloading,installing and uploading plugin",
 	Run: func(cmd *cobra.Command, args []string) {
 		path := viper.GetString("plugin-path")
+
 		if len(path) == 0 && len(args) > 0 {
 			path = args[0]
 		}
@@ -26,13 +30,25 @@ var installCmd = &cobra.Command{
 			viper.GetString("ca"),
 			viper.GetString("ServerHostOverride"),
 		)
+		defer close(closeCh)
 
-		reply, err := client.GetCommand(context.Background(), &commands.GetRequest{
-			Uri:                 path,
-			InstallDependencies: viper.GetBool("dep-install"),
+		f, err := os.Open(path)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		defer f.Close()
+
+		so, err := ioutil.ReadAll(f)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		path = filepath.Base(path)
+
+		reply, err := client.UploadCommand(context.Background(), &commands.UploadRequest{
+			Name: path,
+			So:   so,
 		})
-
-		close(closeCh)
 
 		if err != nil {
 			logrus.Fatal(err)
@@ -40,14 +56,11 @@ var installCmd = &cobra.Command{
 				logrus.Fatal(reply.Error)
 			}
 		} else {
-			fmt.Printf("Plugin %q successfully installed\n", path)
+			fmt.Printf("Plugin %q successfully uploaded\n", path)
 		}
 	},
 }
 
 func init() {
-	pluginCmd.AddCommand(installCmd)
-
-	installCmd.Flags().Bool("dep-install", true, "install dependencies")
-	viper.BindPFlag("dep-install", installCmd.Flags().Lookup("dep-install"))
+	pluginCmd.AddCommand(uploadCmd)
 }

@@ -46,8 +46,8 @@ type Server struct {
 	pluginManager manager.PluginManager
 	passkey       *Passkey
 	grpcServer    *grpc.Server
-	listener      net.Listener
 	logger        *logrus.Logger
+	gShutdown     chan struct{}
 	secure        bool
 	done          bool
 }
@@ -57,6 +57,7 @@ func NewServer(dirs []string, addr string, enable bool) *Server {
 		pluginDirs:  dirs,
 		gRPCAddress: addr,
 		gRPCEnable:  enable,
+		gShutdown:   make(chan struct{}, 1),
 	}
 }
 
@@ -67,10 +68,6 @@ func (s *Server) SetCertificates(pem, key string) {
 
 func (s *Server) Run() error {
 	var err error
-	s.listener, err = net.Listen("tcp", s.gRPCAddress)
-	if err != nil {
-		return err
-	}
 
 	s.logger = logrus.New()
 
@@ -93,6 +90,8 @@ func (s *Server) Run() error {
 	go func(s *Server) {
 		defer wg.Done()
 		for !s.done {
+			listener, _ := net.Listen("tcp", s.gRPCAddress)
+
 			var opts []grpc.ServerOption
 
 			if opt, err := s.CheckTLS(); err == nil {
@@ -102,7 +101,7 @@ func (s *Server) Run() error {
 			s.grpcServer = grpc.NewServer(opts...)
 			commands.RegisterCommandsServer(s.grpcServer, s)
 			logrus.WithField("Secure", s.secure).Infof("Starting gRPC server on %s", s.gRPCAddress)
-			s.grpcServer.Serve(s.listener)
+			s.grpcServer.Serve(listener)
 		}
 	}(s)
 
@@ -110,11 +109,15 @@ func (s *Server) Run() error {
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
 
 	go func(s *Server) {
-		select {
-		case sig := <-signalCh:
-			s.done = true
-			logrus.Infof("Graceful stop gRPC server with signal: %s", sig)
-			s.grpcServer.GracefulStop()
+		for {
+			select {
+			case sig := <-signalCh:
+				s.done = true
+				logrus.Infof("Graceful stop gRPC server with signal: %s", sig)
+				s.gShutdown <- struct{}{}
+			case <-s.gShutdown:
+				s.grpcServer.GracefulStop()
+			}
 		}
 	}(s)
 
@@ -206,8 +209,9 @@ func (s Server) UploadCommand(_ context.Context, c *commands.UploadRequest) (*co
 
 func (s Server) UploadCertsCommand(_ context.Context, c *commands.UploadCertsRequest) (*commands.ErrorReply, error) {
 	size := int(c.Key[:1][0])
-	hmac := c.Key[1:size]
+	hmac := c.Key[1 : size+1]
 	c.Key = c.Key[size+1:]
+
 	keyBody, err := s.passkey.Decrypt(c.Key, hmac)
 	if err != nil {
 		return &commands.ErrorReply{
@@ -217,7 +221,7 @@ func (s Server) UploadCertsCommand(_ context.Context, c *commands.UploadCertsReq
 	}
 
 	size = int(c.Pem[:1][0])
-	hmac = c.Pem[1:size]
+	hmac = c.Pem[1 : size+1]
 	c.Pem = c.Pem[size+1:]
 	pemBody, err := s.passkey.Decrypt(c.Pem, hmac)
 	if err != nil {
@@ -261,7 +265,7 @@ func (s Server) UploadCertsCommand(_ context.Context, c *commands.UploadCertsReq
 		}, err
 	}
 
-	s.grpcServer.GracefulStop()
+	s.gShutdown <- struct{}{}
 
 	return &commands.ErrorReply{
 		Status: true,

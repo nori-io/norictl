@@ -16,6 +16,8 @@
 package core
 
 import (
+	"bytes"
+	"fmt"
 	"go/build"
 	"os"
 	"os/exec"
@@ -71,7 +73,8 @@ func SetupToolChain() (*ToolChain, error) {
 
 func (tc ToolChain) Do(path string) error {
 	// get plugin
-	err := exec.Command(tc.gobin, "get", "-d", path).Run()
+	cmd := exec.Command(tc.gobin, "get", "-d", path)
+	err := cmdRun(cmd)
 	if err != nil {
 		return err
 	}
@@ -80,20 +83,31 @@ func (tc ToolChain) Do(path string) error {
 	if tc.InstallDependencies {
 		cmd := exec.Command(packageManagerBin, "ensure")
 		cmd.Dir = filepath.Join(tc.gopath, "src", path)
-		err = cmd.Run()
+		err = cmdRun(cmd)
 		if err != nil {
 			return err
 		}
 	}
 
 	pluginName := filepath.Base(path)
-	pluginName = filepath.Join("plugin", pluginName)
+	pluginName = filepath.Join("plugin", pluginName) + ".so"
 
 	// build plugin
-	err = exec.Command(tc.gobin, "build", "-buildmode=plugin", "-o", pluginName).Run() // TODO remove debug info
+	cmd = exec.Command(tc.gobin, "build", "-buildmode=plugin", "-o", pluginName)
+	err = cmdRun(cmd) // TODO remove debug info
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func cmdRun(cmd *exec.Cmd) error {
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("%s:\n%s", err.Error(), stderr.String())
+	}
 	return nil
 }

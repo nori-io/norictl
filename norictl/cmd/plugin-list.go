@@ -16,11 +16,18 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list of plugins",
 	Run: func(cmd *cobra.Command, args []string) {
-		cli, closeCh := client.NewClient(viper.GetString("grpc-address"))
+		cli, closeCh := client.NewClient(
+			viper.GetString("grpc-address"),
+			viper.GetString("ca"),
+			viper.GetString("ServerHostOverride"),
+		)
 
 		reply, err := cli.ListCommand(context.Background(), &commands.ListRequest{})
 		close(closeCh)
 		if err != nil {
+			if reply != nil {
+				logrus.Fatal(reply.Error)
+			}
 			logrus.Fatal(err)
 		}
 
