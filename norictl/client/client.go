@@ -18,10 +18,12 @@ func NewClient(addr string, caFile string, serverHostOverride string) (commands.
 			log.Fatalf("Failed to create TLS credentials %v", err)
 		}
 		opts = append(opts, grpc.WithTransportCredentials(creds))
+		log.Printf("Created gRPC client with cert: %s", caFile)
 	} else {
+		log.Println("Created gRPC client")
 		opts = append(opts, grpc.WithInsecure())
 	}
-	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	conn, err := grpc.Dial(addr, opts...)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
