@@ -12,7 +12,7 @@ import (
 	"github.com/secure2work/nori-cli/proto"
 )
 
-var installCmd = &cobra.Command{
+var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "downloading and installing plugin",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -46,5 +46,5 @@ var installCmd = &cobra.Command{
 }
 
 func init() {
-	pluginCmd.AddCommand(installCmd)
+	pluginCmd.AddCommand(getCmd)
 }
