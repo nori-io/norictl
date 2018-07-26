@@ -31,6 +31,7 @@ const (
 
 type ToolChain struct {
 	InstallDependencies bool
+	PluginDir           string
 
 	gobin          string
 	gopath         string
@@ -90,8 +91,12 @@ func (tc ToolChain) Do(path string) error {
 		}
 	}
 
+	if len(tc.PluginDir) == 0 {
+		tc.PluginDir = "plugins"
+	}
+
 	pluginName := filepath.Base(path)
-	pluginName = filepath.Join(os.Getenv("PWD"), "plugin", pluginName) + ".so"
+	pluginName = filepath.Join(os.Getenv("PWD"), tc.PluginDir, pluginName) + ".so"
 
 	// build plugin
 	cmd = exec.Command(tc.gobin, "build", "-buildmode=plugin", "-o", pluginName)

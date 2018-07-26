@@ -136,6 +136,14 @@ func (s *Server) Stop() {
 	s.gShutdown <- struct{}{}
 }
 
+func (s Server) GetPasskey() string {
+	return s.passkey.String()
+}
+
+func (s Server) GetSecure() bool {
+	return s.secure
+}
+
 func (s Server) ListCommand(_ context.Context, _ *commands.ListRequest) (*commands.ListReply, error) {
 	if !s.secure {
 		return nil, NotSecure
@@ -166,6 +174,7 @@ func (s Server) GetCommand(_ context.Context, c *commands.GetRequest) (*commands
 	}
 
 	toolchain.InstallDependencies = c.GetInstallDependencies()
+	toolchain.PluginDir = s.pluginDirs[0]
 	err = toolchain.Do(c.GetUri())
 	if err != nil {
 		return &commands.ErrorReply{
@@ -242,6 +251,21 @@ func (s Server) UploadCertsCommand(_ context.Context, c *commands.UploadCertsReq
 	hmac = c.Pem[1 : size+1]
 	c.Pem = c.Pem[size+1:]
 	pemBody, err := s.passkey.Decrypt(c.Pem, hmac)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+
+	err = os.MkdirAll(filepath.Dir(s.keyFile), os.ModePerm)
+	if err != nil {
+		return &commands.ErrorReply{
+			Status: false,
+			Error:  err.Error(),
+		}, err
+	}
+	err = os.MkdirAll(filepath.Dir(s.pemFile), os.ModePerm)
 	if err != nil {
 		return &commands.ErrorReply{
 			Status: false,
