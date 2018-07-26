@@ -118,9 +118,8 @@ func (s *Server) Run() error {
 		for {
 			select {
 			case sig := <-signalCh:
-				s.done = true
 				logrus.Infof("Graceful stop gRPC server with signal: %s", sig)
-				s.gShutdown <- struct{}{}
+				s.Stop()
 			case <-s.gShutdown:
 				s.grpcServer.GracefulStop()
 			}
@@ -130,6 +129,11 @@ func (s *Server) Run() error {
 	wg.Wait()
 
 	return nil
+}
+
+func (s *Server) Stop() {
+	s.done = true
+	s.gShutdown <- struct{}{}
 }
 
 func (s Server) ListCommand(_ context.Context, _ *commands.ListRequest) (*commands.ListReply, error) {
