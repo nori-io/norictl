@@ -19,25 +19,21 @@ func TestSorting(t *testing.T) {
 	item3_err := new(MockPlugin)
 
 	item0.On("GetMeta").Return(&plugins.PluginMetaStruct{
-		Description:  "0",
-		PluginName:   "item0",
-		Namespace:    "ns0",
+		PluginName:   "item31",
+		Namespace:    "ns31",
 		Dependencies: []string{},
 	})
 	item1.On("GetMeta").Return(&plugins.PluginMetaStruct{
-		Description:  "1",
-		PluginName:   "item1",
-		Namespace:    "ns1",
-		Dependencies: []string{"ns0/item0"},
+		PluginName:   "item14",
+		Namespace:    "ns14",
+		Dependencies: []string{"ns31/item31"},
 	})
 	item2.On("GetMeta").Return(&plugins.PluginMetaStruct{
-		Description:  "2",
 		PluginName:   "item2",
 		Namespace:    "ns2",
-		Dependencies: []string{"ns0/item0", "ns1/item1"},
+		Dependencies: []string{"ns31/item31", "ns14/item14"},
 	})
 	item3_err.On("GetMeta").Return(&plugins.PluginMetaStruct{
-		Description:  "3",
 		PluginName:   "item3",
 		Namespace:    "ns3",
 		Dependencies: []string{"err/err"},
@@ -47,17 +43,17 @@ func TestSorting(t *testing.T) {
 
 	sortedList := SortPlugins(list)
 
-	assert.Equal(sortedList[0].GetMeta().GetDescription(), "0")
+	assert.Equal(sortedList[0].GetMeta().GetPluginName(), "item31")
 	assert.Nil(sortedList[0].error)
 
-	assert.Equal(sortedList[1].GetMeta().GetDescription(), "1")
+	assert.Equal(sortedList[1].GetMeta().GetPluginName(), "item14")
 	assert.Nil(sortedList[1].error)
 
-	assert.Equal(sortedList[2].GetMeta().GetDescription(), "2")
+	assert.Equal(sortedList[2].GetMeta().GetPluginName(), "item2")
 	assert.Nil(sortedList[2].error)
 
-	assert.Equal(sortedList[3].GetMeta().GetDescription(), "3")
-	assert.Equal(sortedList[3].Error(), "Dependencies err/err for plugin ns3/item3 not found.")
+	assert.Equal(sortedList[3].GetMeta().GetPluginName(), "item3")
+	assert.Equal(sortedList[3].error.Error(), "Dependencies err/err for plugin ns3/item3 not found.")
 }
 
 type MockPlugin struct {

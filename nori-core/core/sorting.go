@@ -48,6 +48,11 @@ func SortPlugins(pList PluginList) RespPluginList {
 		}
 	}
 
+	// calculate weight
+	for _, plugin := range list {
+		plugin.calcWeight(nList)
+	}
+
 	// sorting C.O.
 	sort.Sort(list)
 
@@ -91,14 +96,16 @@ func (i *internalPlugin) calcWeight(nList nameList) {
 
 		// also added to the weight a weight of each dependency
 		for _, name := range deps {
-			plug := nList[name]
-			if plug.calculatedWeight {
-				// already calculated
-				i.weight += plug.weight
-			} else {
-				// "To understand recursion, you must understand recursion."
-				plug.calcWeight(nList)
-				i.weight += plug.weight
+			plug, ok := nList[name]
+			if ok {
+				if plug.calculatedWeight {
+					// already calculated
+					i.weight += plug.weight
+				} else {
+					// "To understand recursion, you must understand recursion."
+					plug.calcWeight(nList)
+					i.weight += plug.weight
+				}
 			}
 		}
 	}
@@ -108,6 +115,7 @@ func (i *internalPlugin) checkDeps(nList nameList) error {
 	// TODO check for self-dependence
 	for _, name := range i.GetMeta().GetDependencies() {
 		if _, ok := nList[name]; !ok {
+			i.calculatedWeight = true
 			return fmt.Errorf("Dependencies %s for plugin %s not found.", name, i.name())
 		}
 	}
@@ -125,6 +133,9 @@ func (i internalPluginList) Less(x, y int) bool {
 	// items with error have less priority
 	if i[x].error == nil && i[y].error != nil {
 		return true
+	}
+	if i[x].error != nil && i[y].error == nil {
+		return false
 	}
 
 	// more weight = less priority
