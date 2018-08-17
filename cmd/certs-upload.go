@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/secure2work/nori-cli/nori-core/core"
-	"github.com/secure2work/nori-cli/norictl/client"
-	"github.com/secure2work/nori-cli/proto"
+	"github.com/secure2work/nori/core/grpc"
+	"github.com/secure2work/nori/proto"
+	"github.com/secure2work/norictl/client"
 )
 
 var uploadCertsCmd = &cobra.Command{
@@ -60,7 +60,7 @@ var uploadCertsCmd = &cobra.Command{
 		)
 
 		// encrypting...
-		pk, err := core.PasskeyFromString(passkey)
+		pk, err := grpc.PasskeyFromString(passkey)
 		if err != nil {
 			logrus.Fatal(err)
 		}

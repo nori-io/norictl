@@ -11,8 +11,8 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/secure2work/nori-cli/norictl/client"
-	"github.com/secure2work/nori-cli/proto"
+	"github.com/secure2work/nori/proto"
+	"github.com/secure2work/norictl/client"
 )
 
 var uploadCmd = &cobra.Command{
