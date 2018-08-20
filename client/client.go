@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/secure2work/nori-cli/proto"
+	"github.com/secure2work/nori/proto"
 )
 
 func NewClient(addr string, caFile string, serverHostOverride string) (commands.CommandsClient, chan<- struct{}) {

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/secure2work/nori-cli/nori-core/core"
+	"github.com/secure2work/nori/core/grpc"
 )
 
 var buildCmd = &cobra.Command{
@@ -20,7 +20,7 @@ var buildCmd = &cobra.Command{
 			logrus.Fatal("plugin-path is required")
 		}
 
-		toolchain, err := core.SetupToolChain()
+		toolchain, err := grpc.SetupToolChain()
 		if err != nil {
 			logrus.Fatal(err)
 		}
