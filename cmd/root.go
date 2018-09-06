@@ -13,7 +13,7 @@ import (
 var cfgFile string
 
 const (
-	configDir  = ".config/nori"
+	configDir  = ".config/norictl"
 	configName = "norictl.json"
 )
 
