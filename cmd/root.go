@@ -14,12 +14,12 @@ var cfgFile string
 
 const (
 	configDir  = ".config/nori"
-	configName = "nori-cli.json"
+	configName = "norictl.json"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "nori-cli",
+	Use:   "norictl",
 	Short: "A simple command line client for nori",
 }
 

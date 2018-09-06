@@ -14,7 +14,7 @@ func init() {
 	rootCmd.AddCommand(pluginCmd)
 
 	pluginCmd.PersistentFlags().String("plugin-path", "", "path to plugin")
-	pluginCmd.PersistentFlags().String("grpc-address", "localhost:12345", "gRPC host and port")
+	pluginCmd.PersistentFlags().String("grpc-address", "localhost:29876", "gRPC host and port")
 	pluginCmd.PersistentFlags().String("ca", "client.ca", "client ca for gRPC")
 	pluginCmd.PersistentFlags().String("ServerHostOverride", "", "ServerHostOverride")
 	pluginCmd.PersistentFlags().Bool("dependencies", true, "install dependencies")
