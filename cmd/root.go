@@ -50,10 +50,7 @@ func initConfig() {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-
-		// Search config in home directory with name "nori-cli" (without extension).
-		viper.AddConfigPath(filepath.Join(home, configDir))
-		viper.SetConfigName(filepath.Base(configName))
+		viper.SetConfigFile(filepath.Join(home, configDir, configName))
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
