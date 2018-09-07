@@ -20,7 +20,6 @@ func NewClient(addr string, caFile string, serverHostOverride string) (commands.
 		opts = append(opts, grpc.WithTransportCredentials(creds))
 		log.Printf("Created gRPC client with cert: %s", caFile)
 	} else {
-		log.Println("Created gRPC client")
 		opts = append(opts, grpc.WithInsecure())
 	}
 	conn, err := grpc.Dial(addr, opts...)

@@ -14,6 +14,7 @@ func init() {
 	rootCmd.AddCommand(pluginCmd)
 
 	pluginCmd.PersistentFlags().String("plugin-path", "", "path to plugin")
+	pluginCmd.PersistentFlags().String("plugin-id", "", "plugin id")
 	pluginCmd.PersistentFlags().String("grpc-address", "localhost:29876", "gRPC host and port")
 	pluginCmd.PersistentFlags().String("ca", "client.ca", "client ca for gRPC")
 	pluginCmd.PersistentFlags().String("ServerHostOverride", "", "ServerHostOverride")
@@ -24,4 +25,5 @@ func init() {
 	viper.BindPFlag("ca", pluginCmd.PersistentFlags().Lookup("ca"))
 	viper.BindPFlag("ServerHostOverride", pluginCmd.PersistentFlags().Lookup("ServerHostOverride"))
 	viper.BindPFlag("dependencies", pluginCmd.PersistentFlags().Lookup("dependencies"))
+	viper.BindPFlag("plugin-id", pluginCmd.PersistentFlags().Lookup("plugin-id"))
 }
