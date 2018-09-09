@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -10,6 +8,8 @@ import (
 
 	"github.com/secure2work/nori/proto"
 	"github.com/secure2work/norictl/client"
+	"github.com/olekukonko/tablewriter"
+	"os"
 )
 
 var listCmd = &cobra.Command{
@@ -31,9 +31,17 @@ var listCmd = &cobra.Command{
 			logrus.Fatal(err)
 		}
 
-		for i, resp := range reply.Data {
-			fmt.Printf(": %3d : %15s : %10s : %10s :\n", i+1, resp.Id, resp.Name, resp.Author)
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"#", "ID", "Name", "Author"})
+
+		var i int
+		for _, v := range reply.Data {
+			i += 1
+			table.Append([]string{
+				string(i), v.Id, v.Name, v.Author,
+			})
 		}
+		table.Render()
 	},
 }
 
