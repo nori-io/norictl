@@ -19,7 +19,7 @@ var uploadCmd = &cobra.Command{
 	Use:   "upload",
 	Short: "downloading,installing and uploading plugin",
 	Run: func(cmd *cobra.Command, args []string) {
-		path := viper.GetString("plugin-path")
+		path := viper.GetString("file")
 
 		if len(path) == 0 && len(args) > 0 {
 			path = args[0]
@@ -45,7 +45,7 @@ var uploadCmd = &cobra.Command{
 		}
 		path = filepath.Base(path)
 
-		reply, err := client.UploadCommand(context.Background(), &commands.UploadRequest{
+		reply, err := client.PluginUploadCommand(context.Background(), &commands.PluginUploadRequest{
 			Name: path,
 			So:   so,
 		})

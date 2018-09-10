@@ -17,7 +17,7 @@ var uninstallCmd = &cobra.Command{
 	Use:   "uninstall",
 	Short: "install plugin",
 	Run: func(cmd *cobra.Command, args []string) {
-		id := viper.GetString("plugin-id")
+		id := viper.GetString("id")
 		if len(id) == 0 && len(args) > 0 {
 			id = args[0]
 		}
@@ -28,7 +28,7 @@ var uninstallCmd = &cobra.Command{
 			viper.GetString("ServerHostOverride"),
 		)
 
-		reply, err := cli.UninstallCommand(context.Background(), &commands.UninstallRequest{Id: id})
+		reply, err := cli.PluginUninstallCommand(context.Background(), &commands.PluginUninstallRequest{Id: id})
 		defer close(closeCh)
 		if err != nil {
 			if reply != nil {

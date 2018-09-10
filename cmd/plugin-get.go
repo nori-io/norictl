@@ -27,7 +27,7 @@ var getCmd = &cobra.Command{
 			viper.GetString("ServerHostOverride"),
 		)
 
-		reply, err := client.GetCommand(context.Background(), &commands.GetRequest{
+		reply, err := client.PluginGetCommand(context.Background(), &commands.PluginGetRequest{
 			Uri:                 path,
 			InstallDependencies: viper.GetBool("dependencies"),
 		})

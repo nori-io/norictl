@@ -85,7 +85,7 @@ var uploadCertsCmd = &cobra.Command{
 		keyBs := append([]byte{byte(hmacLen)}, hmac...)
 		keyBs = append(keyBs, keyBytes...)
 
-		reply, err := client.UploadCertsCommand(context.Background(), &commands.UploadCertsRequest{
+		reply, err := client.CertsUploadCommand(context.Background(), &commands.CertsUploadRequest{
 			Pem: pemBs,
 			Key: keyBs,
 		})

@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/testdata"
 
-	"github.com/secure2work/nori-cli/nori-core/core"
+	"github.com/secure2work/nori/core/grpc"
 )
 
 const (
@@ -27,10 +27,11 @@ var (
 	testkey = filepath.Join(testDir, "server.key")
 )
 
-func runServer(assert *assert.Assertions, useCerts bool) *core.Server {
+func runServer(assert *assert.Assertions, useCerts bool) *grpc.Server {
 	assert.Nil(os.RemoveAll(testDir))
 
-	server := core.NewServer([]string{testDir}, addr, true)
+	// FIXME
+	server := grpc.NewServer([]string{testDir}, addr, true)
 	if useCerts {
 		server.SetCertificates(pem, key)
 	} else {

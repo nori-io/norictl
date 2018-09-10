@@ -17,7 +17,7 @@ var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "install plugin",
 	Run: func(cmd *cobra.Command, args []string) {
-		id := viper.GetString("plugin-id")
+		id := viper.GetString("id")
 		if len(id) == 0 && len(args) > 0 {
 			id = args[0]
 		}
@@ -28,7 +28,7 @@ var installCmd = &cobra.Command{
 			viper.GetString("ServerHostOverride"),
 		)
 
-		reply, err := cli.InstallCommand(context.Background(), &commands.InstallRequest{Id: id})
+		reply, err := cli.PluginInstallCommand(context.Background(), &commands.PluginInstallRequest{Id: id})
 		defer close(closeCh)
 		if err != nil {
 			if reply != nil {

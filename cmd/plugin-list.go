@@ -22,7 +22,7 @@ var listCmd = &cobra.Command{
 			viper.GetString("ServerHostOverride"),
 		)
 
-		reply, err := cli.ListCommand(context.Background(), &commands.ListRequest{})
+		reply, err := cli.PluginListCommand(context.Background(), &commands.PluginListRequest{})
 		close(closeCh)
 		if err != nil {
 			if reply != nil {
