@@ -41,7 +41,7 @@ func init() {
 
 	viper.BindPFlag(CONN_CREATE_CERT, createCmd.Flags().Lookup(CONN_CREATE_CERT))
 	viper.BindPFlag(CONN_CREATE_NAME, createCmd.Flags().Lookup(CONN_CREATE_NAME))
-	viper.BindPFlag(CONN_CREATE_SECURE, )createCmd.Flags().Lookup(CONN_CREATE_SECURE))
+	viper.BindPFlag(CONN_CREATE_SECURE, createCmd.Flags().Lookup(CONN_CREATE_SECURE))
 
 	ConnectionCmd.AddCommand(createCmd)
 }

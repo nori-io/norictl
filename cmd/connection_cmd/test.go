@@ -34,7 +34,7 @@ var testCmd = &cobra.Command{
 }
 
 func init() {
-	testCmd.Flags().BoolP(CONN_TEST_VERBOSE, CONN_TEST_VERBOSE_SHORT, "false", "Show connection detailed information")
+	testCmd.Flags().BoolP(CONN_TEST_VERBOSE, CONN_TEST_VERBOSE_SHORT, false, "Show connection detailed information")
 
 	viper.BindPFlag(CONN_TEST_VERBOSE, testCmd.Flags().Lookup(CONN_TEST_VERBOSE))
 
