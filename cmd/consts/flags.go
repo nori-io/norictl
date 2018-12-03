@@ -9,7 +9,7 @@ const (
 	CONN_CREATE_SECURE_SHORT = "s"
 
 	CONN_LS_HOST           = "host"
-	CONN_LS_HOST_SHORT     = "h"
+	CONN_LS_HOST_SHORT     = ""
 	CONN_LS_INSECURE       = "insecure"
 	CONN_LS_INSECURE_SHORT = "i"
 	CONN_LS_SECURE         = "secure"
