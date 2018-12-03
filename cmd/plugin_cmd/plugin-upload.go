@@ -1,4 +1,4 @@
-package cmd
+package plugin_cmd
 
 import (
 	"fmt"
@@ -62,5 +62,5 @@ var uploadCmd = &cobra.Command{
 }
 
 func init() {
-	pluginCmd.AddCommand(uploadCmd)
+	PluginCmd.AddCommand(uploadCmd)
 }

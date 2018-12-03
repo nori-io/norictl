@@ -1,6 +1,9 @@
-package cmd
+package plugin_cmd
 
 import (
+	"fmt"
+
+	"github.com/fzzy/radix/redis/resp"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -8,22 +11,25 @@ import (
 
 	"github.com/secure2work/nori/proto"
 	"github.com/secure2work/norictl/client"
-	"github.com/olekukonko/tablewriter"
-	"os"
 )
 
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list of plugins",
+var uninstallCmd = &cobra.Command{
+	Use:   "uninstall",
+	Short: "install plugin",
 	Run: func(cmd *cobra.Command, args []string) {
+		id := viper.GetString("id")
+		if len(id) == 0 && len(args) > 0 {
+			id = args[0]
+		}
+
 		cli, closeCh := client.NewClient(
 			viper.GetString("grpc-address"),
 			viper.GetString("ca"),
 			viper.GetString("ServerHostOverride"),
 		)
 
-		reply, err := cli.PluginListCommand(context.Background(), &commands.PluginListRequest{})
-		close(closeCh)
+		reply, err := cli.PluginUninstallCommand(context.Background(), &commands.PluginUninstallRequest{Id: id})
+		defer close(closeCh)
 		if err != nil {
 			if reply != nil {
 				logrus.Fatal(reply.Error)
@@ -31,20 +37,10 @@ var listCmd = &cobra.Command{
 			logrus.Fatal(err)
 		}
 
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"#", "ID", "Name", "Author"})
-
-		var i int
-		for _, v := range reply.Data {
-			i += 1
-			table.Append([]string{
-				string(i), v.Id, v.Name, v.Author,
-			})
-		}
-		table.Render()
+		fmt.Printf("Plugin %s uninstalled, %3d :\n", id, resp.Int)
 	},
 }
 
 func init() {
-	pluginCmd.AddCommand(listCmd)
+	PluginCmd.AddCommand(uninstallCmd)
 }

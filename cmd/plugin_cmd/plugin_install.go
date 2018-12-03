@@ -1,4 +1,4 @@
-package cmd
+package plugin_cmd
 
 import (
 	"fmt"
@@ -8,9 +8,9 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
+	"github.com/fzzy/radix/redis/resp"
 	"github.com/secure2work/nori/proto"
 	"github.com/secure2work/norictl/client"
-	"github.com/fzzy/radix/redis/resp"
 )
 
 var installCmd = &cobra.Command{
@@ -42,5 +42,5 @@ var installCmd = &cobra.Command{
 }
 
 func init() {
-	pluginCmd.AddCommand(installCmd)
+	PluginCmd.AddCommand(installCmd)
 }

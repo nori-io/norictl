@@ -1,4 +1,4 @@
-package cmd
+package certs_cmd
 
 import (
 	"fmt"
@@ -104,5 +104,5 @@ var uploadCertsCmd = &cobra.Command{
 }
 
 func init() {
-	certsCmd.AddCommand(uploadCertsCmd)
+	CertsCmd.AddCommand(uploadCertsCmd)
 }

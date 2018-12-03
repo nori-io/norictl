@@ -1,7 +1,5 @@
-*
-!*.md
-!*.go
-!.gitignore
-!cmd
-!client
-!proto
+.idea/
+*.so
+vendor/
+Gopkg.lock
+norictl

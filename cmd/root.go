@@ -8,6 +8,9 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/secure2work/norictl/cmd/certs_cmd"
+	"github.com/secure2work/norictl/cmd/plugin_cmd"
 )
 
 var cfgFile string
@@ -36,6 +39,9 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s/%s)", configDir, configName))
+
+	rootCmd.AddCommand(plugin_cmd.PluginCmd)
+	rootCmd.AddCommand(certs_cmd.CertsCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
