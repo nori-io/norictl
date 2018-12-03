@@ -25,6 +25,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/secure2work/norictl/cmd/certs_cmd"
+	"github.com/secure2work/norictl/cmd/connection_cmd"
 	"github.com/secure2work/norictl/cmd/plugin_cmd"
 )
 
@@ -57,6 +58,7 @@ func init() {
 
 	rootCmd.AddCommand(plugin_cmd.PluginCmd)
 	rootCmd.AddCommand(certs_cmd.CertsCmd)
+	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
