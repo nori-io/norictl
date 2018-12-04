@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	. "github.com/secure2work/norictl/cmd/consts"
+	. "github.com/secure2work/norictl/client/consts"
 )
 
 var showCmd = &cobra.Command{
@@ -36,6 +36,6 @@ var showCmd = &cobra.Command{
 func init() {
 	showCmd.Flags().StringP(CONN_SHOW_FORMAT, CONN_SHOW_FORMAT_SHORT, "table", "Data representation template: json or table")
 
-	viper.BindPFlag(CONN_SHOW_FORMAT, showCmd.Flags().Lookup(CONN_SHOW_FORMAT))
+	viper.BindPFlag(CONN_SHOW_FORMAT_VIPER, showCmd.Flags().Lookup(CONN_SHOW_FORMAT))
 	ConnectionCmd.AddCommand(showCmd)
 }

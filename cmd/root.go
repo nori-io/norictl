@@ -24,17 +24,13 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/secure2work/norictl/client/consts"
 	"github.com/secure2work/norictl/cmd/certs_cmd"
 	"github.com/secure2work/norictl/cmd/connection_cmd"
 	"github.com/secure2work/norictl/cmd/plugin_cmd"
 )
 
 var cfgFile string
-
-const (
-	configDir  = ".config/norictl"
-	configName = "norictl.json"
-)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -73,7 +69,7 @@ func initConfig() {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		viper.SetConfigFile(filepath.Join(home, configDir, configName))
+		viper.SetConfigFile(filepath.Join(home, consts.ConfigDir, consts.ConfigName))
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
