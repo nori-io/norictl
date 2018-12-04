@@ -10,6 +10,9 @@ const (
 	CONN_CREATE_SECURE       = "secure"
 	CONN_CREATE_SECURE_SHORT = "s"
 	CONN_CREATE_SECURE_VIPER = "connection.create.secure"
+	CONN_CREATE_FORCE        = "force"
+	CONN_CREATE_FORCE_SHORT  = "f"
+	CONN_CREATE_FORCE_VIPER  = "connection.create.force"
 
 	CONN_LS_HOST           = "host"
 	CONN_LS_HOST_SHORT     = ""
