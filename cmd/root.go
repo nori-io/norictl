@@ -50,7 +50,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s/%s)", configDir, configName))
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s/%s)", consts.ConfigDir, consts.ConfigName))
 
 	rootCmd.AddCommand(plugin_cmd.PluginCmd)
 	rootCmd.AddCommand(certs_cmd.CertsCmd)
