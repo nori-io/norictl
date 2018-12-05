@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
@@ -14,8 +15,8 @@ import (
 
 type Connection struct {
 	Name     string `json:"-"`
-	Hostname string `json:"hostname"`
-	Secure   bool   `json:"secure"`
+	Host     string `json:"host"`
+	Port     uint64 `json:"port"`
 	CertPath string `json:"cert_path"`
 	path     string `json:"-"`
 }
@@ -91,24 +92,34 @@ func (c Connection) Remove() error {
 }
 
 func (c Connection) Render(format string) (string, error) {
+	return render(format, c)
+}
+
+func (cs Connections) Render(format string) (string, error) {
+	return render(format, cs...)
+}
+
+func render(format string, cs ...Connection) (string, error) {
 	var b bytes.Buffer
+
 	switch format {
 	case "table":
 		table := tablewriter.NewWriter(&b)
-		table.SetHeader([]string{"Name", "Hostname", "Secure", "CertPath"})
-		table.Append([]string{c.Name, c.Hostname, fmt.Sprintf("%t", c.Secure), c.CertPath})
+		table.SetHeader([]string{"Name", "Host", "Port", "CertPath"})
+		for _, c := range cs {
+			table.Append([]string{c.Name, c.Host, strconv.Itoa(int(c.Port)), c.CertPath})
+		}
 		table.Render()
-		return b.String(), nil
 	case "json":
 		enc := json.NewEncoder(&b)
-		err := enc.Encode(&c)
+		err := enc.Encode(&cs)
 		if err != nil {
 			return "", err
 		}
-		return b.String(), nil
 	default:
 		return "", fmt.Errorf("Format %s not supported", format)
 	}
+	return b.String(), nil
 }
 
 func (c Connection) Test(verbose bool) error {
@@ -122,4 +133,24 @@ func (cs Connections) FilterByName(name string) (*Connection, error) {
 		}
 	}
 	return nil, fmt.Errorf("Connection with name %q not exist", name)
+}
+
+func (cs Connections) FilterBySecure(secure bool) Connections {
+	newConns := make(Connections, 0)
+	for _, c := range cs {
+		if (len(c.CertPath) > 0) == secure {
+			newConns = append(newConns, c)
+		}
+	}
+	return newConns
+}
+
+func (cs Connections) FilterByHost(host string) Connections {
+	newConns := make(Connections, 0)
+	for _, c := range cs {
+		if c.Host == host {
+			newConns = append(newConns, c)
+		}
+	}
+	return newConns
 }

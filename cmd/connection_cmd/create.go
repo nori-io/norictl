@@ -17,8 +17,10 @@ package connection_cmd
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -29,14 +31,13 @@ import (
 )
 
 var (
-	cert   string
-	name   string
-	secure bool
-	force  bool
+	cert  string
+	name  string
+	force bool
 )
 
 var createCmd = &cobra.Command{
-	Use:   "create [OPTIONS] [SERVER]",
+	Use:   "create [OPTIONS] [[HOST]:PORT]",
 	Short: "Create new connection to remote Nori node.",
 	Long:  `Create new connection to remote Nori node.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -53,17 +54,30 @@ var createCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		var hostname string
+		var host, portStr string
+		var port uint64
+
 		if len(args) == 0 {
-			hostname = consts.DefaultHostname
+			host = consts.DefaultHost
+			port = consts.DefaultPort
 		} else {
-			hostname = args[0]
+			//A literal IPv6 address in hostport must be enclosed in square brackets, as in "[::1]:80", "[::1%lo0]:80".
+			host, portStr, err = net.SplitHostPort(args[0])
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			port, err = strconv.ParseUint(portStr, 10, 64)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
 		}
 
 		conn := &connection.Connection{
 			Name:     name,
-			Hostname: hostname,
-			Secure:   secure,
+			Host:     host,
+			Port:     port,
 			CertPath: cert,
 		}
 		err = conn.Save(path, force)
@@ -79,6 +93,5 @@ func init() {
 	flags := utils.NewFlagBuilder(ConnectionCmd, createCmd)
 	flags.String(&cert, "cert", "c", "", "Path to certificate file")
 	flags.String(&name, "name", "n", "default", "Connection name")
-	flags.Bool(&secure, "secure", "s", false, "Use or not certificate for connection")
 	flags.Bool(&force, "force", "f", false, "Force rewrite connection")
 }

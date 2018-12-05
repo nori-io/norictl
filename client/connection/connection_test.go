@@ -13,15 +13,15 @@ import (
 
 var testData1 = Connection{
 	Name:     "test1",
-	Hostname: "testhost1",
-	Secure:   true,
+	Host:     "testhost1",
+	Port:     1234,
 	CertPath: "testpath1",
 }
 
 var testData2 = Connection{
 	Name:     "test2",
-	Hostname: "testhost2",
-	Secure:   true,
+	Host:     "testhost2",
+	Port:     12345,
 	CertPath: "testpath2",
 }
 

@@ -28,6 +28,7 @@ var (
 	insecure bool
 	secureLs bool
 	quiet    bool
+	formatLs string
 )
 
 var lsCmd = &cobra.Command{
@@ -45,4 +46,5 @@ func init() {
 	flags.Bool(&insecure, "insecure", "i", false, "Show only insecure connections")
 	flags.Bool(&secureLs, "secure", "s", false, "Show only secure connections")
 	flags.Bool(&quiet, "quiet", "q", false, "Only display connection names")
+	flags.String(&formatLs, "format", "f", "table", "Data representation template: json or table")
 }
