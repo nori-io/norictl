@@ -10,8 +10,6 @@ import (
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
-
-	. "github.com/secure2work/norictl/client/consts"
 )
 
 type Connection struct {
@@ -41,7 +39,7 @@ func (c Connection) Save(path string, force bool) error {
 			return fmt.Errorf("File %s could not be created: %s", path, err)
 		}
 	} else {
-		return fmt.Errorf("File %s already exist. Use %s for overwrite", path, CONN_CREATE_FORCE)
+		return fmt.Errorf("File %s already exist. Use %s for overwrite", path, "force")
 	}
 
 	enc := json.NewEncoder(f)
