@@ -17,9 +17,14 @@ package connection_cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
+	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 
+	"github.com/secure2work/norictl/client/connection"
+	"github.com/secure2work/norictl/client/consts"
 	"github.com/secure2work/norictl/client/utils"
 )
 
@@ -31,12 +36,43 @@ var (
 )
 
 var createCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create [OPTIONS] [SERVER]",
 	Short: "Create new connection to remote Nori node.",
 	Long:  `Create new connection to remote Nori node.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		path := filepath.Join(home, consts.ConfigDir, consts.ConnectionsDir)
+		err = os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		var hostname string
+		if len(args) == 0 {
+			hostname = consts.DefaultHostname
+		} else {
+			hostname = args[0]
+		}
+
+		conn := &connection.Connection{
+			Name:     name,
+			Hostname: hostname,
+			Secure:   secure,
+			CertPath: cert,
+		}
+		err = conn.Save(path, force)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	},
+	DisableFlagsInUseLine: true,
 }
 
 func init() {
