@@ -25,9 +25,9 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/secure2work/norictl/client/consts"
-	"github.com/secure2work/norictl/cmd/certs_cmd"
-	"github.com/secure2work/norictl/cmd/connection_cmd"
-	"github.com/secure2work/norictl/cmd/plugin_cmd"
+	"github.com/secure2work/norictl/cmd/certs"
+	"github.com/secure2work/norictl/cmd/connection"
+	"github.com/secure2work/norictl/cmd/plugin"
 )
 
 var cfgFile string
