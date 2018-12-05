@@ -19,10 +19,11 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
-	. "github.com/secure2work/norictl/client/consts"
+	"github.com/secure2work/norictl/client/utils"
 )
+
+var verbose bool
 
 var testCmd = &cobra.Command{
 	Use:   "test",
@@ -34,9 +35,6 @@ var testCmd = &cobra.Command{
 }
 
 func init() {
-	testCmd.Flags().BoolP(CONN_TEST_VERBOSE, CONN_TEST_VERBOSE_SHORT, false, "Show connection detailed information")
-
-	viper.BindPFlag(CONN_TEST_VERBOSE_VIPER, testCmd.Flags().Lookup(CONN_TEST_VERBOSE))
-
-	ConnectionCmd.AddCommand(testCmd)
+	flags := utils.NewFlagBuilder(ConnectionCmd, testCmd)
+	flags.Bool(&verbose, "verbose", "v", false, "Show connection detailed information")
 }

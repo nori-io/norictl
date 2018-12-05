@@ -19,9 +19,15 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
-	. "github.com/secure2work/norictl/client/consts"
+	"github.com/secure2work/norictl/client/utils"
+)
+
+var (
+	cert   string
+	name   string
+	secure bool
+	force  bool
 )
 
 var createCmd = &cobra.Command{
@@ -30,18 +36,13 @@ var createCmd = &cobra.Command{
 	Long:  `Create new connection to remote Nori node.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("create called")
-		//fmt.Println(viper.)
 	},
 }
 
 func init() {
-	createCmd.Flags().StringP(CONN_CREATE_CERT, CONN_CREATE_CERT_SHORT, "", "Path to certificate file")
-	createCmd.Flags().StringP(CONN_CREATE_NAME, CONN_CREATE_NAME_SHORT, "default", "Connection name")
-	createCmd.Flags().BoolP(CONN_CREATE_SECURE, CONN_CREATE_SECURE_SHORT, false, "Use or not certificate for connection")
-
-	viper.BindPFlag(CONN_CREATE_CERT_VIPER, createCmd.Flags().Lookup(CONN_CREATE_CERT))
-	viper.BindPFlag(CONN_CREATE_NAME_VIPER, createCmd.Flags().Lookup(CONN_CREATE_NAME))
-	viper.BindPFlag(CONN_CREATE_SECURE_VIPER, createCmd.Flags().Lookup(CONN_CREATE_SECURE))
-
-	ConnectionCmd.AddCommand(createCmd)
+	flags := utils.NewFlagBuilder(ConnectionCmd, createCmd)
+	flags.String(&cert, "cert", "c", "", "Path to certificate file")
+	flags.String(&name, "name", "n", "default", "Connection name")
+	flags.Bool(&secure, "secure", "s", false, "Use or not certificate for connection")
+	flags.Bool(&force, "force", "f", false, "Force rewrite connection")
 }

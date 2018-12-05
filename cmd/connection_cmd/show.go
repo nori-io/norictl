@@ -19,10 +19,11 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
-	. "github.com/secure2work/norictl/client/consts"
+	"github.com/secure2work/norictl/client/utils"
 )
+
+var format string
 
 var showCmd = &cobra.Command{
 	Use:   "show",
@@ -34,8 +35,6 @@ var showCmd = &cobra.Command{
 }
 
 func init() {
-	showCmd.Flags().StringP(CONN_SHOW_FORMAT, CONN_SHOW_FORMAT_SHORT, "table", "Data representation template: json or table")
-
-	viper.BindPFlag(CONN_SHOW_FORMAT_VIPER, showCmd.Flags().Lookup(CONN_SHOW_FORMAT))
-	ConnectionCmd.AddCommand(showCmd)
+	flags := utils.NewFlagBuilder(ConnectionCmd, showCmd)
+	flags.String(&format, "format", "f", "table", "Data representation template: json or table")
 }

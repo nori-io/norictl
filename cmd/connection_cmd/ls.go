@@ -19,9 +19,15 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
-	. "github.com/secure2work/norictl/client/consts"
+	"github.com/secure2work/norictl/client/utils"
+)
+
+var (
+	host     bool
+	insecure bool
+	secureLs bool
+	quiet    bool
 )
 
 var lsCmd = &cobra.Command{
@@ -34,15 +40,9 @@ var lsCmd = &cobra.Command{
 }
 
 func init() {
-	lsCmd.Flags().BoolP(CONN_LS_HOST, CONN_LS_HOST_SHORT, false, "Show connections only for given hostname")
-	lsCmd.Flags().BoolP(CONN_LS_INSECURE, CONN_LS_INSECURE_SHORT, false, "Show only insecure connections")
-	lsCmd.Flags().BoolP(CONN_LS_SECURE, CONN_LS_SECURE_SHORT, false, "Show only secure connections")
-	lsCmd.Flags().BoolP(CONN_LS_QUIET, CONN_LS_QUIET_SHORT, false, "Only display connection names")
-
-	viper.BindPFlag(CONN_LS_HOST_VIPER, lsCmd.Flags().Lookup(CONN_LS_HOST))
-	viper.BindPFlag(CONN_LS_INSECURE_VIPER, lsCmd.Flags().Lookup(CONN_LS_INSECURE))
-	viper.BindPFlag(CONN_LS_SECURE_VIPER, lsCmd.Flags().Lookup(CONN_LS_SECURE))
-	viper.BindPFlag(CONN_LS_QUIET_VIPER, lsCmd.Flags().Lookup(CONN_LS_QUIET))
-
-	ConnectionCmd.AddCommand(lsCmd)
+	flags := utils.NewFlagBuilder(ConnectionCmd, lsCmd)
+	flags.Bool(&host, "host", "", false, "Show connections only for given hostname")
+	flags.Bool(&insecure, "insecure", "i", false, "Show only insecure connections")
+	flags.Bool(&secureLs, "secure", "s", false, "Show only secure connections")
+	flags.Bool(&quiet, "quiet", "q", false, "Only display connection names")
 }
