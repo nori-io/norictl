@@ -16,10 +16,25 @@
 package connection_cmd
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"net"
+	"os"
+	"path/filepath"
+	"strconv"
+	"time"
 
+	homedir "github.com/mitchellh/go-homedir"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"golang.org/x/net/context"
 
+	"github.com/secure2work/nori/proto"
+	"github.com/secure2work/norictl/client"
+	"github.com/secure2work/norictl/client/connection"
+	"github.com/secure2work/norictl/client/consts"
 	"github.com/secure2work/norictl/client/utils"
 )
 
@@ -30,11 +45,65 @@ var testCmd = &cobra.Command{
 	Short: "Make connection to remote Nori node to verify connection configuration.",
 	Long:  `Make connection to remote Nori node to verify connection configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("test called")
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		path := filepath.Join(home, consts.ConfigDir)
+
+		useFileName := filepath.Join(path, consts.UseConnFilename)
+
+		bs, err := ioutil.ReadFile(useFileName)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		name := string(bytes.TrimSpace(bs))
+
+		path = filepath.Join(path, consts.ConnectionsDir)
+
+		list, err := connection.List(path)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		conn, err := list.FilterByName(name)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		cli, closeCh := client.NewClient(
+			net.JoinHostPort(conn.Host, strconv.Itoa(int(conn.Port))),
+			conn.CertPath,
+			"",
+		)
+
+		msg := fmt.Sprintf("%d", rand.Uint64())
+
+		ping := &commands.PingRequest{Message: msg}
+
+		reply, err := cli.SendPingCommand(context.Background(), ping)
+		close(closeCh)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		if reply.Message == msg {
+			fmt.Println("OK")
+		} else {
+			fmt.Println("Error: Pong message does not match")
+		}
 	},
 }
 
 func init() {
+	rand.Seed(time.Now().UnixNano())
+
 	flags := utils.NewFlagBuilder(ConnectionCmd, testCmd)
-	flags.Bool(&verbose, "verbose", "v", false, "Show connection detailed information")
+	// TODO implement verbose
+	flags.Bool(&verbose, "verbose", "v", false, "Show connection detailed information (not implemented yet)")
 }
