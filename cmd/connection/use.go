@@ -45,7 +45,9 @@ var useCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		filepath := filepath.Join(path, consts.Use)
+		fpath := filepath.Join(path, consts.UseConnFilename)
+
+		path = filepath.Join(path, consts.ConnectionsDir)
 
 		list, err := connection.List(path)
 		if err != nil {
@@ -59,7 +61,7 @@ var useCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		err := conn.Use(filepath)
+		err = conn.Use(fpath)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
