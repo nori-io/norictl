@@ -104,12 +104,16 @@ func render(format string, cs ...Connection) (string, error) {
 
 	switch format {
 	case "table":
-		table := tablewriter.NewWriter(&b)
-		table.SetHeader([]string{"Name", "Host", "Port", "CertPath"})
-		for _, c := range cs {
-			table.Append([]string{c.Name, c.Host, strconv.Itoa(int(c.Port)), c.CertPath})
+		if len(cs) > 0 {
+			table := tablewriter.NewWriter(&b)
+			table.SetHeader([]string{"Name", "Host", "Port", "CertPath"})
+			for _, c := range cs {
+				table.Append([]string{c.Name, c.Host, strconv.Itoa(int(c.Port)), c.CertPath})
+			}
+			table.Render()
+		} else {
+			return "", fmt.Errorf("Connections not exists.")
 		}
-		table.Render()
 	case "json":
 		enc := json.NewEncoder(&b)
 		err := enc.Encode(&cs)

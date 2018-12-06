@@ -17,14 +17,19 @@ package connection_cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
+	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 
+	"github.com/secure2work/norictl/client/connection"
+	"github.com/secure2work/norictl/client/consts"
 	"github.com/secure2work/norictl/client/utils"
 )
 
 var (
-	host     bool
+	host     string
 	insecure bool
 	secureLs bool
 	quiet    bool
@@ -36,13 +41,56 @@ var lsCmd = &cobra.Command{
 	Short: "List connections",
 	Long:  `List connections.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ls called")
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		path := filepath.Join(home, consts.ConfigDir, consts.ConnectionsDir)
+		err = os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		list, err := connection.List(path)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		if insecure {
+			list = list.FilterBySecure(false)
+		}
+
+		if secureLs {
+			list = list.FilterBySecure(true)
+		}
+
+		if len(host) > 0 {
+			list = list.FilterByHost(host)
+		}
+
+		if quiet {
+			for _, l := range list {
+				fmt.Println(l.Name)
+			}
+		} else {
+			str, err := list.Render(formatLs)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			fmt.Println(str)
+		}
 	},
+	DisableFlagsInUseLine: true,
 }
 
 func init() {
 	flags := utils.NewFlagBuilder(ConnectionCmd, lsCmd)
-	flags.Bool(&host, "host", "", false, "Show connections only for given hostname")
+	flags.String(&host, "host", "x", "", "Show connections only for given hostname")
 	flags.Bool(&insecure, "insecure", "i", false, "Show only insecure connections")
 	flags.Bool(&secureLs, "secure", "s", false, "Show only secure connections")
 	flags.Bool(&quiet, "quiet", "q", false, "Only display connection names")
