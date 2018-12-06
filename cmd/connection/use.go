@@ -17,17 +17,55 @@ package connection_cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
+	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+
+	"github.com/secure2work/norictl/client/connection"
+	"github.com/secure2work/norictl/client/consts"
 )
 
 var useCmd = &cobra.Command{
-	Use:   "use",
+	Use:   "use [NAME]",
 	Short: "Define a connection to use.",
 	Long:  `Define a connection to use.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("use called")
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		path := filepath.Join(home, consts.ConfigDir)
+		err = os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		filepath := filepath.Join(path, consts.Use)
+
+		list, err := connection.List(path)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		conn, err := list.FilterByName(name)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		err := conn.Use(filepath)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	},
+	DisableFlagsInUseLine: true,
 }
 
 func init() {

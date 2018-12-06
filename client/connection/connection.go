@@ -91,6 +91,22 @@ func (c Connection) Remove() error {
 	return os.Remove(name)
 }
 
+func (c Connection) Use(filepath string) error {
+	f, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	_, err = f.WriteString(c.Name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c Connection) Render(format string) (string, error) {
 	return render(format, c)
 }
