@@ -16,11 +16,9 @@
 package connection_cmd
 
 import (
-	"fmt"
 	"os"
-	"path/filepath"
 
-	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/secure2work/norictl/client/connection"
@@ -32,39 +30,24 @@ var useCmd = &cobra.Command{
 	Short: "Define a connection to use.",
 	Long:  `Define a connection to use.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		home, err := homedir.Dir()
+		err := os.MkdirAll(consts.ConfigDir, os.ModePerm)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
-		path := filepath.Join(home, consts.ConfigDir)
-		err = os.MkdirAll(path, os.ModePerm)
+		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
-		fpath := filepath.Join(path, consts.UseConnFilename)
-
-		path = filepath.Join(path, consts.ConnectionsDir)
-
-		list, err := connection.List(path)
+		conn, err := list.FilterByName(name())
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
-		conn, err := list.FilterByName(name)
+		err = conn.Use(consts.UseFilePath)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		err = conn.Use(fpath)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 	},
 	DisableFlagsInUseLine: true,

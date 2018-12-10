@@ -18,9 +18,8 @@ package connection_cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
-	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/secure2work/norictl/client/connection"
@@ -29,11 +28,11 @@ import (
 )
 
 var (
-	host     string
-	insecure bool
-	secureLs bool
-	quiet    bool
-	formatLs string
+	host     func() string
+	insecure func() bool
+	secureLs func() bool
+	quiet    func() bool
+	formatLs func() string
 )
 
 var lsCmd = &cobra.Command{
@@ -41,46 +40,42 @@ var lsCmd = &cobra.Command{
 	Short: "List connections",
 	Long:  `List connections.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		home, err := homedir.Dir()
+		err := os.MkdirAll(consts.ConnectionsDir, os.ModePerm)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
-		path := filepath.Join(home, consts.ConfigDir, consts.ConnectionsDir)
-		err = os.MkdirAll(path, os.ModePerm)
+		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
-		list, err := connection.List(path)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+		if insecure() && secureLs() {
+			log.Error("")
+			insecure = func() bool { return false }
+			secureLs = func() bool { return false }
 		}
 
-		if insecure {
+		if insecure() {
 			list = list.FilterBySecure(false)
 		}
 
-		if secureLs {
+		if secureLs() {
 			list = list.FilterBySecure(true)
 		}
 
-		if len(host) > 0 {
-			list = list.FilterByHost(host)
+		if len(host()) > 0 {
+			list = list.FilterByHost(host())
 		}
 
-		if quiet {
+		if quiet() {
 			for _, l := range list {
 				fmt.Println(l.Name)
 			}
 		} else {
-			str, err := list.Render(formatLs)
+			str, err := list.Render(formatLs())
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 			fmt.Println(str)
 		}

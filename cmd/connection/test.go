@@ -21,13 +21,10 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net"
-	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -38,43 +35,28 @@ import (
 	"github.com/secure2work/norictl/client/utils"
 )
 
-var verbose bool
+var verbose func() bool
 
 var testCmd = &cobra.Command{
 	Use:   "test",
 	Short: "Make connection to remote Nori node to verify connection configuration.",
 	Long:  `Make connection to remote Nori node to verify connection configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		home, err := homedir.Dir()
+		bs, err := ioutil.ReadFile(consts.UseFilePath)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		path := filepath.Join(home, consts.ConfigDir)
-
-		useFileName := filepath.Join(path, consts.UseConnFilename)
-
-		bs, err := ioutil.ReadFile(useFileName)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		name := string(bytes.TrimSpace(bs))
 
-		path = filepath.Join(path, consts.ConnectionsDir)
-
-		list, err := connection.List(path)
+		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		conn, err := list.FilterByName(name)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		cli, closeCh := client.NewClient(
@@ -90,7 +72,7 @@ var testCmd = &cobra.Command{
 		reply, err := cli.SendPingCommand(context.Background(), ping)
 		close(closeCh)
 		if err != nil {
-			logrus.Fatal(err)
+			log.Fatal(err)
 		}
 		if reply.Message == msg {
 			fmt.Println("OK")
@@ -103,7 +85,5 @@ var testCmd = &cobra.Command{
 func init() {
 	rand.Seed(time.Now().UnixNano())
 
-	flags := utils.NewFlagBuilder(ConnectionCmd, testCmd)
-	// TODO implement verbose
-	flags.Bool(&verbose, "verbose", "v", false, "Show connection detailed information (not implemented yet)")
+	utils.NewFlagBuilder(ConnectionCmd, testCmd)
 }

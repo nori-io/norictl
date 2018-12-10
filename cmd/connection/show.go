@@ -18,9 +18,8 @@ package connection_cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
-	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/secure2work/norictl/client/connection"
@@ -28,24 +27,16 @@ import (
 	"github.com/secure2work/norictl/client/utils"
 )
 
-var format string
+var format func() string
 
 var showCmd = &cobra.Command{
 	Use:   "show [NAME]",
 	Short: "Shows detailed information about specific connection.",
 	Long:  `Shows detailed information about specific connection.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		home, err := homedir.Dir()
+		err := os.MkdirAll(consts.ConnectionsDir, os.ModePerm)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		path := filepath.Join(home, consts.ConfigDir, consts.ConnectionsDir)
-		err = os.MkdirAll(path, os.ModePerm)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		var name string
@@ -55,22 +46,19 @@ var showCmd = &cobra.Command{
 			name = args[0]
 		}
 
-		list, err := connection.List(path)
+		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		conn, err := list.FilterByName(name)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
-		r, err := conn.Render(format)
+		r, err := conn.Render(format())
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		fmt.Println(r)

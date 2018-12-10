@@ -1,9 +1,9 @@
 package consts
 
 const (
-	ConfigDir              = ".config/norictl"
-	ConfigName             = "norictl.json"
-	ConnectionsDir         = "connections"
+	configDir              = ".config/norictl"
+	configName             = "norictl.json"
+	connectionsDir         = "connections"
 	DefaultHost            = "localhost"
 	DefaultPort     uint64 = 29876
 	DefaultName            = "default"

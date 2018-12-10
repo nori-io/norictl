@@ -16,13 +16,11 @@
 package connection_cmd
 
 import (
-	"fmt"
 	"net"
 	"os"
-	"path/filepath"
 	"strconv"
 
-	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/secure2work/norictl/client/connection"
@@ -31,9 +29,9 @@ import (
 )
 
 var (
-	cert  string
-	name  string
-	force bool
+	cert  func() string
+	name  func() string
+	force func() bool
 )
 
 var createCmd = &cobra.Command{
@@ -41,17 +39,9 @@ var createCmd = &cobra.Command{
 	Short: "Create new connection to remote Nori node.",
 	Long:  `Create new connection to remote Nori node.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		home, err := homedir.Dir()
+		err := os.MkdirAll(consts.ConnectionsDir, os.ModePerm)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		path := filepath.Join(home, consts.ConfigDir, consts.ConnectionsDir)
-		err = os.MkdirAll(path, os.ModePerm)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		var host, portStr string
@@ -64,26 +54,23 @@ var createCmd = &cobra.Command{
 			//A literal IPv6 address in hostport must be enclosed in square brackets, as in "[::1]:80", "[::1%lo0]:80".
 			host, portStr, err = net.SplitHostPort(args[0])
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 			port, err = strconv.ParseUint(portStr, 10, 64)
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 		}
 
 		conn := &connection.Connection{
-			Name:     name,
+			Name:     name(),
 			Host:     host,
 			Port:     port,
-			CertPath: cert,
+			CertPath: cert(),
 		}
-		err = conn.Save(path, force)
+		err = conn.Save(consts.ConnectionsDir, force())
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 	},
 	DisableFlagsInUseLine: true,

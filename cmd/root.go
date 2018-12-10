@@ -18,19 +18,20 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
-	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	"github.com/secure2work/norictl/client/consts"
+	"github.com/secure2work/norictl/client/utils"
 	"github.com/secure2work/norictl/cmd/certs"
 	"github.com/secure2work/norictl/cmd/connection"
 	"github.com/secure2work/norictl/cmd/plugin"
 )
 
 var cfgFile string
+var logLevel func() string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -50,7 +51,10 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s/%s)", consts.ConfigDir, consts.ConfigName))
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
+
+	flags := utils.NewFlagBuilder(nil, rootCmd)
+	flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
 
 	rootCmd.AddCommand(plugin_cmd.PluginCmd)
 	rootCmd.AddCommand(certs_cmd.CertsCmd)
@@ -60,22 +64,21 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if cfgFile != "" {
-		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		viper.SetConfigFile(filepath.Join(home, consts.ConfigDir, consts.ConfigName))
+		viper.SetConfigFile(consts.ConfigPath)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		lvl, err := log.ParseLevel(logLevel())
+		if err != nil {
+			log.Error(err)
+		} else {
+			log.SetLevel(lvl)
+		}
+		log.Info("Using config file: ", viper.ConfigFileUsed())
 	}
 }
