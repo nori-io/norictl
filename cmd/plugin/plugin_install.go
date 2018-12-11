@@ -18,41 +18,47 @@ package plugin_cmd
 import (
 	"fmt"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/fzzy/radix/redis/resp"
 	"github.com/secure2work/nori/proto"
 	"github.com/secure2work/norictl/client"
+	"github.com/secure2work/norictl/client/connection"
 )
 
 var installCmd = &cobra.Command{
-	Use:   "install",
-	Short: "install plugin",
+	Use:   "install [OPTIONS] PLUGIN_ID",
+	Short: "Install downloaded plugin.",
 	Run: func(cmd *cobra.Command, args []string) {
-		id := viper.GetString("id")
-		if len(id) == 0 && len(args) > 0 {
-			id = args[0]
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			log.Fatal(err)
 		}
 
+		if len(args) == 0 {
+			log.Fatal("PLUGIN_ID required!")
+		}
+
+		pluginId := args[0]
+
 		cli, closeCh := client.NewClient(
-			viper.GetString("grpc-address"),
-			viper.GetString("ca"),
-			viper.GetString("ServerHostOverride"),
+			conn.HostPort(),
+			conn.CertPath,
+			"",
 		)
 
-		reply, err := cli.PluginInstallCommand(context.Background(), &commands.PluginInstallRequest{Id: id})
+		reply, err := cli.PluginInstallCommand(context.Background(), &commands.PluginInstallRequest{Id: pluginId})
 		defer close(closeCh)
 		if err != nil {
 			if reply != nil {
-				logrus.Fatal(reply.Error)
+				log.Fatal(reply.Error)
 			}
-			logrus.Fatal(err)
+			log.Fatal(err)
 		}
 
-		fmt.Printf("Plugin %s installed, %3d :\n", id, resp.Int)
+		fmt.Printf("Plugin %s installed, %3d :\n", pluginId, resp.Int)
 	},
 }
 

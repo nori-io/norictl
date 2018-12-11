@@ -18,48 +18,64 @@ package plugin_cmd
 import (
 	"fmt"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/secure2work/nori/proto"
 	"github.com/secure2work/norictl/client"
+	"github.com/secure2work/norictl/client/connection"
+	"github.com/secure2work/norictl/client/utils"
+)
+
+var (
+	getDownload func() bool
+	getUpdate   func() bool
 )
 
 var getCmd = &cobra.Command{
-	Use:   "get",
-	Short: "downloading and installing plugin",
+	Use:   "get [OPTIONS] PLUGIN_ID",
+	Short: "downloading plugin",
+	Long: `Get downloads the plugin, along with its dependencies.
+	It then installs the plugin, like norictl plugin install.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		path := viper.GetString("plugin-path")
-		if len(path) == 0 && len(args) > 0 {
-			path = args[0]
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			log.Fatal(err)
 		}
 
+		if len(args) == 0 {
+			log.Fatal("PLUGIN_ID required!")
+		}
+
+		pluginId := args[0]
+
 		client, closeCh := client.NewClient(
-			viper.GetString("grpc-address"),
-			viper.GetString("ca"),
-			viper.GetString("ServerHostOverride"),
+			conn.HostPort(),
+			conn.CertPath,
+			"",
 		)
 
 		reply, err := client.PluginGetCommand(context.Background(), &commands.PluginGetRequest{
-			Uri:                 path,
-			InstallDependencies: viper.GetBool("dependencies"),
+			Uri:                 pluginId,
+			InstallDependencies: true,
 		})
 
 		close(closeCh)
 
 		if err != nil {
-			logrus.Fatal(err)
+			log.Fatal(err)
 			if reply != nil {
-				logrus.Fatal(reply.Error)
+				log.Fatal(reply.Error)
 			}
 		} else {
-			fmt.Printf("Plugin %q successfully installed\n", path)
+			fmt.Printf("Plugin %q successfully installed\n", pluginId)
 		}
 	},
 }
 
 func init() {
-	PluginCmd.AddCommand(getCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, getCmd)
+	flags.Bool(&getDownload, "download", "d", false, "Stop after downloading the plugin, do not install it")
+	flags.Bool(&getUpdate, "update", "u", false, "Use the network to update plugin and plugin dependencies")
 }

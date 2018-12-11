@@ -16,45 +16,82 @@
 package plugin_cmd
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"golang.org/x/net/context"
-
 	"os"
+	"strconv"
 
 	"github.com/olekukonko/tablewriter"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"golang.org/x/net/context"
+
 	"github.com/secure2work/nori/proto"
 	"github.com/secure2work/norictl/client"
+	"github.com/secure2work/norictl/client/connection"
+	"github.com/secure2work/norictl/client/utils"
+)
+
+var (
+	listError     func() bool
+	listInstalled func() bool
+	listRunning   func() bool
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list of plugins",
+	Use:     "ls [OPTIONS]",
+	Aliases: []string{"list"},
+	Short:   "Shows list of plugins on remote Nori node.",
 	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		cli, closeCh := client.NewClient(
-			viper.GetString("grpc-address"),
-			viper.GetString("ca"),
-			viper.GetString("ServerHostOverride"),
+			conn.HostPort(),
+			conn.CertPath,
+			"",
 		)
 
 		reply, err := cli.PluginListCommand(context.Background(), &commands.PluginListRequest{})
 		close(closeCh)
 		if err != nil {
 			if reply != nil {
-				logrus.Fatal(reply.Error)
+				log.Fatal(reply.Error)
 			}
-			logrus.Fatal(err)
+			log.Fatal(err)
 		}
 
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"#", "ID", "Name", "Author"})
 
-		var i int
-		for _, v := range reply.Data {
-			i += 1
+		list := reply.Data
+
+		filter := func(list []*commands.PluginList, f func(p *commands.PluginList) bool) []*commands.PluginList {
+			newList := make([]*commands.PluginList, 0)
+
+			for _, l := range list {
+				if f(l) {
+					newList = append(newList, l)
+				}
+			}
+			return newList
+		}
+
+		if listInstalled() {
+			list = filter(list, func(p *commands.PluginList) bool {
+				return p.Installed
+			})
+		}
+
+		if listRunning() {
+			list = filter(list, func(p *commands.PluginList) bool {
+				return p.Running
+			})
+		}
+
+		for i, v := range list {
 			table.Append([]string{
-				string(i), v.Id, v.Name, v.Author,
+				strconv.Itoa(i + 1), v.Id, v.Name, v.Author,
 			})
 		}
 		table.Render()
@@ -62,5 +99,8 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	PluginCmd.AddCommand(listCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, listCmd)
+	flags.Bool(&listError, "error", "e", false, "Show plugins with errors (not implement)") // TODO
+	flags.Bool(&listInstalled, "installed", "i", false, "Show only installed plugins")
+	flags.Bool(&listRunning, "running", "r", false, "Show only running plugins")
 }
