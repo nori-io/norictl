@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
+	"github.com/secure2work/norictl/client/consts"
 )
 
 type Connection struct {
@@ -69,21 +71,35 @@ func List(path string) (Connections, error) {
 
 		name := filepath.Join(path, f.Name())
 
-		file, err := os.Open(name)
+		conn, err := open(name)
 		if err != nil {
-			return nil, fmt.Errorf("Open error \"%s\" with file %s", err, name)
+			return nil, err
 		}
-		conn := new(Connection)
-		err = json.NewDecoder(file).Decode(conn)
-		file.Close()
-		if err != nil {
-			return nil, fmt.Errorf("Decode error \"%s\" with file %s", err, name)
-		}
+
 		conn.Name = strings.TrimSuffix(f.Name(), ext)
 		conn.path = path
 		connections = append(connections, *conn)
 	}
 	return connections, nil
+}
+
+func open(name string) (*Connection, error) {
+	file, err := os.Open(name)
+	if err != nil {
+		return nil, fmt.Errorf("Open error \"%s\" with file %s", err, name)
+	}
+	conn := new(Connection)
+	err = json.NewDecoder(file).Decode(conn)
+	file.Close()
+	if err != nil {
+		return nil, fmt.Errorf("Decode error \"%s\" with file %s", err, name)
+	}
+	return conn, nil
+}
+
+func Get(path, name string) (*Connection, error) {
+	name = filepath.Join(path, name+ext)
+	return open(name)
 }
 
 func (c Connection) Remove() error {
@@ -142,10 +158,6 @@ func render(format string, cs ...Connection) (string, error) {
 	return b.String(), nil
 }
 
-func (c Connection) Test(verbose bool) error {
-	return nil
-}
-
 func (cs Connections) FilterByName(name string) (*Connection, error) {
 	for _, c := range cs {
 		if c.Name == name {
@@ -173,4 +185,23 @@ func (cs Connections) FilterByHost(host string) Connections {
 		}
 	}
 	return newConns
+}
+
+func CurrentConnection() (*Connection, error) {
+	bs, err := ioutil.ReadFile(consts.UseFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	name := string(bytes.TrimSpace(bs))
+
+	conn, err := Get(consts.ConnectionsDir, name)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
+func (c Connection) HostPort() string {
+	return net.JoinHostPort(c.Host, strconv.Itoa(int(c.Port)))
 }
