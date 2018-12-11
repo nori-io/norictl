@@ -16,9 +16,7 @@
 package connection_cmd
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"net"
 	"strconv"
@@ -31,7 +29,6 @@ import (
 	"github.com/secure2work/nori/proto"
 	"github.com/secure2work/norictl/client"
 	"github.com/secure2work/norictl/client/connection"
-	"github.com/secure2work/norictl/client/consts"
 	"github.com/secure2work/norictl/client/utils"
 )
 
@@ -42,25 +39,13 @@ var testCmd = &cobra.Command{
 	Short: "Make connection to remote Nori node to verify connection configuration.",
 	Long:  `Make connection to remote Nori node to verify connection configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		bs, err := ioutil.ReadFile(consts.UseFilePath)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		name := string(bytes.TrimSpace(bs))
-
-		list, err := connection.List(consts.ConnectionsDir)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		conn, err := list.FilterByName(name)
+		conn, err := connection.CurrentConnection()
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		cli, closeCh := client.NewClient(
-			net.JoinHostPort(conn.Host, strconv.Itoa(int(conn.Port))),
+			conn.HostPort(),
 			conn.CertPath,
 			"",
 		)
