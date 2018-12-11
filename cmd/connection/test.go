@@ -18,8 +18,6 @@ package connection_cmd
 import (
 	"fmt"
 	"math/rand"
-	"net"
-	"strconv"
 	"time"
 
 	log "github.com/sirupsen/logrus"
