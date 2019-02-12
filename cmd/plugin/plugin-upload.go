@@ -1,4 +1,4 @@
-// Copyright © 2018 Secure2Work info@secure2work.com
+// Copyright © 2018 Nori info@nori.io
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,8 +26,8 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/secure2work/nori/proto"
-	"github.com/secure2work/norictl/client"
+	"github.com/nori-io/nori/proto"
+	"github.com/nori-io/norictl/client"
 )
 
 var uploadCmd = &cobra.Command{

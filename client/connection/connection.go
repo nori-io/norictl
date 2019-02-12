@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
-	"github.com/secure2work/norictl/client/consts"
+	"github.com/nori-io/norictl/client/consts"
 )
 
 type Connection struct {

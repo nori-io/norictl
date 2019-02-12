@@ -1,4 +1,4 @@
-// Copyright © 2018 Secure2Work info@secure2work.com
+// Copyright © 2018 Nori info@nori.io
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,11 +23,11 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/secure2work/norictl/client/consts"
-	"github.com/secure2work/norictl/client/utils"
-	"github.com/secure2work/norictl/cmd/certs"
-	"github.com/secure2work/norictl/cmd/connection"
-	"github.com/secure2work/norictl/cmd/plugin"
+	"github.com/nori-io/norictl/client/consts"
+	"github.com/nori-io/norictl/client/utils"
+	"github.com/nori-io/norictl/cmd/certs"
+	"github.com/nori-io/norictl/cmd/connection"
+	"github.com/nori-io/norictl/cmd/plugin"
 )
 
 var cfgFile string

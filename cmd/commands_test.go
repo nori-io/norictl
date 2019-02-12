@@ -1,4 +1,4 @@
-// Copyright © 2018 Secure2Work info@secure2work.com
+// Copyright © 2018 Nori info@nori.io
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/testdata"
 
-	"github.com/secure2work/nori/core/grpc"
+	"github.com/nori-io/nori/core/grpc"
 )
 
 const (
@@ -73,7 +73,7 @@ func TestPluginGet(t *testing.T) {
 	server := runServer(assert, true)
 	defer server.Stop()
 
-	viper.Set("plugin-path", "github.com/secure2work/nori/plugins/cache")
+	viper.Set("plugin-path", "github.com/nori-io/nori/plugins/cache")
 	viper.Set("grpc-address", addr)
 	viper.Set("ca", ca)
 	viper.Set("ServerHostOverride", "x.test.youtube.com")

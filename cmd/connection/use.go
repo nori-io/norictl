@@ -1,4 +1,4 @@
-// Copyright © 2018 Secure2Work info@secure2work.com
+// Copyright © 2018 Nori info@nori.io
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/secure2work/norictl/client/connection"
-	"github.com/secure2work/norictl/client/consts"
+	"github.com/nori-io/norictl/client/connection"
+	"github.com/nori-io/norictl/client/consts"
 )
 
 var useCmd = &cobra.Command{

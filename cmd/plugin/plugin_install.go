@@ -1,4 +1,4 @@
-// Copyright © 2018 Secure2Work info@secure2work.com
+// Copyright © 2018 Nori info@nori.io
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,9 +23,9 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/fzzy/radix/redis/resp"
-	"github.com/secure2work/nori/proto"
-	"github.com/secure2work/norictl/client"
-	"github.com/secure2work/norictl/client/connection"
+	"github.com/nori-io/nori/proto"
+	"github.com/nori-io/norictl/client"
+	"github.com/nori-io/norictl/client/connection"
 )
 
 var installCmd = &cobra.Command{
