@@ -18,11 +18,12 @@ package plugin_cmd
 import (
 	"fmt"
 
+//	commands "github.com/nori-io/nori/proto"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/nori/proto"
+	commands "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 	"github.com/nori-io/norictl/client"
 	"github.com/nori-io/norictl/client/connection"
 	"github.com/nori-io/norictl/client/utils"
@@ -57,10 +58,22 @@ var getCmd = &cobra.Command{
 		)
 
 		reply, err := client.PluginGetCommand(context.Background(), &commands.PluginGetRequest{
-			Uri:                 pluginId,
-			InstallDependencies: true,
+			Id:                   nil,
+			FlagDownload:         false,
+			FlagVerbose:          false,
+			XXX_NoUnkeyedLiteral: struct{}{},
+			XXX_unrecognized:     nil,
+			XXX_sizecache:        0,
 		})
 
+/*		reply, err := client.PluginGetCommand(context.Background(), &commands.PluginGetRequest{
+
+			Uri:                 pluginId,
+			InstallDependencies: true,
+		})*/
+		
+		
+		
 		close(closeCh)
 
 		if err != nil {

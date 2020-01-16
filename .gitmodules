@@ -1,0 +1,3 @@
+[submodule "nori-grpc"]
+	path = nori-grpc
+	url = http://github.com/nori-io/nori-grpc
