@@ -58,7 +58,7 @@ var getCmd = &cobra.Command{
 		)
 
 		reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
-			Id:                   &protoNori.ID{
+			Id: &protoNori.ID{
 				Id:                   pluginId,
 				Version:              "",
 				XXX_NoUnkeyedLiteral: struct{}{},
@@ -71,7 +71,6 @@ var getCmd = &cobra.Command{
 			XXX_unrecognized:     nil,
 			XXX_sizecache:        0,
 		})
-
 
 		close(closeCh)
 

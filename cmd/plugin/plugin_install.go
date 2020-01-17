@@ -18,14 +18,14 @@ package plugin_cmd
 import (
 	"fmt"
 
+	"github.com/fzzy/radix/redis/resp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/fzzy/radix/redis/resp"
-	"github.com/nori-io/nori/proto"
 	"github.com/nori-io/norictl/client"
 	"github.com/nori-io/norictl/client/connection"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var installCmd = &cobra.Command{
@@ -43,17 +43,37 @@ var installCmd = &cobra.Command{
 
 		pluginId := args[0]
 
-		cli, closeCh := client.NewClient(
+		client, closeCh := client.NewClient(
 			conn.HostPort(),
 			conn.CertPath,
 			"",
 		)
 
-		reply, err := cli.PluginInstallCommand(context.Background(), &commands.PluginInstallRequest{Id: pluginId})
+		reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
+			Id: &protoNori.ID{
+				Id:                   pluginId,
+				Version:              "",
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			},
+			FlagVerbose:          false,
+			FlagDeps:             false,
+			FlagAll:              false,
+			XXX_NoUnkeyedLiteral: struct{}{},
+			XXX_unrecognized:     nil,
+			XXX_sizecache:        0,
+		})
 		defer close(closeCh)
 		if err != nil {
 			if reply != nil {
-				log.Fatal(reply.Error)
+				log.Fatal(protoNori.ErrorReply{
+					Status:               false,
+					Error:                err.Error(),
+					XXX_NoUnkeyedLiteral: struct{}{},
+					XXX_unrecognized:     nil,
+					XXX_sizecache:        0,
+				})
 			}
 			log.Fatal(err)
 		}
