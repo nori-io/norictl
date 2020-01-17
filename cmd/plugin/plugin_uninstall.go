@@ -18,14 +18,13 @@ package plugin_cmd
 import (
 	"fmt"
 
-	"github.com/fzzy/radix/redis/resp"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/nori/proto"
 	"github.com/nori-io/norictl/client"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var uninstallCmd = &cobra.Command{
@@ -43,11 +42,30 @@ var uninstallCmd = &cobra.Command{
 			viper.GetString("ServerHostOverride"),
 		)
 
-		reply, err := cli.PluginUninstallCommand(context.Background(), &commands.PluginUninstallRequest{Id: id})
+		reply, err := cli.PluginUninstallCommand(context.Background(), &protoNori.PluginUninstallRequest{
+			Id: &protoNori.ID{
+				Id:                   id,
+				Version:              "",
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			},
+			FlagAll:              false,
+			FlagDependent:        false,
+			XXX_NoUnkeyedLiteral: struct{}{},
+			XXX_unrecognized:     nil,
+			XXX_sizecache:        0,
+		})
 		defer close(closeCh)
 		if err != nil {
 			if reply != nil {
-				logrus.Fatal(reply.Error)
+				logrus.Fatal(protoNori.ErrorReply{
+					Status:               false,
+					Error:                err.Error(),
+					XXX_NoUnkeyedLiteral: struct{}{},
+					XXX_unrecognized:     nil,
+					XXX_sizecache:        0,
+				})
 			}
 			logrus.Fatal(err)
 		}
