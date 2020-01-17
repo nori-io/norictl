@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/olekukonko/tablewriter"
 	"github.com/nori-io/norictl/client/consts"
+	"github.com/olekukonko/tablewriter"
 )
 
 type Connection struct {
