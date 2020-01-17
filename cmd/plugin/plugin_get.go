@@ -26,8 +26,7 @@ import (
 	"github.com/nori-io/norictl/client"
 	"github.com/nori-io/norictl/client/connection"
 	"github.com/nori-io/norictl/client/utils"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf"
-	protoNori2 "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
@@ -58,20 +57,34 @@ var getCmd = &cobra.Command{
 			"",
 		)
 
-		reply, err := client.PluginGetCommand()
+		reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
+			Id:                   &protoNori.ID{
+				Id:                   pluginId,
+				Version:              "",
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			},
+			FlagDownload:         true,
+			FlagVerbose:          false,
+			XXX_NoUnkeyedLiteral: struct{}{},
+			XXX_unrecognized:     nil,
+			XXX_sizecache:        0,
+		})
 
-		/*		reply, err := client.PluginGetCommand(context.Background(), &commands.PluginGetRequest{
-
-				Uri:                 pluginId,
-				InstallDependencies: true,
-			})*/
 
 		close(closeCh)
 
 		if err != nil {
 			log.Fatal(err)
 			if reply != nil {
-				log.Fatal(reply.Error)
+				log.Fatal(protoNori.ErrorReply{
+					Status:               false,
+					Error:                err.Error(),
+					XXX_NoUnkeyedLiteral: struct{}{},
+					XXX_unrecognized:     nil,
+					XXX_sizecache:        0,
+				})
 			}
 		} else {
 			fmt.Printf("Plugin %q successfully installed\n", pluginId)
