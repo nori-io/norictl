@@ -3,7 +3,6 @@
 
 package protoNori
 
-
 import (
 	context "context"
 	fmt "fmt"
