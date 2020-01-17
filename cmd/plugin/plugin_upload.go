@@ -26,14 +26,13 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/nori/proto"
 	"github.com/nori-io/norictl/client"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var uploadCmd = &cobra.Command{
 	Use:   "upload",
-	Short: "downloading,installing and uploading plugin",
+	Short: " uploading plugin",
 	Run: func(cmd *cobra.Command, args []string) {
 		path := viper.GetString("file")
 
