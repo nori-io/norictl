@@ -27,6 +27,10 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
+var (
+	startAll func() bool
+)
+
 var startCmd = &cobra.Command{
 	Use:   "norictl plugin start [PLUGIN_ID] [OPTIONS]",
 	Short: "Start one plugin or all plugins.",
@@ -49,7 +53,7 @@ var startCmd = &cobra.Command{
 		)
 
 		reply, err := client.PluginStartCommand(context.Background(), &protoNori.PluginStartRequest{
-			Id:                   &protoNori.ID{
+			Id: &protoNori.ID{
 				Id:                   pluginId,
 				Version:              "",
 				XXX_NoUnkeyedLiteral: struct{}{},
@@ -82,4 +86,3 @@ var startCmd = &cobra.Command{
 func init() {
 	PluginCmd.AddCommand(startCmd)
 }
-
