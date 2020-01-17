@@ -22,10 +22,10 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/nori/proto"
 	"github.com/nori-io/norictl/client"
 	"github.com/nori-io/norictl/client/connection"
 	"github.com/nori-io/norictl/client/utils"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
@@ -48,19 +48,29 @@ var metaCmd = &cobra.Command{
 
 		pluginId := args[0]
 
-		cli, closeCh := client.NewClient(
+		client, closeCh := client.NewClient(
 			conn.HostPort(),
 			conn.CertPath,
 			"",
 		)
 
-		meta := &commands.PluginMetaRequest{
-			Id:                 pluginId,
-			Dependencies:       metaDeps(),
-			DependenciesStatus: metaDepsStatus(),
+		meta := &protoNori.PluginMetaRequest{
+			ID: &protoNori.PluginID{
+				MetaId:               pluginId,
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			},
+			FlagDeps:             false,
+			FlagDepsStatus:       false,
+			FlagDependent:        false,
+			FlagDependentStatus:  false,
+			XXX_NoUnkeyedLiteral: struct{}{},
+			XXX_unrecognized:     nil,
+			XXX_sizecache:        0,
 		}
 
-		reply, err := cli.PluginMetaCommand(context.Background(), meta)
+		reply, err := client.PluginMetaCommand(context.Background(), meta)
 		defer close(closeCh)
 		if err != nil {
 			log.Fatal(err)
