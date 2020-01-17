@@ -28,6 +28,7 @@ import (
 
 	"github.com/nori-io/nori/proto"
 	"github.com/nori-io/norictl/client"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var uploadCmd = &cobra.Command{
@@ -60,15 +61,23 @@ var uploadCmd = &cobra.Command{
 		}
 		path = filepath.Base(path)
 
-		reply, err := client.PluginUploadCommand(context.Background(), &commands.PluginUploadRequest{
-			Name: path,
-			So:   so,
+		reply, err := client.PluginUploadCommand(context.Background(), &protoNori.PluginUploadRequest{
+			Filepath:             path,
+			XXX_NoUnkeyedLiteral: struct{}{},
+			XXX_unrecognized:     nil,
+			XXX_sizecache:        0,
 		})
 
 		if err != nil {
 			logrus.Fatal(err)
 			if reply != nil {
-				logrus.Fatal(reply.Error)
+				logrus.Fatal(protoNori.ErrorReply{
+					Status:               false,
+					Error:                err.Error(),
+					XXX_NoUnkeyedLiteral: struct{}{},
+					XXX_unrecognized:     nil,
+					XXX_sizecache:        0,
+				})
 			}
 		} else {
 			fmt.Printf("Plugin %q successfully uploaded\n", path)
