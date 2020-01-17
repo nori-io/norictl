@@ -32,9 +32,12 @@ import (
 )
 
 var (
-	listError     func() bool
-	listInstalled func() bool
-	listRunning   func() bool
+	listError       func() bool
+	listInstalled   func() bool
+	listRunning     func() bool
+	listInactive    func() bool
+	listAll         func() bool
+	listInstallable func() bool
 )
 
 var listCmd = &cobra.Command{
@@ -71,27 +74,27 @@ var listCmd = &cobra.Command{
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"#", "ID", "Name", "Author"})
 
-		list :=  []*protoNori.PluginListWithStatus{{
-				MetaID:               nil,
-				Author:               nil,
-				DependenciesArray:    nil,
-				Description:          nil,
-				Core:                 nil,
-				Interface:            nil,
-				License:              nil,
-				Links:                nil,
-				Repository:           nil,
-				Tags:                 nil,
-				FlagAll:              true,
-				FlagError:            false,
-				FlagInstalled:        false,
-				FlagRunning:          false,
-				FlagInstallable:      false,
-				FlagInactive:         false,
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			},}
+		list := []*protoNori.PluginListWithStatus{{
+			MetaID:               nil,
+			Author:               nil,
+			DependenciesArray:    nil,
+			Description:          nil,
+			Core:                 nil,
+			Interface:            nil,
+			License:              nil,
+			Links:                nil,
+			Repository:           nil,
+			Tags:                 nil,
+			FlagAll:              true,
+			FlagError:            false,
+			FlagInstalled:        false,
+			FlagRunning:          false,
+			FlagInstallable:      false,
+			FlagInactive:         false,
+			XXX_NoUnkeyedLiteral: struct{}{},
+			XXX_unrecognized:     nil,
+			XXX_sizecache:        0,
+		}}
 		filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
 			newList := make([]*protoNori.PluginListWithStatus, 0)
 
@@ -112,6 +115,30 @@ var listCmd = &cobra.Command{
 		if listRunning() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
 				return p.FlagRunning
+			})
+		}
+
+		if listInactive() {
+			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				return p.FlagInactive
+			})
+		}
+
+		if listAll() {
+			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				return p.FlagAll
+			})
+		}
+
+		if listError() {
+			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				return p.FlagError
+			})
+		}
+
+		if listInstallable() {
+			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				return p.FlagInstallable
 			})
 		}
 
