@@ -28,6 +28,7 @@ import (
 	"github.com/nori-io/norictl/client"
 	"github.com/nori-io/norictl/client/connection"
 	"github.com/nori-io/norictl/client/utils"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
@@ -46,17 +47,23 @@ var listCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		cli, closeCh := client.NewClient(
+		client, closeCh := client.NewClient(
 			conn.HostPort(),
 			conn.CertPath,
 			"",
 		)
 
-		reply, err := cli.PluginListCommand(context.Background(), &commands.PluginListRequest{})
+		reply, err := client.PluginListCommand(context.Background(), &commands.PluginListRequest{})
 		close(closeCh)
 		if err != nil {
 			if reply != nil {
-				log.Fatal(reply.Error)
+				log.Fatal(protoNori.ErrorReply{
+					Status:               false,
+					Error:                err.Error(),
+					XXX_NoUnkeyedLiteral: struct{}{},
+					XXX_unrecognized:     nil,
+					XXX_sizecache:        0,
+				})
 			}
 			log.Fatal(err)
 		}
@@ -64,13 +71,32 @@ var listCmd = &cobra.Command{
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"#", "ID", "Name", "Author"})
 
-		list := reply.Data
-
-		filter := func(list []*commands.PluginList, f func(p *commands.PluginList) bool) []*commands.PluginList {
-			newList := make([]*commands.PluginList, 0)
+		list :=  []*protoNori.PluginListWithStatus{{
+				MetaID:               nil,
+				Author:               nil,
+				DependenciesArray:    nil,
+				Description:          nil,
+				Core:                 nil,
+				Interface:            nil,
+				License:              nil,
+				Links:                nil,
+				Repository:           nil,
+				Tags:                 nil,
+				FlagAll:              true,
+				FlagError:            false,
+				FlagInstalled:        false,
+				FlagRunning:          false,
+				FlagInstallable:      false,
+				FlagInactive:         false,
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			},}
+		filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
+			newList := make([]*protoNori.PluginListWithStatus, 0)
 
 			for _, l := range list {
-				if f(l) {
+				if f(*l) {
 					newList = append(newList, l)
 				}
 			}
@@ -78,20 +104,20 @@ var listCmd = &cobra.Command{
 		}
 
 		if listInstalled() {
-			list = filter(list, func(p *commands.PluginList) bool {
-				return p.Installed
+			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				return p.FlagInstalled
 			})
 		}
 
 		if listRunning() {
-			list = filter(list, func(p *commands.PluginList) bool {
-				return p.Running
+			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				return p.FlagRunning
 			})
 		}
 
 		for i, v := range list {
 			table.Append([]string{
-				strconv.Itoa(i + 1), v.Id, v.Name, v.Author,
+				strconv.Itoa(i + 1), v.MetaID.String(), v.Author.String(),
 			})
 		}
 		table.Render()

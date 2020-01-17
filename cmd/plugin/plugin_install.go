@@ -18,7 +18,6 @@ package plugin_cmd
 import (
 	"fmt"
 
-	"github.com/fzzy/radix/redis/resp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
