@@ -35,7 +35,7 @@ var (
 )
 
 var getCmd = &cobra.Command{
-	Use:   "get [OPTIONS] PLUGIN_ID",
+	Use:   "norictl plugin get [PLUGIN_ID] [OPTIONS]",
 	Short: "downloading plugin",
 	Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,

@@ -31,8 +31,8 @@ import (
 )
 
 var uploadCmd = &cobra.Command{
-	Use:   "upload",
-	Short: " uploading plugin",
+	Use:   "norictl plugin upload [OPTIONS]",
+	Short: "Upload the plugin from local machine.",
 	Run: func(cmd *cobra.Command, args []string) {
 		path := viper.GetString("file")
 

@@ -21,7 +21,7 @@ import (
 
 var PluginCmd = &cobra.Command{
 	Use:   "plugin",
-	Short: "plugin",
+	Short: "norictl plugin COMMAND",
 }
 
 func init() {

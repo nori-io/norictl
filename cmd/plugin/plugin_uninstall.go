@@ -28,8 +28,9 @@ import (
 )
 
 var uninstallCmd = &cobra.Command{
-	Use:   "uninstall",
-	Short: "install plugin",
+
+	Use:   "norictl plugin uninstall [PLUGIN_ID] [OPTIONS]",
+	Short: "Uninstall plugin or plugins.",
 	Run: func(cmd *cobra.Command, args []string) {
 		id := viper.GetString("id")
 		if len(id) == 0 && len(args) > 0 {

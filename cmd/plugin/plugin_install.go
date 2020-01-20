@@ -28,8 +28,8 @@ import (
 )
 
 var installCmd = &cobra.Command{
-	Use:   "install [OPTIONS] PLUGIN_ID",
-	Short: "Install downloaded plugin.",
+	Use:   "norictl plugin install [PLUGIN_ID] [OPTIONS]",
+	Short: "Install downloaded plugin or plugins.",
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
 		if err != nil {

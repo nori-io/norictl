@@ -34,7 +34,7 @@ var (
 )
 
 var metaCmd = &cobra.Command{
-	Use:   "meta [OPTIONS] PLUGIN_ID",
+	Use:   "norictl plugin meta [PLUGIN_ID] [OPTIONS]",
 	Short: "Show plugin meta data.",
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
