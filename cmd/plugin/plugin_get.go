@@ -16,8 +16,6 @@
 package plugin_cmd
 
 import (
-	"fmt"
-
 	//commands "github.com/nori-io/nori/proto"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -27,6 +25,7 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -56,6 +55,8 @@ var getCmd = &cobra.Command{
 			"",
 		)
 
+		uiGet := ui.NewUI()
+
 		reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
 			Id: &protoNori.ID{
 				Id:                   pluginId,
@@ -74,6 +75,7 @@ var getCmd = &cobra.Command{
 
 		if err != nil {
 			log.Fatal(err)
+			uiGet.GetFailure(pluginId)
 			if reply != nil {
 				log.Fatal(protoNori.ErrorReply{
 					Status:               false,
@@ -84,7 +86,7 @@ var getCmd = &cobra.Command{
 				})
 			}
 		} else {
-			fmt.Printf("Plugin %q successfully installed\n", pluginId)
+			uiGet.GetSuccess(pluginId)
 		}
 	},
 }

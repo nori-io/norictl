@@ -16,8 +16,6 @@
 package plugin_cmd
 
 import (
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -26,6 +24,7 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -54,6 +53,7 @@ var installCmd = &cobra.Command{
 			conn.CertPath,
 			"",
 		)
+		uiInstall := ui.NewUI()
 
 		reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
 			Id: &protoNori.ID{
@@ -81,10 +81,10 @@ var installCmd = &cobra.Command{
 					XXX_sizecache:        0,
 				})
 			}
+			uiInstall.InstallFailure(pluginId)
 			log.Fatal(err)
 		}
-
-		fmt.Printf("Plugin %s installed, %3d :\n", pluginId, resp.Int)
+		uiInstall.InstallSuccess(pluginId)
 	},
 }
 

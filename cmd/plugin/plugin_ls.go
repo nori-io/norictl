@@ -30,6 +30,7 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -96,19 +97,26 @@ var lsCmd = &cobra.Command{
 			XXX_unrecognized:     nil,
 			XXX_sizecache:        0,
 		}}
+
+		uiLs := ui.NewUI()
+
 		filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
 			newList := make([]*protoNori.PluginListWithStatus, 0)
-
+			plugins:=make([][]string, len(list))
 			for _, l := range list {
 				if f(*l) {
 					newList = append(newList, l)
+					plugins:=append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					uiLs.AllPlugins(plugins)
 				}
 			}
+
 			return newList
 		}
 
 		if listInstalled() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+
 				return p.FlagInstalled
 			})
 		}
