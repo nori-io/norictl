@@ -91,7 +91,7 @@ var uploadCmd = &cobra.Command{
 
 func init() {
 	PluginCmd.AddCommand(uploadCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, uninstallCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, uploadCmd)
 	flags.String(&uploadFile, "file", "--file", "", "Specify path to plugin") // TODO
 
 }

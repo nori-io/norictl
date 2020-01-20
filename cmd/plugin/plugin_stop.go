@@ -85,8 +85,8 @@ var stopCmd = &cobra.Command{
 }
 
 func init() {
-	PluginCmd.AddCommand(startCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, startCmd)
+	PluginCmd.AddCommand(stopCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, stopCmd)
 	flags.Bool(&stopAll, "all", "--all", false, "Stop all plugins") // TODO
 
 }
