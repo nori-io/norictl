@@ -27,7 +27,12 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+)
+
+var (
+	uploadFile func() string
 )
 
 var uploadCmd = &cobra.Command{
@@ -86,4 +91,7 @@ var uploadCmd = &cobra.Command{
 
 func init() {
 	PluginCmd.AddCommand(uploadCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, uninstallCmd)
+	flags.String(&uploadFile, "file", "--file", "", "Specify path to plugin") // TODO
+
 }

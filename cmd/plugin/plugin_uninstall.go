@@ -24,7 +24,13 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+)
+
+var (
+	uninstallAll       func() bool
+	uninstallDependent func() bool
 )
 
 var uninstallCmd = &cobra.Command{
@@ -77,4 +83,7 @@ var uninstallCmd = &cobra.Command{
 
 func init() {
 	PluginCmd.AddCommand(uninstallCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, uninstallCmd)
+	flags.Bool(&uninstallAll, "all", "--all", false, "Uninstall all installed plugins")                       // TODO
+	flags.Bool(&uninstallDependent, "dependent", "--dependent", false, "Uninstall plugin and depend plugins") // TODO
 }

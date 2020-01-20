@@ -89,5 +89,4 @@ func init() {
 	flags := utils.NewFlagBuilder(PluginCmd, startCmd)
 	flags.Bool(&stopAll, "all", "--all", false, "Stop all plugins") // TODO
 
-
 }
