@@ -20,7 +20,7 @@ import (
 )
 
 var PluginCmd = &cobra.Command{
-	Use:   "plugin",
+	Use:   "norictl plugin",
 	Short: "norictl plugin COMMAND",
 }
 

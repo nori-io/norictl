@@ -23,15 +23,14 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
-	"github.com/nori-io/norictl/client/utils"
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
-	getDownload func() bool
-	getUpdate   func() bool
+	getVerbose func() bool
 )
 
 var getCmd = &cobra.Command{
@@ -65,7 +64,6 @@ var getCmd = &cobra.Command{
 				XXX_unrecognized:     nil,
 				XXX_sizecache:        0,
 			},
-			FlagDownload:         true,
 			FlagVerbose:          false,
 			XXX_NoUnkeyedLiteral: struct{}{},
 			XXX_unrecognized:     nil,
@@ -92,7 +90,7 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
+	PluginCmd.AddCommand(getCmd)
 	flags := utils.NewFlagBuilder(PluginCmd, getCmd)
-	flags.Bool(&getDownload, "download", "d", false, "Stop after downloading the plugin, do not install it")
-	flags.Bool(&getUpdate, "update", "u", false, "Use the network to update plugin and plugin dependencies")
+	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
 }

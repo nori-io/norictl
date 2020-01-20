@@ -22,8 +22,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/nori-io/norictl/client/connection"
-	"github.com/nori-io/norictl/client/consts"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/consts"
 )
 
 var rmCmd = &cobra.Command{

@@ -22,15 +22,17 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
-	"github.com/nori-io/norictl/client/utils"
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
-	metaDeps       func() bool
-	metaDepsStatus func() bool
+	metaDeps            func() bool
+	metaDepsStatus      func() bool
+	metaDependent       func() bool
+	metaDependentStatus func() bool
 )
 
 var metaCmd = &cobra.Command{
@@ -81,7 +83,10 @@ var metaCmd = &cobra.Command{
 }
 
 func init() {
+	PluginCmd.AddCommand(metaCmd)
 	flags := utils.NewFlagBuilder(PluginCmd, metaCmd)
-	flags.Bool(&metaDeps, "deps", "d", false, "Show only plugin dependencies")
-	flags.Bool(&metaDepsStatus, "deps-status", "s", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc)")
+	flags.Bool(&metaDeps, "deps", "--deps", false, "Show only plugin dependencies")
+	flags.Bool(&metaDepsStatus, "deps-status", "--deps-status", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+	flags.Bool(&metaDependent, "dependent", "--dependent", false, "Show only plugins, that depend on specified plugin")
+	flags.Bool(&metaDependentStatus, "dependent-status", "--dependent-status", false, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
 }

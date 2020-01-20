@@ -22,9 +22,16 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+)
+
+var (
+	installVerbose func() bool
+	installDeps    func() bool
+	installAll     func() bool
 )
 
 var installCmd = &cobra.Command{
@@ -83,4 +90,8 @@ var installCmd = &cobra.Command{
 
 func init() {
 	PluginCmd.AddCommand(installCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, installCmd)
+	flags.Bool(&installVerbose, "--verbose", "-v", false, "Verbose progress and debug output")
+	flags.Bool(&installDeps, "--deps", "-d", false, "Install plugin with dependencies")
+	flags.Bool(&installAll, "--all", "-all", false, "Install all installable plugins")
 }

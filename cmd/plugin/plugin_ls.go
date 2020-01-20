@@ -25,22 +25,23 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/nori/proto"
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
-	"github.com/nori-io/norictl/client/utils"
+
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
+	listAll         func() bool
 	listError       func() bool
+	listInactive    func() bool
+	listInstallable func() bool
 	listInstalled   func() bool
 	listRunning     func() bool
-	listInactive    func() bool
-	listAll         func() bool
-	listInstallable func() bool
 )
 
-var listCmd = &cobra.Command{
+var lsCmd = &cobra.Command{
 	Use:     "norictl plugin ls [OPTIONS]",
 	Aliases: []string{"list"},
 	Short:   "Shows list of plugins on remote Nori node.",
@@ -152,8 +153,12 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	flags := utils.NewFlagBuilder(PluginCmd, listCmd)
-	flags.Bool(&listError, "error", "e", false, "Show plugins with errors (not implement)") // TODO
-	flags.Bool(&listInstalled, "installed", "i", false, "Show only installed plugins")
-	flags.Bool(&listRunning, "running", "r", false, "Show only running plugins")
+	PluginCmd.AddCommand(lsCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, lsCmd)
+	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                       // TODO
+	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")              // TODO
+	flags.Bool(&listInactive, "inactive", "--inactive", false, "Show plugins that are not running")       // TODO
+	flags.Bool(&listInactive, "installable", "--installable", false, "Show plugins that need to install") // TODO
+	flags.Bool(&listInstalled, "installed", "-i", false, "Show only installed plugins")
+	flags.Bool(&listRunning, "running", "-r", false, "Show only running plugins")
 }

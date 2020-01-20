@@ -22,8 +22,9 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
@@ -85,4 +86,7 @@ var startCmd = &cobra.Command{
 
 func init() {
 	PluginCmd.AddCommand(startCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, startCmd)
+	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
+
 }

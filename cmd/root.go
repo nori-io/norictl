@@ -23,11 +23,11 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/nori-io/norictl/client/consts"
-	"github.com/nori-io/norictl/client/utils"
 	"github.com/nori-io/norictl/cmd/certs"
 	"github.com/nori-io/norictl/cmd/connection"
 	"github.com/nori-io/norictl/cmd/plugin"
+	"github.com/nori-io/norictl/internal/client/consts"
+	"github.com/nori-io/norictl/internal/client/utils"
 )
 
 var cfgFile string

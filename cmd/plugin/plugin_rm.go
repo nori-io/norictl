@@ -23,8 +23,8 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
@@ -83,4 +83,5 @@ var rmCmd = &cobra.Command{
 }
 
 func init() {
+	PluginCmd.AddCommand(rmCmd)
 }

@@ -23,9 +23,9 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
-	"github.com/nori-io/norictl/client/utils"
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
@@ -89,7 +89,7 @@ var pullCmd = &cobra.Command{
 }
 
 func init() {
-	flags := utils.NewFlagBuilder(PluginCmd, getCmd)
-	flags.Bool(&getDownload, "download", "d", false, "Stop after downloading the plugin, do not install it")
-	flags.Bool(&getUpdate, "update", "u", false, "Use the network to update plugin and plugin dependencies")
+	PluginCmd.AddCommand(pullCmd)
+	flags := utils.NewFlagBuilder(PluginCmd, pullCmd)
+	flags.Bool(&pullDeps, "pull", "-d", false, "Pull downloads the plugin, with or without it's dependencies.")
 }

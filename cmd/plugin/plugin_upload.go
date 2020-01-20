@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/client"
+	"github.com/nori-io/norictl/internal/client"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 

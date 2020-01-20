@@ -25,9 +25,10 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/nori/proto"
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
-	"github.com/nori-io/norictl/client/utils"
+
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
 )
 
 var verbose func() bool
