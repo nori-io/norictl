@@ -102,12 +102,12 @@ var lsCmd = &cobra.Command{
 
 		filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
 			newList := make([]*protoNori.PluginListWithStatus, 0)
-			plugins:=make([][]string, len(list))
+			plugins := make([][]string, len(list))
 			for _, l := range list {
 				if f(*l) {
 					newList = append(newList, l)
-					plugins:=append(plugins, []string{l.MetaID.String(), l.Author.String()})
-					uiLs.AllPlugins(plugins)
+					plugins := append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					uiLs.PluginsAll(plugins)
 				}
 			}
 
@@ -116,6 +116,15 @@ var lsCmd = &cobra.Command{
 
 		if listInstalled() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				newList := make([]*protoNori.PluginListWithStatus, 0)
+
+				plugins := make([][]string, len(list))
+				for _, l := range list {
+					newList = append(newList, l)
+					plugins := append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					uiLs.PluginsInstalled(plugins)
+
+				}
 
 				return p.FlagInstalled
 			})

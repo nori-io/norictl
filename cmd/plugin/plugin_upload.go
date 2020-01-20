@@ -59,7 +59,7 @@ var uploadCmd = &cobra.Command{
 
 		defer f.Close()
 
-		so, err := ioutil.ReadAll(f)
+		_, err = ioutil.ReadAll(f)
 		if err != nil {
 			logrus.Fatal(err)
 		}
