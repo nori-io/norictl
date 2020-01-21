@@ -83,3 +83,11 @@ func (u *UI) StartSuccess(pluginId string) {
 func (u *UI) StartFailure(pluginId string) {
 	fmt.Printf("START FAILURE: Plugin %s\n", pluginId)
 }
+
+func (u *UI) StopSuccess(pluginId string) {
+	fmt.Printf("STOP SUCCESSFUL: Plugin %s\n", pluginId)
+}
+
+func (u *UI) StopFailure(pluginId string) {
+	fmt.Printf("STOP FAILURE: Plugin %s\n", pluginId)
+}
