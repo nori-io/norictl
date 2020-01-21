@@ -16,8 +16,6 @@
 package plugin_cmd
 
 import (
-	"fmt"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,6 +24,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -64,8 +63,10 @@ var uninstallCmd = &cobra.Command{
 			XXX_sizecache:        0,
 		})
 		defer close(closeCh)
+		uiIninstall := ui.NewUI()
 		if err != nil {
 			if reply != nil {
+				uiIninstall.UninstallFailure(id)
 				logrus.Fatal(protoNori.ErrorReply{
 					Status:               false,
 					Error:                err.Error(),
@@ -77,7 +78,7 @@ var uninstallCmd = &cobra.Command{
 			logrus.Fatal(err)
 		}
 
-		fmt.Printf("Plugin %s uninstalled, %3d :\n", id, resp.Int)
+		uiIninstall.UninstallSuccess(id)
 	},
 }
 

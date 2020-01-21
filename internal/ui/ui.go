@@ -91,3 +91,11 @@ func (u *UI) StopSuccess(pluginId string) {
 func (u *UI) StopFailure(pluginId string) {
 	fmt.Printf("STOP FAILURE: Plugin %s\n", pluginId)
 }
+
+func (u *UI) UninstallSuccess(pluginId string) {
+	fmt.Printf("UNINSTALL SUCCESSFUL: Plugin %s\n", pluginId)
+}
+
+func (u *UI) UninstallFailure(pluginId string) {
+	fmt.Printf("UNINSTALL FAILURE: Plugin %s\n", pluginId)
+}
