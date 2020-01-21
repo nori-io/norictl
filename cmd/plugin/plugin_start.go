@@ -16,8 +16,6 @@
 package plugin_cmd
 
 import (
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -26,6 +24,7 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -67,7 +66,9 @@ var startCmd = &cobra.Command{
 			XXX_sizecache:        0,
 		})
 		defer close(closeCh)
+		uiStart := ui.NewUI()
 		if err != nil {
+			uiStart.StartFailure(pluginId)
 			if reply != nil {
 				log.Fatal(protoNori.ErrorReply{
 					Status:               false,
@@ -79,8 +80,8 @@ var startCmd = &cobra.Command{
 			}
 			log.Fatal(err)
 		}
+		uiStart.StartSuccess(pluginId)
 
-		fmt.Printf("Plugin %s started, %3d :\n", pluginId, resp.Int)
 	},
 }
 

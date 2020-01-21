@@ -80,5 +80,7 @@ func main() {
 	uiExample.PullFailure("nori/session:0.0.9")
 	uiExample.RmSuccess("nori/session:0.0.10")
 	uiExample.RmFailure("nori/session:0.0.11")
+	uiExample.StartSuccess("nori/session:0.0.12")
+	uiExample.StartFailure("nori/session:0.0.13")
 
 }

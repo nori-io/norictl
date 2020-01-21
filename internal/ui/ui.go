@@ -75,3 +75,11 @@ func (u *UI) RmSuccess(pluginId string) {
 func (u *UI) RmFailure(pluginId string) {
 	fmt.Printf("REMOVE FAILURE: Plugin %s\n", pluginId)
 }
+
+func (u *UI) StartSuccess(pluginId string) {
+	fmt.Printf("START SUCCESSFUL: Plugin %s\n", pluginId)
+}
+
+func (u *UI) StartFailure(pluginId string) {
+	fmt.Printf("START FAILURE: Plugin %s\n", pluginId)
+}
