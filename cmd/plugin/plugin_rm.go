@@ -16,8 +16,6 @@
 package plugin_cmd
 
 import (
-	"fmt"
-
 	//commands "github.com/nori-io/nori/proto"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -26,6 +24,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
 var rmCmd = &cobra.Command{
@@ -64,8 +63,9 @@ var rmCmd = &cobra.Command{
 		})
 
 		close(closeCh)
-
+		uiRm := ui.NewUI()
 		if err != nil {
+			uiRm.RmFailure(pluginId)
 			log.Fatal(err)
 			if reply != nil {
 				log.Fatal(protoNori.ErrorReply{
@@ -77,7 +77,7 @@ var rmCmd = &cobra.Command{
 				})
 			}
 		} else {
-			fmt.Printf("Plugin %q successfully removed\n", pluginId)
+			uiRm.RmSuccess(pluginId)
 		}
 	},
 }

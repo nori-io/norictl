@@ -80,9 +80,9 @@ var metaCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		uiMeta.PluginMetaExist(fmt.Sprintf("%s", reply))
 
-		fmt.Printf("Meta info for plugin \"%s\":\n%s\n", pluginId, reply.Json)
 	},
 }
 

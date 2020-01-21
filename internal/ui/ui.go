@@ -66,5 +66,12 @@ func (u *UI) PullSuccess(pluginId string) {
 
 func (u *UI) PullFailure(pluginId string) {
 	fmt.Printf("PULL FAILURE: Plugin %s\n", pluginId)
+}
 
+func (u *UI) RmSuccess(pluginId string) {
+	fmt.Printf("REMOVE SUCCESSFUL: Plugin %s\n", pluginId)
+}
+
+func (u *UI) RmFailure(pluginId string) {
+	fmt.Printf("REMOVE FAILURE: Plugin %s\n", pluginId)
 }
