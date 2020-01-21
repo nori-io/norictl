@@ -59,3 +59,12 @@ func (u *UI) PluginMetaExist(pluginInformation string) {
 func (u *UI) PluginMetaNotExist(pluginInformation string) {
 	fmt.Printf("Plugin %q get failure\n", pluginInformation)
 }
+
+func (u *UI) PullSuccess(pluginId string) {
+	fmt.Printf("PULL SUCCESSFUL: Plugin %s\n", pluginId)
+}
+
+func (u *UI) PullFailure(pluginId string) {
+	fmt.Printf("PULL FAILURE: Plugin %s\n", pluginId)
+
+}

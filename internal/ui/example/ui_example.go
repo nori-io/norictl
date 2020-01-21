@@ -76,7 +76,8 @@ func main() {
 		XXX_unrecognized:     nil,
 		XXX_sizecache:        0},
 	))
-
+	uiExample.PullSuccess("nori/session:0.0.8")
+	uiExample.PullFailure("nori/session:0.0.9")
 
 	fmt.Println()
 
