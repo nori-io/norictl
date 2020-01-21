@@ -17,6 +17,8 @@ func main() {
 	plugins = append(plugins, []string{"nori/session:0.0.4", "author1"})
 	plugins = append(plugins, []string{"nori/session:0.0.5", "author2"})
 	uiExample.PluginsAll(plugins)
+	uiExample.PluginsInstalled(plugins)
+
 	uiExample.PluginMetaExist(fmt.Sprintf("%v", protoNori.PluginMetaReply{
 		ArrayPluginListWithoutStatus: []*protoNori.PluginListWithoutStatus{&protoNori.PluginListWithoutStatus{
 			MetaID: &protoNori.ID{

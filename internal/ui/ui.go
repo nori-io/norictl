@@ -42,7 +42,44 @@ func (u *UI) PluginsAll(plugins [][]string) {
 	table.Render() // Send output
 }
 
+func (u *UI) PluginsError(plugins [][]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Plugin.MetaId", "Author"})
+	for _, v := range plugins {
+		table.Append(v)
+	}
+	table.Render() // Send output
+}
+
+func (u *UI) PluginsInactive(plugins [][]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Plugin.MetaId", "Author"})
+	for _, v := range plugins {
+		table.Append(v)
+	}
+	table.Render() // Send output
+}
+
+func (u *UI) PluginsInstallable(plugins [][]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Plugin.MetaId", "Author"})
+	for _, v := range plugins {
+		table.Append(v)
+	}
+	table.Render() // Send output
+}
+
 func (u *UI) PluginsInstalled(plugins [][]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Plugin.MetaId", "Author"})
+
+	for _, v := range plugins {
+		table.Append(v)
+	}
+	table.Render() // Send output
+}
+
+func (u *UI) PluginsRunning(plugins [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Plugin.MetaId", "Author"})
 

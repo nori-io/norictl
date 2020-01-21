@@ -17,7 +17,6 @@ package plugin_cmd
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
@@ -121,10 +120,10 @@ var lsCmd = &cobra.Command{
 				plugins := make([][]string, len(list))
 				for _, l := range list {
 					newList = append(newList, l)
-					plugins := append(plugins, []string{l.MetaID.String(), l.Author.String()})
-					uiLs.PluginsInstalled(plugins)
+					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 				}
+				uiLs.PluginsInstalled(plugins)
 
 				return p.FlagInstalled
 			})
@@ -132,40 +131,74 @@ var lsCmd = &cobra.Command{
 
 		if listRunning() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				newList := make([]*protoNori.PluginListWithStatus, 0)
+				plugins := make([][]string, len(list))
+				for _, l := range list {
+					newList = append(newList, l)
+					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+
+				}
+				uiLs.PluginsRunning(plugins)
 				return p.FlagRunning
 			})
 		}
 
 		if listInactive() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				newList := make([]*protoNori.PluginListWithStatus, 0)
+				plugins := make([][]string, len(list))
+				for _, l := range list {
+					newList = append(newList, l)
+					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+
+				}
+				uiLs.PluginsInactive(plugins)
 				return p.FlagInactive
 			})
 		}
 
 		if listAll() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				newList := make([]*protoNori.PluginListWithStatus, 0)
+				plugins := make([][]string, len(list))
+				for _, l := range list {
+					newList = append(newList, l)
+					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+
+				}
+				uiLs.PluginsAll(plugins)
 				return p.FlagAll
 			})
 		}
 
 		if listError() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				newList := make([]*protoNori.PluginListWithStatus, 0)
+				plugins := make([][]string, len(list))
+				for _, l := range list {
+					newList = append(newList, l)
+					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+
+				}
+				uiLs.PluginsError(plugins)
 				return p.FlagError
 			})
 		}
 
 		if listInstallable() {
 			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+				newList := make([]*protoNori.PluginListWithStatus, 0)
+				plugins := make([][]string, len(list))
+				for _, l := range list {
+					newList = append(newList, l)
+					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+
+				}
+				uiLs.PluginsInstallable(plugins)
 				return p.FlagInstallable
 			})
 		}
 
-		for i, v := range list {
-			table.Append([]string{
-				strconv.Itoa(i + 1), v.MetaID.String(), v.Author.String(),
-			})
-		}
-		table.Render()
 	},
 }
 
