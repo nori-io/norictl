@@ -99,3 +99,11 @@ func (u *UI) UninstallSuccess(pluginId string) {
 func (u *UI) UninstallFailure(pluginId string) {
 	fmt.Printf("UNINSTALL FAILURE: Plugin %s\n", pluginId)
 }
+
+func (u *UI) UploadSuccess(path string) {
+	fmt.Printf("UPLOAD SUCCESSFUL: Path:  %s\n", path)
+}
+
+func (u *UI) UploadFailure(path string) {
+	fmt.Printf("UPLOAD FAILURE: Path: %s\n", path)
+}

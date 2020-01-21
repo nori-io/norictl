@@ -86,5 +86,7 @@ func main() {
 	uiExample.StopFailure("nori/session:0.0.15")
 	uiExample.UninstallSuccess("nori/session:0.0.14")
 	uiExample.UninstallFailure("nori/session:0.0.15")
+	uiExample.UploadSuccess("/plugins")
+	uiExample.UploadFailure("/plugins")
 
 }
