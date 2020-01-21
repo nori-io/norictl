@@ -53,10 +53,9 @@ func (u *UI) PluginsInstalled(plugins [][]string) {
 }
 
 func (u *UI) PluginMetaExist(pluginInformation string) {
-	fmt.Printf("Plugin %q successfully get\n", pluginInformation)
+	fmt.Printf("EXIST: Plugin  %s \n", pluginInformation)
 }
 
 func (u *UI) PluginMetaNotExist(pluginInformation string) {
 	fmt.Printf("Plugin %q get failure\n", pluginInformation)
 }
-
