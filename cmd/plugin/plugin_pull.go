@@ -62,7 +62,7 @@ var pullCmd = &cobra.Command{
 				XXX_unrecognized:     nil,
 				XXX_sizecache:        0,
 			},
-			FlagDeps:             false,
+			FlagDeps:             pullDeps(),
 			XXX_NoUnkeyedLiteral: struct{}{},
 			XXX_unrecognized:     nil,
 			XXX_sizecache:        0,

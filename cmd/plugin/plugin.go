@@ -17,6 +17,8 @@ package plugin_cmd
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/nori-io/norictl/internal/ui"
 )
 
 var PluginCmd = &cobra.Command{
@@ -24,6 +26,8 @@ var PluginCmd = &cobra.Command{
 	Short: "norictl plugin COMMAND",
 }
 
-func init() {
+var UI *ui.UI
 
+func init() {
+	UI=ui.NewUI()
 }

@@ -60,7 +60,7 @@ var stopCmd = &cobra.Command{
 				XXX_unrecognized:     nil,
 				XXX_sizecache:        0,
 			},
-			FlagAll:              false,
+			FlagAll:              stopAll(),
 			XXX_NoUnkeyedLiteral: struct{}{},
 			XXX_unrecognized:     nil,
 			XXX_sizecache:        0,

@@ -25,7 +25,6 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -55,7 +54,6 @@ var getCmd = &cobra.Command{
 			"",
 		)
 
-		uiGet := ui.NewUI()
 
 		reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
 			Id: &protoNori.ID{
@@ -65,7 +63,7 @@ var getCmd = &cobra.Command{
 				XXX_unrecognized:     nil,
 				XXX_sizecache:        0,
 			},
-			FlagVerbose:          false,
+			FlagVerbose:          getVerbose(),
 			XXX_NoUnkeyedLiteral: struct{}{},
 			XXX_unrecognized:     nil,
 			XXX_sizecache:        0,
@@ -75,7 +73,7 @@ var getCmd = &cobra.Command{
 
 		if err != nil {
 			log.Fatal(err)
-			uiGet.GetFailure(pluginId)
+			UI.GetFailure(pluginId)
 			if reply != nil {
 				log.Fatal(protoNori.ErrorReply{
 					Status:               false,
@@ -86,7 +84,7 @@ var getCmd = &cobra.Command{
 				})
 			}
 		} else {
-			uiGet.GetSuccess(pluginId)
+			UI.GetSuccess(pluginId)
 		}
 	},
 }
