@@ -3,14 +3,12 @@ package ui
 import (
 	"fmt"
 	"os"
-	plugin "plugin"
 
-	"github.com/bruteforce1414/testGRPC/metainfo"
 	"github.com/olekukonko/tablewriter"
 )
 
 type UI struct {
-	color o
+	//color
 }
 
 func NewUI() *UI {
@@ -19,19 +17,19 @@ func NewUI() *UI {
 }
 
 func (u *UI) GetSuccess(pluginId string) {
-	fmt.Printf("Plugin %q successfully get\n", pluginId)
+	fmt.Printf("GET SUCCESSFUL: Plugin %q\n", pluginId)
 }
 
 func (u *UI) GetFailure(pluginId string) {
-	fmt.Printf("Plugin %q get failure\n", pluginId)
+	fmt.Printf("GET FAILURE: Plugin %q\n", pluginId)
 }
 
 func (u *UI) InstallSuccess(pluginId string) {
-	fmt.Printf("Plugin %s installed, %3d :\n", pluginId)
+	fmt.Printf("INSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) InstallFailure(pluginId string) {
-	fmt.Printf("Plugin %s install failure, %3d :\n", pluginId)
+	fmt.Printf("INSTALL FAILURE: Plugin %s\n", pluginId)
 }
 
 func (u *UI) PluginsAll(plugins [][]string) {
@@ -58,7 +56,7 @@ func (u *UI) PluginMetaExist(pluginInformation string) {
 	fmt.Printf("Plugin %q successfully get\n", pluginInformation)
 }
 
-func (u *UI) PluginMetaNotExist(pluginInformation metainfo.ArrayMetaDataReply) {
+func (u *UI) PluginMetaNotExist(pluginInformation string) {
 	fmt.Printf("Plugin %q get failure\n", pluginInformation)
 }
 
