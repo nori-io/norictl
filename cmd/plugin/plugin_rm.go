@@ -63,9 +63,8 @@ var rmCmd = &cobra.Command{
 		})
 
 		close(closeCh)
-		uiRm := ui.NewUI()
 		if err != nil {
-			uiRm.RmFailure(pluginId)
+			UI.RmFailure(pluginId)
 			log.Fatal(err)
 			if reply != nil {
 				log.Fatal(protoNori.ErrorReply{
@@ -77,7 +76,7 @@ var rmCmd = &cobra.Command{
 				})
 			}
 		} else {
-			uiRm.RmSuccess(pluginId)
+			UI.RmSuccess(pluginId)
 		}
 	},
 }

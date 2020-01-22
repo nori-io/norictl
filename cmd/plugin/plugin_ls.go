@@ -29,7 +29,6 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -103,8 +102,6 @@ var lsCmd = &cobra.Command{
 			XXX_sizecache:        0,
 		}}
 
-		uiLs := ui.NewUI()
-
 		filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
 			newList := make([]*protoNori.PluginListWithStatus, 0)
 			plugins := make([][]string, len(list))
@@ -112,7 +109,7 @@ var lsCmd = &cobra.Command{
 				if f(*l) {
 					newList = append(newList, l)
 					plugins := append(plugins, []string{l.MetaID.String(), l.Author.String()})
-					uiLs.PluginsAll(plugins)
+					UI.PluginsAll(plugins)
 				}
 			}
 
@@ -129,7 +126,7 @@ var lsCmd = &cobra.Command{
 					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 				}
-				uiLs.PluginsInstalled(plugins)
+				UI.PluginsInstalled(plugins)
 
 				return p.FlagInstalled
 			})
@@ -144,7 +141,7 @@ var lsCmd = &cobra.Command{
 					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 				}
-				uiLs.PluginsRunning(plugins)
+				UI.PluginsRunning(plugins)
 				return p.FlagRunning
 			})
 		}
@@ -158,7 +155,7 @@ var lsCmd = &cobra.Command{
 					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 				}
-				uiLs.PluginsInactive(plugins)
+				UI.PluginsInactive(plugins)
 				return p.FlagInactive
 			})
 		}
@@ -172,7 +169,7 @@ var lsCmd = &cobra.Command{
 					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 				}
-				uiLs.PluginsAll(plugins)
+				UI.PluginsAll(plugins)
 				return p.FlagAll
 			})
 		}
@@ -186,7 +183,7 @@ var lsCmd = &cobra.Command{
 					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 				}
-				uiLs.PluginsError(plugins)
+				UI.PluginsError(plugins)
 				return p.FlagError
 			})
 		}
@@ -200,7 +197,7 @@ var lsCmd = &cobra.Command{
 					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 				}
-				uiLs.PluginsInstallable(plugins)
+				UI.PluginsInstallable(plugins)
 				return p.FlagInstallable
 			})
 		}

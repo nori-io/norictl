@@ -24,7 +24,6 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -53,7 +52,6 @@ var installCmd = &cobra.Command{
 			conn.CertPath,
 			"",
 		)
-		uiInstall := ui.NewUI()
 
 		reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
 			Id: &protoNori.ID{
@@ -81,10 +79,10 @@ var installCmd = &cobra.Command{
 					XXX_sizecache:        0,
 				})
 			}
-			uiInstall.InstallFailure(pluginId)
+			UI.InstallFailure(pluginId)
 			log.Fatal(err)
 		}
-		uiInstall.InstallSuccess(pluginId)
+		UI.InstallSuccess(pluginId)
 	},
 }
 

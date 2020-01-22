@@ -24,7 +24,6 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -63,10 +62,9 @@ var uninstallCmd = &cobra.Command{
 			XXX_sizecache:        0,
 		})
 		defer close(closeCh)
-		uiIninstall := ui.NewUI()
 		if err != nil {
 			if reply != nil {
-				uiIninstall.UninstallFailure(id)
+				UI.UninstallFailure(id)
 				logrus.Fatal(protoNori.ErrorReply{
 					Status:               false,
 					Error:                err.Error(),
@@ -78,7 +76,7 @@ var uninstallCmd = &cobra.Command{
 			logrus.Fatal(err)
 		}
 
-		uiIninstall.UninstallSuccess(id)
+		UI.UninstallSuccess(id)
 	},
 }
 

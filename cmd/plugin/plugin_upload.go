@@ -28,7 +28,6 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -71,9 +70,8 @@ var uploadCmd = &cobra.Command{
 			XXX_unrecognized:     nil,
 			XXX_sizecache:        0,
 		})
-		uiUpload := ui.NewUI()
 		if err != nil {
-			uiUpload.UploadFailure(path)
+			UI.UploadFailure(path)
 			logrus.Fatal(err)
 			if reply != nil {
 				logrus.Fatal(protoNori.ErrorReply{
@@ -85,7 +83,7 @@ var uploadCmd = &cobra.Command{
 				})
 			}
 		} else {
-			uiUpload.UploadSuccess(path)
+			UI.UploadSuccess(path)
 		}
 	},
 }

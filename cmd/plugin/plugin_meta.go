@@ -26,7 +26,6 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -73,15 +72,13 @@ var metaCmd = &cobra.Command{
 			XXX_sizecache:        0,
 		}
 
-		uiMeta := ui.NewUI()
-
 		reply, err := client.PluginMetaCommand(context.Background(), meta)
 		defer close(closeCh)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		uiMeta.PluginMetaExist(fmt.Sprintf("%s", reply))
+		UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 
 	},
 }

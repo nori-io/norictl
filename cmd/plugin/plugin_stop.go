@@ -66,9 +66,8 @@ var stopCmd = &cobra.Command{
 			XXX_sizecache:        0,
 		})
 		defer close(closeCh)
-		uiStop := ui.NewUI()
 		if err != nil {
-			uiStop.StopFailure(pluginId)
+			UI.StopFailure(pluginId)
 			if reply != nil {
 				log.Fatal(protoNori.ErrorReply{
 					Status:               false,
@@ -81,7 +80,7 @@ var stopCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		uiStop.StopFailure(pluginId)
+		UI.StopFailure(pluginId)
 	},
 }
 

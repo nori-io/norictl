@@ -25,7 +25,6 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var (
@@ -69,10 +68,9 @@ var pullCmd = &cobra.Command{
 		})
 
 		close(closeCh)
-		uiPull := ui.NewUI()
 		if err != nil {
 			log.Fatal(err)
-			uiPull.PullFailure(pluginId)
+			UI.PullFailure(pluginId)
 			if reply != nil {
 				log.Fatal(protoNori.ErrorReply{
 					Status:               false,
@@ -83,7 +81,7 @@ var pullCmd = &cobra.Command{
 				})
 			}
 		} else {
-			uiPull.PullFailure(pluginId)
+			UI.PullFailure(pluginId)
 		}
 	},
 }
