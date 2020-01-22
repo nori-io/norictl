@@ -16,8 +16,12 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+
+	 "github.com/nori-io/logger"
+	logger2 "github.com/nori-io/nori-common/logger"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -32,6 +36,7 @@ import (
 
 var cfgFile string
 var logLevel func() string
+var LoggerNoriCtl logger2.Logger
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -50,7 +55,9 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
+	buf := bytes.Buffer{}
+	LoggerNoriCtl=logger.New(logger.SetJsonFormatter(), logger.SetOutWriter(&buf))
+	//LoggerNoriCtl:=logger.New()
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 
 	flags := utils.NewFlagBuilder(nil, rootCmd)
