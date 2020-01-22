@@ -15,7 +15,7 @@
 
 package certs_cmd
 
-import (
+/*import (
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -122,3 +122,4 @@ var uploadCertsCmd = &cobra.Command{
 func init() {
 	CertsCmd.AddCommand(uploadCertsCmd)
 }
+*/

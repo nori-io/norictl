@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	. "github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -17,19 +18,19 @@ func NewUI() *UI {
 }
 
 func (u *UI) GetSuccess(pluginId string) {
-	fmt.Printf("GET SUCCESSFUL: Plugin %q\n", pluginId)
+	Green("GET SUCCESSFUL: Plugin %q\n", pluginId)
 }
 
 func (u *UI) GetFailure(pluginId string) {
-	fmt.Printf("GET FAILURE: Plugin %q\n", pluginId)
+	Red("GET FAILURE: Plugin %q\n", pluginId)
 }
 
 func (u *UI) InstallSuccess(pluginId string) {
-	fmt.Printf("INSTALL SUCCESSFUL: Plugin %s\n", pluginId)
+	Green("INSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) InstallFailure(pluginId string) {
-	fmt.Printf("INSTALL FAILURE: Plugin %s\n", pluginId)
+	Red("INSTALL FAILURE: Plugin %s\n", pluginId)
 }
 
 func (u *UI) PluginsAll(plugins [][]string) {
@@ -98,49 +99,49 @@ func (u *UI) PluginMetaNotExist(pluginInformation string) {
 }
 
 func (u *UI) PullSuccess(pluginId string) {
-	fmt.Printf("PULL SUCCESSFUL: Plugin %s\n", pluginId)
+	Green("PULL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) PullFailure(pluginId string) {
-	fmt.Printf("PULL FAILURE: Plugin %s\n", pluginId)
+	Red("PULL FAILURE: Plugin %s\n", pluginId)
 }
 
 func (u *UI) RmSuccess(pluginId string) {
-	fmt.Printf("REMOVE SUCCESSFUL: Plugin %s\n", pluginId)
+	Green("REMOVE SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) RmFailure(pluginId string) {
-	fmt.Printf("REMOVE FAILURE: Plugin %s\n", pluginId)
+	Red("REMOVE FAILURE: Plugin %s\n", pluginId)
 }
 
 func (u *UI) StartSuccess(pluginId string) {
-	fmt.Printf("START SUCCESSFUL: Plugin %s\n", pluginId)
+	Green("START SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) StartFailure(pluginId string) {
-	fmt.Printf("START FAILURE: Plugin %s\n", pluginId)
+	Red("START FAILURE: Plugin %s\n", pluginId)
 }
 
 func (u *UI) StopSuccess(pluginId string) {
-	fmt.Printf("STOP SUCCESSFUL: Plugin %s\n", pluginId)
+	Green("STOP SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) StopFailure(pluginId string) {
-	fmt.Printf("STOP FAILURE: Plugin %s\n", pluginId)
+	Red("STOP FAILURE: Plugin %s\n", pluginId)
 }
 
 func (u *UI) UninstallSuccess(pluginId string) {
-	fmt.Printf("UNINSTALL SUCCESSFUL: Plugin %s\n", pluginId)
+	Green("UNINSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) UninstallFailure(pluginId string) {
-	fmt.Printf("UNINSTALL FAILURE: Plugin %s\n", pluginId)
+	Red("UNINSTALL FAILURE: Plugin %s\n", pluginId)
 }
 
 func (u *UI) UploadSuccess(path string) {
-	fmt.Printf("UPLOAD SUCCESSFUL: Path:  %s\n", path)
+	Green("UPLOAD SUCCESSFUL: Path:  %s\n", path)
 }
 
 func (u *UI) UploadFailure(path string) {
-	fmt.Printf("UPLOAD FAILURE: Path: %s\n", path)
+	Red("UPLOAD FAILURE: Path: %s\n", path)
 }
