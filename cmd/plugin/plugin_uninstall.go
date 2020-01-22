@@ -46,11 +46,10 @@ var uninstallCmd = &cobra.Command{
 		}
 		pluginIdSplit := strings.Split(pluginId, ":")
 		versionPlugin := pluginIdSplit[1]
-		_, err:= version.NewVersion(versionPlugin)
+		_, err := version.NewVersion(versionPlugin)
 		if err != nil {
 			fmt.Println("Format of plugin's version is incorrect:", err)
 		}
-
 
 		cli, closeCh := client.NewClient(
 			viper.GetString("grpc-address"),

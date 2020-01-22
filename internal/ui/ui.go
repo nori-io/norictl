@@ -145,3 +145,8 @@ func (u *UI) UploadSuccess(path string) {
 func (u *UI) UploadFailure(path string) {
 	Red("UPLOAD FAILURE: Path: %s\n", path)
 }
+
+func (u *UI) InterfacePluginList(plugins string) {
+	Green("PLUGINS WITH INTERFACE: Path:  %s\n", plugins)
+
+}
