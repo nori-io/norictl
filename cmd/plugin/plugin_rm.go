@@ -16,6 +16,10 @@
 package plugin_cmd
 
 import (
+	"fmt"
+	"strings"
+
+	"github.com/nori-io/nori-common/version"
 	//commands "github.com/nori-io/nori/proto"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -24,7 +28,6 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
-	"github.com/nori-io/norictl/internal/ui"
 )
 
 var rmCmd = &cobra.Command{
@@ -42,6 +45,13 @@ var rmCmd = &cobra.Command{
 		}
 
 		pluginId := args[0]
+
+		pluginIdSplit := strings.Split(pluginId, ":")
+		versionPlugin := pluginIdSplit[1]
+		_, err= version.NewVersion(versionPlugin)
+		if err != nil {
+			fmt.Println("Format of plugin's version is incorrect:", err)
+		}
 
 		client, closeCh := client.NewClient(
 			conn.HostPort(),

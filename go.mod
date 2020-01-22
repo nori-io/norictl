@@ -8,7 +8,7 @@ require (
 	github.com/golang/protobuf v1.3.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nori-io/nori v0.0.0-20191210091048-4d19a2687134
-	github.com/nori-io/nori-common v1.1.0 // indirect
+	github.com/nori-io/nori-common v1.1.0
 	github.com/nori-io/nori-common/v2 v2.0.0 // indirect
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/sirupsen/logrus v1.4.2
