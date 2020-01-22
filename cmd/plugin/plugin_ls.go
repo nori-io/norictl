@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/nori/proto"
-
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -56,10 +54,13 @@ var lsCmd = &cobra.Command{
 			"",
 		)
 
-		reply, err := client.PluginListCommand(context.Background(), &commands.PluginListRequest{
-
-			Installed:            listInstalled(),
-			Running:              listRunning(),
+		reply, err := client.PluginListCommand(context.Background(), &protoNori.PluginListRequest{
+			FlagAll:              listAll(),
+			FlagError:            listError(),
+			FlagInstalled:        listInstalled(),
+			FlagRunning:          listRunning(),
+			FlagInstallable:      listInstallable(),
+			FlagInactive:         listInactive(),
 			XXX_NoUnkeyedLiteral: struct{}{},
 			XXX_unrecognized:     nil,
 			XXX_sizecache:        0,
