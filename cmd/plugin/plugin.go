@@ -16,18 +16,23 @@
 package plugin_cmd
 
 import (
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/internal/ui"
 )
 
-var PluginCmd = &cobra.Command{
-	Use:   "norictl plugin",
-	Short: "norictl plugin COMMAND",
+func PluginCmd(logger logger.Logger) {
+
+	PluginCmd := &cobra.Command{
+		Use:   "norictl plugin",
+		Short: "norictl plugin COMMAND",
+	}
+	PluginCmd.AddCommand(installCmd(logger))
+
 }
 
 var UI *ui.UI
-
 
 func init() {
 	UI = ui.NewUI()

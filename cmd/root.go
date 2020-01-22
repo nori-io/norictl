@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
-	 "github.com/nori-io/logger"
-	logger2 "github.com/nori-io/nori-common/logger"
+	logger "github.com/nori-io/logger"
+	logger2 "github.com/nori-io/nori-common/v2/logger"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -56,14 +56,13 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	buf := bytes.Buffer{}
-	LoggerNoriCtl=logger.New(logger.SetJsonFormatter(), logger.SetOutWriter(&buf))
-	//LoggerNoriCtl:=logger.New()
+	LoggerNoriCtl = logger.New(logger.SetJsonFormatter(""), logger.SetOutWriter(&buf))
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 
 	flags := utils.NewFlagBuilder(nil, rootCmd)
 	flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
 
-	rootCmd.AddCommand(plugin_cmd.PluginCmd)
+	rootCmd.AddCommand(plugin_cmd.PluginCmd(LoggerNoriCtl))
 	rootCmd.AddCommand(certs_cmd.CertsCmd)
 	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }

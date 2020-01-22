@@ -19,11 +19,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	cmd2 "github.com/nori-io/norictl/cmd"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -36,70 +36,70 @@ var (
 	installAll     func() bool
 )
 
-func installCmd() *cobra.Command {
+func installCmd(log logger.Logger) *cobra.Command {
 	return &cobra.Command{
-	Use:   "norictl plugin install [PLUGIN_ID] [OPTIONS]",
-	Short: "Install downloaded plugin or plugins.",
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			cmd2.LoggerNoriCtl.Fatal(fmt.Sprintf("%s",err))
-		}
+		Use:   "norictl plugin install [PLUGIN_ID] [OPTIONS]",
+		Short: "Install downloaded plugin or plugins.",
+		Run: func(cmd *cobra.Command, args []string) {
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+			}
 
-		if len(args) == 0 {
-			cmd2.LoggerNoriCtl.Fatal("PLUGIN_ID required!")
-		}
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
 
-		pluginId := args[0]
+			pluginId := args[0]
 
-		pluginIdSplit := strings.Split(pluginId, ":")
-		versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			fmt.Println("Format of plugin's version is incorrect:", err)
-		}
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err = version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
 
-		client, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
-			Id: &protoNori.ID{
-				Id:                   pluginId,
-				Version:              "",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			},
-			FlagVerbose:          installVerbose(),
-			FlagDeps:             installDeps(),
-			FlagAll:              installAll(),
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-		defer close(closeCh)
-		if err != nil {
-			if reply != nil {
-				cmd2.LoggerNoriCtl.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
+			reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
+				Id: &protoNori.ID{
+					Id:                   pluginId,
+					Version:              "",
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
-				}))
+				},
+				FlagVerbose:          installVerbose(),
+				FlagDeps:             installDeps(),
+				FlagAll:              installAll(),
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+			defer close(closeCh)
+			if err != nil {
+				if reply != nil {
+					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					}))
+				}
+				UI.InstallFailure(pluginId)
+				log.Fatal(fmt.Sprintf("%s", err))
 			}
-			UI.InstallFailure(pluginId)
-			cmd2.LoggerNoriCtl.Fatal(fmt.Sprintf("%s",err))
-		}
-		UI.InstallSuccess(pluginId)
-	},
-}}
+			UI.InstallSuccess(pluginId)
+		},
+	}
+}
 
 func init() {
-	PluginCmd.AddCommand(installCmd())
 	flags := utils.NewFlagBuilder(PluginCmd, installCmd())
 	flags.Bool(&installVerbose, "--verbose", "-v", false, "Verbose progress and debug output")
 	flags.Bool(&installDeps, "--deps", "-d", false, "Install plugin with dependencies")
