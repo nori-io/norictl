@@ -57,6 +57,7 @@ var lsCmd = &cobra.Command{
 		)
 
 		reply, err := client.PluginListCommand(context.Background(), &commands.PluginListRequest{
+
 			Installed:            listInstalled(),
 			Running:              listRunning(),
 			XXX_NoUnkeyedLiteral: struct{}{},
