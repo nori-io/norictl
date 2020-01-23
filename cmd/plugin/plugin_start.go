@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -34,69 +34,73 @@ var (
 	startAll func() bool
 )
 
-var startCmd = &cobra.Command{
-	Use:   "norictl plugin start [PLUGIN_ID] [OPTIONS]",
-	Short: "Start one plugin or all plugins.",
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			log.Fatal(err)
-		}
+func startCmd (log logger.Logger) *cobra.Command{
+	return &cobra.Command{
+		Use:   "norictl plugin start [PLUGIN_ID] [OPTIONS]",
+		Short: "Start one plugin or all plugins.",
+		Run: func(cmd *cobra.Command, args []string) {
+			setFlagsStart(log)
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal("%s", err)
+			}
 
-		if len(args) == 0 {
-			log.Fatal("PLUGIN_ID required!")
-		}
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
 
-		pluginId := args[0]
+			pluginId := args[0]
 
-		pluginIdSplit := strings.Split(pluginId, ":")
-		versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			fmt.Println("Format of plugin's version is incorrect:", err)
-		}
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err = version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
 
-		client, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		reply, err := client.PluginStartCommand(context.Background(), &protoNori.PluginStartRequest{
-			Id: &protoNori.ID{
-				Id:                   pluginId,
-				Version:              "",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			},
-			FlagAll:              startAll(),
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-		defer close(closeCh)
-		if err != nil {
-			UI.StartFailure(pluginId)
-			if reply != nil {
-				log.Fatal(protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
+			reply, err := client.PluginStartCommand(context.Background(), &protoNori.PluginStartRequest{
+				Id: &protoNori.ID{
+					Id:                   pluginId,
+					Version:              "",
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
-				})
+				},
+				FlagAll:              startAll(),
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+			defer close(closeCh)
+			if err != nil {
+				UI.StartFailure(pluginId)
+				if reply != nil {
+					log.Fatal("%s", protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					})
+				}
+				log.Fatal("%s", err)
 			}
-			log.Fatal(err)
-		}
-		UI.StartSuccess(pluginId)
+			UI.StartSuccess(pluginId)
 
-	},
-}
+		},
+	}}
 
 func init() {
-	PluginCmd.AddCommand(startCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, startCmd)
-	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
 
+}
+
+func setFlagsStart(log logger.Logger){
+	flags := utils.NewFlagBuilder(PluginCmd(log), startCmd(log))
+	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
 }

@@ -34,6 +34,8 @@ func PluginCmd(log logger.Logger) *cobra.Command {
 	PluginCmd.AddCommand(lsCmd(log))
 	PluginCmd.AddCommand(metaCmd(log))
 	PluginCmd.AddCommand(pullCmd(log))
+	PluginCmd.AddCommand(rmCmd(log))
+	PluginCmd.AddCommand(startCmd(log))
 	return PluginCmd
 
 }

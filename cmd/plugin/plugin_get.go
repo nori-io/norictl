@@ -45,7 +45,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 			setFlagsGet(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 			}
 
 			if len(args) == 0 {
@@ -84,16 +84,16 @@ func getCmd(log logger.Logger) *cobra.Command {
 			close(closeCh)
 
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 				UI.GetFailure(pluginId)
 				if reply != nil {
-					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
+					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
 						XXX_unrecognized:     nil,
 						XXX_sizecache:        0,
-					}))
+					})
 				}
 			} else {
 				UI.GetSuccess(pluginId)

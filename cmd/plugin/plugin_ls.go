@@ -16,7 +16,6 @@
 package plugin_cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/nori-io/nori-common/v2/logger"
@@ -48,7 +47,7 @@ func lsCmd(log logger.Logger) *cobra.Command {
 			setFlagsLs(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 			}
 
 			client, closeCh := client.NewClient(
@@ -71,15 +70,15 @@ func lsCmd(log logger.Logger) *cobra.Command {
 			close(closeCh)
 			if err != nil {
 				if reply != nil {
-					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
+					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
 						XXX_unrecognized:     nil,
 						XXX_sizecache:        0,
-					}))
+					})
 				}
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 			}
 
 			table := tablewriter.NewWriter(os.Stdout)

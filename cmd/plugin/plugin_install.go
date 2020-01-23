@@ -44,7 +44,7 @@ func installCmd(log logger.Logger) *cobra.Command {
 			setFlagsInstall(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 			}
 
 			if len(args) == 0 {
@@ -83,16 +83,16 @@ func installCmd(log logger.Logger) *cobra.Command {
 			defer close(closeCh)
 			if err != nil {
 				if reply != nil {
-					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
+					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
 						XXX_unrecognized:     nil,
 						XXX_sizecache:        0,
-					}))
+					})
 				}
 				UI.InstallFailure(pluginId)
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 			}
 			UI.InstallSuccess(pluginId)
 		},

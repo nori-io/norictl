@@ -34,7 +34,7 @@ var (
 	pullDeps func() bool
 )
 
-func pullCmd (log logger.Logger) *cobra.Command{
+func pullCmd(log logger.Logger) *cobra.Command {
 	return &cobra.Command{
 		Use:   "norictl plugin pull [PLUGIN_ID] [OPTIONS]",
 		Short: "downloading plugin",
@@ -43,7 +43,7 @@ func pullCmd (log logger.Logger) *cobra.Command{
 			setFlagsPull(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s",err))
+				log.Fatal("%s", err)
 			}
 
 			if len(args) == 0 {
@@ -81,16 +81,16 @@ func pullCmd (log logger.Logger) *cobra.Command{
 
 			close(closeCh)
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 				UI.PullFailure(pluginId)
 				if reply != nil {
-					log.Fatal(fmt.Sprintf( "%s", protoNori.ErrorReply{
+					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
 						XXX_unrecognized:     nil,
 						XXX_sizecache:        0,
-					}))
+					})
 				}
 			} else {
 				UI.PullFailure(pluginId)
@@ -98,11 +98,11 @@ func pullCmd (log logger.Logger) *cobra.Command{
 		},
 	}
 }
-}
-func init() {
-	}
 
-func setFlagsPull(log logger.Logger){
+func init() {
+}
+
+func setFlagsPull(log logger.Logger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), pullCmd(log))
 	flags.Bool(&pullDeps, "pull", "-d", false, "Pull downloads the plugin, with or without it's dependencies.")
 }

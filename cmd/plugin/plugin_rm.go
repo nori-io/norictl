@@ -19,9 +19,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
-	//commands "github.com/nori-io/nori/proto"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -30,67 +29,68 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-var rmCmd = &cobra.Command{
-	Use:   "norictl plugin rm [PLUGIN_ID] [OPTIONS]",
-	Short: "remove plugin",
-	Long:  `Remove plugin from local machine.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			log.Fatal(err)
-		}
+func rmCmd(log logger.Logger) *cobra.Command{
+	return&cobra.Command{
+		Use:   "norictl plugin rm [PLUGIN_ID] [OPTIONS]",
+		Short: "remove plugin",
+		Long:  `Remove plugin from local machine.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal("%s", err)
+			}
 
-		if len(args) == 0 {
-			log.Fatal("PLUGIN_ID required!")
-		}
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
 
-		pluginId := args[0]
+			pluginId := args[0]
 
-		pluginIdSplit := strings.Split(pluginId, ":")
-		versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			fmt.Println("Format of plugin's version is incorrect:", err)
-		}
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err = version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
 
-		client, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		reply, err := client.PluginRemoveCommand(context.Background(), &protoNori.PluginRemoveRequest{
-			Id: &protoNori.ID{
-				Id:                   pluginId,
-				Version:              "",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			},
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-
-		close(closeCh)
-		if err != nil {
-			UI.RmFailure(pluginId)
-			log.Fatal(err)
-			if reply != nil {
-				log.Fatal(protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
+			reply, err := client.PluginRemoveCommand(context.Background(), &protoNori.PluginRemoveRequest{
+				Id: &protoNori.ID{
+					Id:                   pluginId,
+					Version:              "",
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
-				})
+				},
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+
+			close(closeCh)
+			if err != nil {
+				UI.RmFailure(pluginId)
+				log.Fatal("%s", err)
+				if reply != nil {
+					log.Fatal("%s", protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					})
+				}
+			} else {
+				UI.RmSuccess(pluginId)
 			}
-		} else {
-			UI.RmSuccess(pluginId)
-		}
-	},
+		},
+	}
 }
 
 func init() {
-	PluginCmd.AddCommand(rmCmd)
 }

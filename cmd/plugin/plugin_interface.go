@@ -52,15 +52,15 @@ func interfaceCmd(log logger.Logger) *cobra.Command {
 				XXX_sizecache:        0,
 			})
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 				if reply != nil {
-					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
+					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
 						XXX_unrecognized:     nil,
 						XXX_sizecache:        0,
-					}))
+					})
 				}
 			} else {
 				UI.InterfacePluginList(fmt.Sprintf("%s", reply))

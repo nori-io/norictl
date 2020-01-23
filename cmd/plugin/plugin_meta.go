@@ -44,7 +44,7 @@ func metaCmd(log logger.Logger) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 			}
 
 			if len(args) == 0 {
@@ -84,7 +84,7 @@ func metaCmd(log logger.Logger) *cobra.Command {
 			reply, err := client.PluginMetaCommand(context.Background(), meta)
 			defer close(closeCh)
 			if err != nil {
-				log.Fatal(fmt.Sprintf("%s", err))
+				log.Fatal("%s", err)
 			}
 
 			UI.PluginMetaExist(fmt.Sprintf("%s", reply))
