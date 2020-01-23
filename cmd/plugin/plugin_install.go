@@ -41,6 +41,7 @@ func installCmd(log logger.Logger) *cobra.Command {
 		Use:   "norictl plugin install [PLUGIN_ID] [OPTIONS]",
 		Short: "Install downloaded plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
+			setFlags(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				log.Fatal(fmt.Sprintf("%s", err))
@@ -51,7 +52,6 @@ func installCmd(log logger.Logger) *cobra.Command {
 			}
 
 			pluginId := args[0]
-
 			pluginIdSplit := strings.Split(pluginId, ":")
 			versionPlugin := pluginIdSplit[1]
 			_, err = version.NewVersion(versionPlugin)
@@ -99,9 +99,12 @@ func installCmd(log logger.Logger) *cobra.Command {
 	}
 }
 
-func init() {
-	flags := utils.NewFlagBuilder(PluginCmd, installCmd())
+func setFlags(log logger.Logger) {
+	flags := utils.NewFlagBuilder(PluginCmd(log), installCmd(log))
 	flags.Bool(&installVerbose, "--verbose", "-v", false, "Verbose progress and debug output")
 	flags.Bool(&installDeps, "--deps", "-d", false, "Install plugin with dependencies")
 	flags.Bool(&installAll, "--all", "-all", false, "Install all installable plugins")
+}
+
+func init() {
 }

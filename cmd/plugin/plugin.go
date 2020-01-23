@@ -22,13 +22,15 @@ import (
 	"github.com/nori-io/norictl/internal/ui"
 )
 
-func PluginCmd(logger logger.Logger) {
+func PluginCmd(logger logger.Logger) *cobra.Command {
 
 	PluginCmd := &cobra.Command{
 		Use:   "norictl plugin",
 		Short: "norictl plugin COMMAND",
 	}
 	PluginCmd.AddCommand(installCmd(logger))
+	PluginCmd.AddCommand(getCmd(logger))
+	return PluginCmd
 
 }
 

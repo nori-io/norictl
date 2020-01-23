@@ -20,10 +20,12 @@ import (
 	"strings"
 
 	"github.com/nori-io/nori-common/version"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
+	"github.com/nori-io/nori-common/v2/logger"
 
+
+	"github.com/nori-io/norictl/cmd"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -34,72 +36,78 @@ var (
 	getVerbose func() bool
 )
 
-var getCmd = &cobra.Command{
-	Use:   "norictl plugin get [PLUGIN_ID] [OPTIONS]",
-	Short: "downloading plugin",
-	Long: `Get downloads the plugin, along with its dependencies.
+func getCmd(log logger.Logger) *cobra.Command {
+	return &cobra.Command{
+		Use:   "norictl plugin get [PLUGIN_ID] [OPTIONS]",
+		Short: "downloading plugin",
+		Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			log.Fatal(err)
-		}
+		Run: func(cmd *cobra.Command, args []string) {
+		setFlags(log)
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+			}
 
-		if len(args) == 0 {
-			log.Fatal("PLUGIN_ID required!")
-		}
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
 
-		pluginId := args[0]
+			pluginId := args[0]
 
-		pluginIdSplit := strings.Split(pluginId, ":")
-		versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			fmt.Println("Format of plugin's version is incorrect:", err)
-		}
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err = version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
 
-		client, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
-			Id: &protoNori.ID{
-				Id:                   pluginId,
-				Version:              "",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			},
-			FlagVerbose:          getVerbose(),
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-
-		close(closeCh)
-
-		if err != nil {
-			log.Fatal(err)
-			UI.GetFailure(pluginId)
-			if reply != nil {
-				log.Fatal(protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
+			reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
+				Id: &protoNori.ID{
+					Id:                   pluginId,
+					Version:              "",
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
-				})
+				},
+				FlagVerbose:          getVerbose(),
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+
+			close(closeCh)
+
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+				UI.GetFailure(pluginId)
+				if reply != nil {
+					log.Fatal(fmt.Sprintf("%s",protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					}))
+				}
+			} else {
+				UI.GetSuccess(pluginId)
 			}
-		} else {
-			UI.GetSuccess(pluginId)
-		}
-	},
+		},
+	}
 }
 
 func init() {
-	PluginCmd.AddCommand(getCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, getCmd)
+
+}
+
+func setFlags(log logger.Logger){
+	flags := utils.NewFlagBuilder(PluginCmd(cmd.LoggerNoriCtl), getCmd(log))
 	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
 }

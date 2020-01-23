@@ -6,12 +6,14 @@ package protoNori
 import (
 	context "context"
 	fmt "fmt"
+	math "math"
+
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	math "math"
-	plugin "plugin"
+
+	plugin "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
