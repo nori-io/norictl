@@ -16,25 +16,18 @@
 package connection_cmd
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"golang.org/x/net/context"
 
-	"github.com/nori-io/nori/proto"
-
-	"github.com/nori-io/norictl/internal/client"
-	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 )
 
 var verbose func() bool
 
 var testCmd = &cobra.Command{
-	Use:   "test",
+	/*Use:   "test",
 	Short: "Make connection to remote Nori node to verify connection configuration.",
 	Long:  `Make connection to remote Nori node to verify connection configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -44,26 +37,26 @@ var testCmd = &cobra.Command{
 		}
 
 		cli, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		msg := fmt.Sprintf("%d", rand.Uint64())
+			msg := fmt.Sprintf("%d", rand.Uint64())
 
-		ping := &commands.PingRequest{Message: msg}
+			ping := &commands.PingRequest{Message: msg}
 
-		reply, err := cli.SendPingCommand(context.Background(), ping)
-		close(closeCh)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if reply.Message == msg {
-			fmt.Println("OK")
-		} else {
-			fmt.Println("Error: Pong message does not match")
-		}
-	},
+			reply, err := cli.SendPingCommand(context.Background(), ping)
+			close(closeCh)
+			if err != nil {
+				log.Fatal(err)
+			}
+			if reply.Message == msg {
+				fmt.Println("OK")
+			} else {
+				fmt.Println("Error: Pong message does not match")
+			}
+	},*/
 }
 
 func init() {

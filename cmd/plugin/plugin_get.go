@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/nori-io/norictl/cmd"
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -107,6 +107,6 @@ func init() {
 }
 
 func setFlagsGet(log logger.Logger) {
-	flags := utils.NewFlagBuilder(PluginCmd(cmd.LoggerNoriCtl), getCmd(log))
+	flags := utils.NewFlagBuilder(PluginCmd(common.LoggerNoriCtl), getCmd(log))
 	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
 }

@@ -17,9 +17,9 @@ package connection_cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/internal/client/connection"
