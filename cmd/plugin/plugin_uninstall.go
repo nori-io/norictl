@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -35,64 +35,71 @@ var (
 	uninstallDependent func() bool
 )
 
-var uninstallCmd = &cobra.Command{
+func uninstallCmd(log logger.Logger) *cobra.Command {
 
-	Use:   "norictl plugin uninstall [PLUGIN_ID] [OPTIONS]",
-	Short: "Uninstall plugin or plugins.",
-	Run: func(cmd *cobra.Command, args []string) {
-		pluginId := viper.GetString("id")
-		if len(pluginId) == 0 && len(args) > 0 {
-			pluginId = args[0]
-		}
-		pluginIdSplit := strings.Split(pluginId, ":")
-		versionPlugin := pluginIdSplit[1]
-		_, err := version.NewVersion(versionPlugin)
-		if err != nil {
-			fmt.Println("Format of plugin's version is incorrect:", err)
-		}
+	return &cobra.Command{
 
-		cli, closeCh := client.NewClient(
-			viper.GetString("grpc-address"),
-			viper.GetString("ca"),
-			viper.GetString("ServerHostOverride"),
-		)
+		Use:   "norictl plugin uninstall [PLUGIN_ID] [OPTIONS]",
+		Short: "Uninstall plugin or plugins.",
+		Run: func(cmd *cobra.Command, args []string) {
+			setFlagsUninstall(log)
+			pluginId := viper.GetString("id")
+			if len(pluginId) == 0 && len(args) > 0 {
+				pluginId = args[0]
+			}
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err := version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
 
-		reply, err := cli.PluginUninstallCommand(context.Background(), &protoNori.PluginUninstallRequest{
-			Id: &protoNori.ID{
-				Id:                   pluginId,
-				Version:              "",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			},
-			FlagAll:              uninstallAll(),
-			FlagDependent:        uninstallDependent(),
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-		defer close(closeCh)
-		if err != nil {
-			if reply != nil {
-				UI.UninstallFailure(id)
-				logrus.Fatal(protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
+			cli, closeCh := client.NewClient(
+				viper.GetString("grpc-address"),
+				viper.GetString("ca"),
+				viper.GetString("ServerHostOverride"),
+			)
+
+			reply, err := cli.PluginUninstallCommand(context.Background(), &protoNori.PluginUninstallRequest{
+				Id: &protoNori.ID{
+					Id:                   pluginId,
+					Version:              "",
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
-				})
+				},
+				FlagAll:              uninstallAll(),
+				FlagDependent:        uninstallDependent(),
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+			defer close(closeCh)
+			if err != nil {
+				if reply != nil {
+					UI.UninstallFailure(pluginId)
+					log.Fatal("%s", protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					})
+				}
+				log.Fatal("%s", err)
 			}
-			logrus.Fatal(err)
-		}
 
-		UI.UninstallSuccess(id)
-	},
+			UI.UninstallSuccess(pluginId)
+		},
+	}
 }
 
 func init() {
-	PluginCmd.AddCommand(uninstallCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, uninstallCmd)
+
+}
+
+func setFlagsUninstall(log logger.Logger) {
+	flags := utils.NewFlagBuilder(PluginCmd(log), uninstallCmd(log))
 	flags.Bool(&uninstallAll, "all", "--all", false, "Uninstall all installed plugins")                       // TODO
 	flags.Bool(&uninstallDependent, "dependent", "--dependent", false, "Uninstall plugin and depend plugins") // TODO
 }

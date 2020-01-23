@@ -29,8 +29,8 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-func rmCmd(log logger.Logger) *cobra.Command{
-	return&cobra.Command{
+func rmCmd(log logger.Logger) *cobra.Command {
+	return &cobra.Command{
 		Use:   "norictl plugin rm [PLUGIN_ID] [OPTIONS]",
 		Short: "remove plugin",
 		Long:  `Remove plugin from local machine.`,

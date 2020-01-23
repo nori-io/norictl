@@ -34,7 +34,7 @@ var (
 	startAll func() bool
 )
 
-func startCmd (log logger.Logger) *cobra.Command{
+func startCmd(log logger.Logger) *cobra.Command {
 	return &cobra.Command{
 		Use:   "norictl plugin start [PLUGIN_ID] [OPTIONS]",
 		Short: "Start one plugin or all plugins.",
@@ -94,13 +94,14 @@ func startCmd (log logger.Logger) *cobra.Command{
 			UI.StartSuccess(pluginId)
 
 		},
-	}}
+	}
+}
 
 func init() {
 
 }
 
-func setFlagsStart(log logger.Logger){
+func setFlagsStart(log logger.Logger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), startCmd(log))
 	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
 }
