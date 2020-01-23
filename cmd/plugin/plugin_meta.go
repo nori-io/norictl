@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -37,63 +37,67 @@ var (
 	metaDependentStatus func() bool
 )
 
-var metaCmd = &cobra.Command{
-	Use:   "norictl plugin meta [PLUGIN_ID] [OPTIONS]",
-	Short: "Show plugin meta data.",
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			log.Fatal(err)
-		}
+func metaCmd(log logger.Logger) *cobra.Command {
+	return &cobra.Command{
+		Use:   "norictl plugin meta [PLUGIN_ID] [OPTIONS]",
+		Short: "Show plugin meta data.",
+		Run: func(cmd *cobra.Command, args []string) {
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+			}
 
-		if len(args) == 0 {
-			log.Fatal("PLUGIN_ID required!")
-		}
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
 
-		pluginId := args[0]
-		pluginIdSplit := strings.Split(pluginId, ":")
-		versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			fmt.Println("Format of plugin's version is incorrect:", err)
-		}
+			pluginId := args[0]
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err = version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
 
-		client, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		meta := &protoNori.PluginMetaRequest{
-			ID: &protoNori.PluginID{
-				MetaId:               pluginId,
+			meta := &protoNori.PluginMetaRequest{
+				ID: &protoNori.PluginID{
+					MetaId:               pluginId,
+					XXX_NoUnkeyedLiteral: struct{}{},
+					XXX_unrecognized:     nil,
+					XXX_sizecache:        0,
+				},
+				FlagDeps:             metaDeps(),
+				FlagDepsStatus:       metaDepsStatus(),
+				FlagDependent:        metaDependent(),
+				FlagDependentStatus:  metaDependentStatus(),
 				XXX_NoUnkeyedLiteral: struct{}{},
 				XXX_unrecognized:     nil,
 				XXX_sizecache:        0,
-			},
-			FlagDeps:             metaDeps(),
-			FlagDepsStatus:       metaDepsStatus(),
-			FlagDependent:        metaDependent(),
-			FlagDependentStatus:  metaDependentStatus(),
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		}
+			}
 
-		reply, err := client.PluginMetaCommand(context.Background(), meta)
-		defer close(closeCh)
-		if err != nil {
-			log.Fatal(err)
-		}
+			reply, err := client.PluginMetaCommand(context.Background(), meta)
+			defer close(closeCh)
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+			}
 
-		UI.PluginMetaExist(fmt.Sprintf("%s", reply))
+			UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 
-	},
+		},
+	}
 }
 
 func init() {
-	PluginCmd.AddCommand(metaCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, metaCmd)
+}
+
+func setFlagsMeta(log logger.Logger) {
+	flags := utils.NewFlagBuilder(PluginCmd(log), metaCmd(log))
 	flags.Bool(&metaDeps, "deps", "--deps", false, "Show only plugin dependencies")
 	flags.Bool(&metaDepsStatus, "deps-status", "--deps-status", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
 	flags.Bool(&metaDependent, "dependent", "--dependent", false, "Show only plugins, that depend on specified plugin")
