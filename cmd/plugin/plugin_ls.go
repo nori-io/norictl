@@ -16,10 +16,11 @@
 package plugin_cmd
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/olekukonko/tablewriter"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -38,182 +39,189 @@ var (
 	listRunning     func() bool
 )
 
-var lsCmd = &cobra.Command{
-	Use:     "norictl plugin ls [OPTIONS]",
-	Aliases: []string{"list"},
-	Short:   "Shows list of plugins on remote Nori node.",
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			log.Fatal(err)
-		}
+func lsCmd(log logger.Logger) *cobra.Command {
+	return &cobra.Command{
+		Use:     "norictl plugin ls [OPTIONS]",
+		Aliases: []string{"list"},
+		Short:   "Shows list of plugins on remote Nori node.",
+		Run: func(cmd *cobra.Command, args []string) {
+			setFlagsLs(log)
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+			}
 
-		client, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		reply, err := client.PluginListCommand(context.Background(), &protoNori.PluginListRequest{
-			FlagAll:              listAll(),
-			FlagError:            listError(),
-			FlagInstalled:        listInstalled(),
-			FlagRunning:          listRunning(),
-			FlagInstallable:      listInstallable(),
-			FlagInactive:         listInactive(),
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-		close(closeCh)
-		if err != nil {
-			if reply != nil {
-				log.Fatal(protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
+			reply, err := client.PluginListCommand(context.Background(), &protoNori.PluginListRequest{
+				FlagAll:              listAll(),
+				FlagError:            listError(),
+				FlagInstalled:        listInstalled(),
+				FlagRunning:          listRunning(),
+				FlagInstallable:      listInstallable(),
+				FlagInactive:         listInactive(),
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+			close(closeCh)
+			if err != nil {
+				if reply != nil {
+					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					}))
+				}
+				log.Fatal(fmt.Sprintf("%s", err))
+			}
+
+			table := tablewriter.NewWriter(os.Stdout)
+			table.SetHeader([]string{"#", "ID", "Name", "Author"})
+
+			list := []*protoNori.PluginListWithStatus{{
+				MetaID:               nil,
+				Author:               nil,
+				DependenciesArray:    nil,
+				Description:          nil,
+				Core:                 nil,
+				Interface:            nil,
+				License:              nil,
+				Links:                nil,
+				Repository:           nil,
+				Tags:                 nil,
+				FlagAll:              true,
+				FlagError:            false,
+				FlagInstalled:        false,
+				FlagRunning:          false,
+				FlagInstallable:      false,
+				FlagInactive:         false,
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			}}
+
+			filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
+				newList := make([]*protoNori.PluginListWithStatus, 0)
+				plugins := make([][]string, len(list))
+				for _, l := range list {
+					if f(*l) {
+						newList = append(newList, l)
+						plugins := append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						UI.PluginsAll(plugins)
+					}
+				}
+
+				return newList
+			}
+
+			if listInstalled() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+
+					}
+					UI.PluginsInstalled(plugins)
+
+					return p.FlagInstalled
 				})
 			}
-			log.Fatal(err)
-		}
 
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"#", "ID", "Name", "Author"})
+			if listRunning() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
-		list := []*protoNori.PluginListWithStatus{{
-			MetaID:               nil,
-			Author:               nil,
-			DependenciesArray:    nil,
-			Description:          nil,
-			Core:                 nil,
-			Interface:            nil,
-			License:              nil,
-			Links:                nil,
-			Repository:           nil,
-			Tags:                 nil,
-			FlagAll:              true,
-			FlagError:            false,
-			FlagInstalled:        false,
-			FlagRunning:          false,
-			FlagInstallable:      false,
-			FlagInactive:         false,
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		}}
-
-		filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
-			newList := make([]*protoNori.PluginListWithStatus, 0)
-			plugins := make([][]string, len(list))
-			for _, l := range list {
-				if f(*l) {
-					newList = append(newList, l)
-					plugins := append(plugins, []string{l.MetaID.String(), l.Author.String()})
-					UI.PluginsAll(plugins)
-				}
+					}
+					UI.PluginsRunning(plugins)
+					return p.FlagRunning
+				})
 			}
 
-			return newList
-		}
+			if listInactive() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
-		if listInstalled() {
-			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-				newList := make([]*protoNori.PluginListWithStatus, 0)
+					}
+					UI.PluginsInactive(plugins)
+					return p.FlagInactive
+				})
+			}
 
-				plugins := make([][]string, len(list))
-				for _, l := range list {
-					newList = append(newList, l)
-					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+			if listAll() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
-				}
-				UI.PluginsInstalled(plugins)
+					}
+					UI.PluginsAll(plugins)
+					return p.FlagAll
+				})
+			}
 
-				return p.FlagInstalled
-			})
-		}
+			if listError() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
-		if listRunning() {
-			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-				newList := make([]*protoNori.PluginListWithStatus, 0)
-				plugins := make([][]string, len(list))
-				for _, l := range list {
-					newList = append(newList, l)
-					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					}
+					UI.PluginsError(plugins)
+					return p.FlagError
+				})
+			}
 
-				}
-				UI.PluginsRunning(plugins)
-				return p.FlagRunning
-			})
-		}
+			if listInstallable() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
-		if listInactive() {
-			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-				newList := make([]*protoNori.PluginListWithStatus, 0)
-				plugins := make([][]string, len(list))
-				for _, l := range list {
-					newList = append(newList, l)
-					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					}
+					UI.PluginsInstallable(plugins)
+					return p.FlagInstallable
+				})
+			}
 
-				}
-				UI.PluginsInactive(plugins)
-				return p.FlagInactive
-			})
-		}
-
-		if listAll() {
-			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-				newList := make([]*protoNori.PluginListWithStatus, 0)
-				plugins := make([][]string, len(list))
-				for _, l := range list {
-					newList = append(newList, l)
-					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-
-				}
-				UI.PluginsAll(plugins)
-				return p.FlagAll
-			})
-		}
-
-		if listError() {
-			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-				newList := make([]*protoNori.PluginListWithStatus, 0)
-				plugins := make([][]string, len(list))
-				for _, l := range list {
-					newList = append(newList, l)
-					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-
-				}
-				UI.PluginsError(plugins)
-				return p.FlagError
-			})
-		}
-
-		if listInstallable() {
-			list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-				newList := make([]*protoNori.PluginListWithStatus, 0)
-				plugins := make([][]string, len(list))
-				for _, l := range list {
-					newList = append(newList, l)
-					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-
-				}
-				UI.PluginsInstallable(plugins)
-				return p.FlagInstallable
-			})
-		}
-
-	},
+		},
+	}
 }
 
 func init() {
-	PluginCmd.AddCommand(lsCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, lsCmd)
+
+}
+
+func setFlagsLs(log logger.Logger) {
+	flags := utils.NewFlagBuilder(PluginCmd(log), lsCmd(log))
 	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                       // TODO
 	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")              // TODO
 	flags.Bool(&listInactive, "inactive", "--inactive", false, "Show plugins that are not running")       // TODO
 	flags.Bool(&listInactive, "installable", "--installable", false, "Show plugins that need to install") // TODO
 	flags.Bool(&listInstalled, "installed", "-i", false, "Show only installed plugins")
 	flags.Bool(&listRunning, "running", "-r", false, "Show only running plugins")
+
 }
