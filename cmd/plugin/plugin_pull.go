@@ -19,9 +19,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
-	//commands "github.com/nori-io/nori/proto"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -35,70 +34,75 @@ var (
 	pullDeps func() bool
 )
 
-var pullCmd = &cobra.Command{
-	Use:   "norictl plugin pull [PLUGIN_ID] [OPTIONS]",
-	Short: "downloading plugin",
-	Long:  `Pull downloads the plugin, with or without it's dependencies.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			log.Fatal(err)
-		}
+func pullCmd (log logger.Logger) *cobra.Command{
+	return &cobra.Command{
+		Use:   "norictl plugin pull [PLUGIN_ID] [OPTIONS]",
+		Short: "downloading plugin",
+		Long:  `Pull downloads the plugin, with or without it's dependencies.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			setFlagsPull(log)
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s",err))
+			}
 
-		if len(args) == 0 {
-			log.Fatal("PLUGIN_ID required!")
-		}
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
 
-		pluginId := args[0]
+			pluginId := args[0]
 
-		pluginIdSplit := strings.Split(pluginId, ":")
-		versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			fmt.Println("Format of plugin's version is incorrect:", err)
-		}
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err = version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
 
-		client, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
 
-		reply, err := client.PluginPullCommand(context.Background(), &protoNori.PluginPullRequest{
-			Id: &protoNori.ID{
-				Id:                   pluginId,
-				Version:              "",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			},
-			FlagDeps:             pullDeps(),
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-
-		close(closeCh)
-		if err != nil {
-			log.Fatal(err)
-			UI.PullFailure(pluginId)
-			if reply != nil {
-				log.Fatal(protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
+			reply, err := client.PluginPullCommand(context.Background(), &protoNori.PluginPullRequest{
+				Id: &protoNori.ID{
+					Id:                   pluginId,
+					Version:              "",
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
-				})
-			}
-		} else {
-			UI.PullFailure(pluginId)
-		}
-	},
-}
+				},
+				FlagDeps:             pullDeps(),
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
 
+			close(closeCh)
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+				UI.PullFailure(pluginId)
+				if reply != nil {
+					log.Fatal(fmt.Sprintf( "%s", protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					}))
+				}
+			} else {
+				UI.PullFailure(pluginId)
+			}
+		},
+	}
+}
+}
 func init() {
-	PluginCmd.AddCommand(pullCmd)
-	flags := utils.NewFlagBuilder(PluginCmd, pullCmd)
+	}
+
+func setFlagsPull(log logger.Logger){
+	flags := utils.NewFlagBuilder(PluginCmd(log), pullCmd(log))
 	flags.Bool(&pullDeps, "pull", "-d", false, "Pull downloads the plugin, with or without it's dependencies.")
 }
