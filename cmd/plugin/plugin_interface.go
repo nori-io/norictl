@@ -18,7 +18,7 @@ package plugin_cmd
 import (
 	"fmt"
 
-	"github.com/sirupsen/logrus"
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -27,46 +27,47 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-var interfaceCmd = &cobra.Command{
-	Use:   "norictl plugin interface [InterfaceName]",
-	Short: "Shows list of plugins that implement specify interface.",
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			logrus.Fatal("InterfaceName required!!!")
-		}
-
-		interfaceName := args[0]
-
-		client, closeCh := client.NewClient(
-			viper.GetString("grpc-address"),
-			viper.GetString("ca"),
-			viper.GetString("ServerHostOverride"),
-		)
-		defer close(closeCh)
-
-		reply, err := client.PluginInterfaceCommand(context.Background(), &protoNori.PluginInterfaceRequest{
-			InterfaceName:        interfaceName,
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
-		})
-		if err != nil {
-			logrus.Fatal(err)
-			if reply != nil {
-				logrus.Fatal(protoNori.ErrorReply{
-					Status:               false,
-					Error:                err.Error(),
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
-				})
+func interfaceCmd(log logger.Logger) *cobra.Command {
+	return &cobra.Command{
+		Use:   "norictl plugin interface [InterfaceName]",
+		Short: "Shows list of plugins that implement specify interface.",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) == 0 {
+				log.Fatal("InterfaceName required!!!")
 			}
-		} else {
-			UI.InterfacePluginList(fmt.Sprintf("%s", reply))
-		}
-	},
+
+			interfaceName := args[0]
+
+			client, closeCh := client.NewClient(
+				viper.GetString("grpc-address"),
+				viper.GetString("ca"),
+				viper.GetString("ServerHostOverride"),
+			)
+			defer close(closeCh)
+
+			reply, err := client.PluginInterfaceCommand(context.Background(), &protoNori.PluginInterfaceRequest{
+				InterfaceName:        interfaceName,
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+			if err != nil {
+				log.Fatal(fmt.Sprintf("%s", err))
+				if reply != nil {
+					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					}))
+				}
+			} else {
+				UI.InterfacePluginList(fmt.Sprintf("%s", reply))
+			}
+		},
+	}
 }
 
 func init() {
-	PluginCmd.AddCommand(installCmd)
 }

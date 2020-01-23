@@ -19,11 +19,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
-	"github.com/nori-io/nori-common/v2/logger"
-
 
 	"github.com/nori-io/norictl/cmd"
 	"github.com/nori-io/norictl/internal/client"
@@ -43,7 +42,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 		Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
 		Run: func(cmd *cobra.Command, args []string) {
-		setFlags(log)
+			setFlagsGet(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				log.Fatal(fmt.Sprintf("%s", err))
@@ -88,7 +87,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 				log.Fatal(fmt.Sprintf("%s", err))
 				UI.GetFailure(pluginId)
 				if reply != nil {
-					log.Fatal(fmt.Sprintf("%s",protoNori.ErrorReply{
+					log.Fatal(fmt.Sprintf("%s", protoNori.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
@@ -107,7 +106,7 @@ func init() {
 
 }
 
-func setFlags(log logger.Logger){
+func setFlagsGet(log logger.Logger) {
 	flags := utils.NewFlagBuilder(PluginCmd(cmd.LoggerNoriCtl), getCmd(log))
 	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
 }
