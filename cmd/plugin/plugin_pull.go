@@ -68,8 +68,8 @@ func pullCmd(log logger.Logger) *cobra.Command {
 
 			reply, err := client.PluginPullCommand(context.Background(), &protoNori.PluginPullRequest{
 				Id: &protoNori.ID{
-					Id:                   pluginId,
-					Version:              "",
+					Id:                   pluginIdSplit[0],
+					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
@@ -94,7 +94,7 @@ func pullCmd(log logger.Logger) *cobra.Command {
 					})
 				}
 			} else {
-				common.UI.PullFailure(pluginId)
+				common.UI.PullSuccess(pluginId)
 			}
 		},
 	}
@@ -105,5 +105,5 @@ func init() {
 
 func setFlagsPull(log logger.Logger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), pullCmd(log))
-	flags.Bool(&pullDeps, "pull", "-d", false, "Pull downloads the plugin, with or without it's dependencies.")
+	flags.Bool(&pullDeps, "deps", "-d", false, "	Download plugin with it's dependencies")
 }

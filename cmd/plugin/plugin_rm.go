@@ -62,8 +62,8 @@ func rmCmd(log logger.Logger) *cobra.Command {
 
 			reply, err := client.PluginRemoveCommand(context.Background(), &protoNori.PluginRemoveRequest{
 				Id: &protoNori.ID{
-					Id:                   pluginId,
-					Version:              "",
+					Id:                   pluginIdSplit[0],
+					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,

@@ -43,6 +43,7 @@ func metaCmd(log logger.Logger) *cobra.Command {
 		Use:   "norictl plugin meta [PLUGIN_ID] [OPTIONS]",
 		Short: "Show plugin meta data.",
 		Run: func(cmd *cobra.Command, args []string) {
+			setFlagsMeta(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				log.Fatal("%s", err)

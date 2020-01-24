@@ -63,8 +63,8 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 
 			reply, err := cli.PluginUninstallCommand(context.Background(), &protoNori.PluginUninstallRequest{
 				Id: &protoNori.ID{
-					Id:                   pluginId,
-					Version:              "",
+					Id:                   pluginIdSplit[0],
+					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,

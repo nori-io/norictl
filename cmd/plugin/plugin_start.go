@@ -67,8 +67,8 @@ func startCmd(log logger.Logger) *cobra.Command {
 
 			reply, err := client.PluginStartCommand(context.Background(), &protoNori.PluginStartRequest{
 				Id: &protoNori.ID{
-					Id:                   pluginId,
-					Version:              "",
+					Id:                   pluginIdSplit[0],
+					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
