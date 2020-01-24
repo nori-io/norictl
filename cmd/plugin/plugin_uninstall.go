@@ -89,7 +89,6 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 				}
 				log.Fatal("%s", err)
 			}
-
 			common.UI.UninstallSuccess(pluginId)
 		},
 	}

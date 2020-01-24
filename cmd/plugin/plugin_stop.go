@@ -40,6 +40,7 @@ func stopCmd(log logger.Logger) *cobra.Command {
 		Use:   "norictl plugin stop [PLUGIN_ID] [OPTIONS]",
 		Short: "Stop plugin's or plugins' execution",
 		Run: func(cmd *cobra.Command, args []string) {
+			setFlagsStop(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				log.Fatal("%s ", err)
