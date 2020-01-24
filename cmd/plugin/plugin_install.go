@@ -86,6 +86,7 @@ func installCmd(log logger.Logger) *cobra.Command {
 			})
 			defer close(closeCh)
 			if err != nil {
+				log.Fatal("%s", err)
 				if reply != nil {
 					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
@@ -96,7 +97,6 @@ func installCmd(log logger.Logger) *cobra.Command {
 					})
 				}
 				common.UI.InstallFailure(pluginId)
-				log.Fatal("%s", err)
 			}
 			common.UI.InstallSuccess(pluginId)
 		},

@@ -148,6 +148,6 @@ func (u *UI) UploadFailure(path string) {
 }
 
 func (u *UI) InterfacePluginList(plugins string) {
-	Green("PLUGINS WITH INTERFACE: Path:  %s\n", plugins)
+	Green("PLUGINS WITH INTERFACE:  %s\n", plugins)
 
 }

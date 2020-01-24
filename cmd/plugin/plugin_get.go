@@ -109,6 +109,6 @@ func init() {
 }
 
 func setFlagsGet(log logger.Logger) {
-	flags := utils.NewFlagBuilder(PluginCmd(common.LoggerNoriCtl), getCmd(log))
+	flags := utils.NewFlagBuilder(PluginCmd(log), getCmd(log))
 	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
 }

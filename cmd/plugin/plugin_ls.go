@@ -123,46 +123,6 @@ func lsCmd(log logger.Logger) *cobra.Command {
 				return newList
 			}
 
-			if listInstalled() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
-					plugins := make([][]string, len(list))
-					for _, l := range list {
-						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-
-					}
-					common.UI.PluginsInstalled(plugins)
-					return p.FlagInstalled
-				})
-			}
-
-			if listRunning() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
-					plugins := make([][]string, len(list))
-					for _, l := range list {
-						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-					}
-					common.UI.PluginsRunning(plugins)
-					return p.FlagRunning
-				})
-			}
-
-			if listInactive() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
-					plugins := make([][]string, len(list))
-					for _, l := range list {
-						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-					}
-					common.UI.PluginsInactive(plugins)
-					return p.FlagInactive
-				})
-			}
-
 			if listAll() {
 				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
 					newList := make([]*protoNori.PluginListWithStatus, 0)
@@ -190,6 +150,19 @@ func lsCmd(log logger.Logger) *cobra.Command {
 				})
 			}
 
+			if listInactive() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					}
+					common.UI.PluginsInactive(plugins)
+					return p.FlagInactive
+				})
+			}
+
 			if listInstallable() {
 				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
 					newList := make([]*protoNori.PluginListWithStatus, 0)
@@ -201,6 +174,33 @@ func lsCmd(log logger.Logger) *cobra.Command {
 					}
 					common.UI.PluginsInstallable(plugins)
 					return p.FlagInstallable
+				})
+			}
+
+			if listInstalled() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+
+					}
+					common.UI.PluginsInstalled(plugins)
+					return p.FlagInstalled
+				})
+			}
+
+			if listRunning() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					}
+					common.UI.PluginsRunning(plugins)
+					return p.FlagRunning
 				})
 			}
 
