@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -79,7 +80,7 @@ func startCmd(log logger.Logger) *cobra.Command {
 			})
 			defer close(closeCh)
 			if err != nil {
-				UI.StartFailure(pluginId)
+				common.UI.StartFailure(pluginId)
 				if reply != nil {
 					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
@@ -91,7 +92,7 @@ func startCmd(log logger.Logger) *cobra.Command {
 				}
 				log.Fatal("%s", err)
 			}
-			UI.StartSuccess(pluginId)
+			common.UI.StartSuccess(pluginId)
 
 		},
 	}

@@ -23,6 +23,7 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
@@ -63,7 +64,7 @@ func interfaceCmd(log logger.Logger) *cobra.Command {
 					})
 				}
 			} else {
-				UI.InterfacePluginList(fmt.Sprintf("%s", reply))
+				common.UI.InterfacePluginList(fmt.Sprintf("%s", reply))
 			}
 		},
 	}

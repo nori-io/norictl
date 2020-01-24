@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -67,8 +68,8 @@ func installCmd(log logger.Logger) *cobra.Command {
 
 			reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
 				Id: &protoNori.ID{
-					Id:                   pluginId,
-					Version:              "",
+					Id:                   pluginIdSplit[0],
+					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
@@ -91,10 +92,10 @@ func installCmd(log logger.Logger) *cobra.Command {
 						XXX_sizecache:        0,
 					})
 				}
-				UI.InstallFailure(pluginId)
+				common.UI.InstallFailure(pluginId)
 				log.Fatal("%s", err)
 			}
-			UI.InstallSuccess(pluginId)
+			common.UI.InstallSuccess(pluginId)
 		},
 	}
 }

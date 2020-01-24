@@ -29,6 +29,7 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+
 )
 
 var (
@@ -53,7 +54,6 @@ func getCmd(log logger.Logger) *cobra.Command {
 			}
 
 			pluginId := args[0]
-
 			pluginIdSplit := strings.Split(pluginId, ":")
 			versionPlugin := pluginIdSplit[1]
 			_, err = version.NewVersion(versionPlugin)
@@ -69,8 +69,8 @@ func getCmd(log logger.Logger) *cobra.Command {
 
 			reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
 				Id: &protoNori.ID{
-					Id:                   pluginId,
-					Version:              "",
+					Id:                   pluginIdSplit[0],
+					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
@@ -85,7 +85,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 
 			if err != nil {
 				log.Fatal("%s", err)
-				UI.GetFailure(pluginId)
+				common.UI.GetFailure(pluginId)
 				if reply != nil {
 					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
@@ -96,7 +96,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 					})
 				}
 			} else {
-				UI.GetSuccess(pluginId)
+				common.UI.GetSuccess(pluginId)
 			}
 		},
 	}

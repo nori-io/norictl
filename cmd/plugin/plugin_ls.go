@@ -23,6 +23,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -112,26 +113,23 @@ func lsCmd(log logger.Logger) *cobra.Command {
 				for _, l := range list {
 					if f(*l) {
 						newList = append(newList, l)
-						plugins := append(plugins, []string{l.MetaID.String(), l.Author.String()})
-						UI.PluginsAll(plugins)
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 					}
 				}
-
+				common.UI.PluginsAll(plugins)
 				return newList
 			}
 
 			if listInstalled() {
 				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
 					newList := make([]*protoNori.PluginListWithStatus, 0)
-
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 					}
-					UI.PluginsInstalled(plugins)
-
+					common.UI.PluginsInstalled(plugins)
 					return p.FlagInstalled
 				})
 			}
@@ -143,9 +141,8 @@ func lsCmd(log logger.Logger) *cobra.Command {
 					for _, l := range list {
 						newList = append(newList, l)
 						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-
 					}
-					UI.PluginsRunning(plugins)
+					common.UI.PluginsRunning(plugins)
 					return p.FlagRunning
 				})
 			}
@@ -157,9 +154,8 @@ func lsCmd(log logger.Logger) *cobra.Command {
 					for _, l := range list {
 						newList = append(newList, l)
 						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-
 					}
-					UI.PluginsInactive(plugins)
+					common.UI.PluginsInactive(plugins)
 					return p.FlagInactive
 				})
 			}
@@ -171,9 +167,8 @@ func lsCmd(log logger.Logger) *cobra.Command {
 					for _, l := range list {
 						newList = append(newList, l)
 						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
-
 					}
-					UI.PluginsAll(plugins)
+					common.UI.PluginsAll(plugins)
 					return p.FlagAll
 				})
 			}
@@ -187,7 +182,7 @@ func lsCmd(log logger.Logger) *cobra.Command {
 						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 					}
-					UI.PluginsError(plugins)
+					common.UI.PluginsError(plugins)
 					return p.FlagError
 				})
 			}
@@ -201,7 +196,7 @@ func lsCmd(log logger.Logger) *cobra.Command {
 						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 					}
-					UI.PluginsInstallable(plugins)
+					common.UI.PluginsInstallable(plugins)
 					return p.FlagInstallable
 				})
 			}
@@ -219,7 +214,7 @@ func setFlagsLs(log logger.Logger) {
 	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                       // TODO
 	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")              // TODO
 	flags.Bool(&listInactive, "inactive", "--inactive", false, "Show plugins that are not running")       // TODO
-	flags.Bool(&listInactive, "installable", "--installable", false, "Show plugins that need to install") // TODO
+	flags.Bool(&listInstallable, "installable", "--installable", false, "Show plugins that need to install") // TODO
 	flags.Bool(&listInstalled, "installed", "-i", false, "Show only installed plugins")
 	flags.Bool(&listRunning, "running", "-r", false, "Show only running plugins")
 

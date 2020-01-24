@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
@@ -87,7 +88,7 @@ func metaCmd(log logger.Logger) *cobra.Command {
 				log.Fatal("%s", err)
 			}
 
-			UI.PluginMetaExist(fmt.Sprintf("%s", reply))
+			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 
 		},
 	}

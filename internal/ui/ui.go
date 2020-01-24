@@ -35,6 +35,7 @@ func (u *UI) InstallFailure(pluginId string) {
 
 func (u *UI) PluginsAll(plugins [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
+
 	table.SetHeader([]string{"Plugin.MetaId", "Author"})
 
 	for _, v := range plugins {

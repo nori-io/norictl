@@ -25,6 +25,7 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
@@ -77,7 +78,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 			defer close(closeCh)
 			if err != nil {
 				if reply != nil {
-					UI.UninstallFailure(pluginId)
+					common.UI.UninstallFailure(pluginId)
 					log.Fatal("%s", protoNori.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
@@ -89,7 +90,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 				log.Fatal("%s", err)
 			}
 
-			UI.UninstallSuccess(pluginId)
+			common.UI.UninstallSuccess(pluginId)
 		},
 	}
 }

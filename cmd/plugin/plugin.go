@@ -19,6 +19,7 @@ import (
 	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/ui"
 )
 
@@ -28,9 +29,10 @@ func PluginCmd(log logger.Logger) *cobra.Command {
 		Use:   "norictl plugin",
 		Short: "norictl plugin COMMAND",
 	}
-	PluginCmd.AddCommand(installCmd(log))
+
 	PluginCmd.AddCommand(getCmd(log))
 	PluginCmd.AddCommand(installCmd(log))
+	PluginCmd.AddCommand(interfaceCmd(log))
 	PluginCmd.AddCommand(lsCmd(log))
 	PluginCmd.AddCommand(metaCmd(log))
 	PluginCmd.AddCommand(pullCmd(log))
@@ -43,8 +45,7 @@ func PluginCmd(log logger.Logger) *cobra.Command {
 
 }
 
-var UI *ui.UI
 
 func init() {
-	UI = ui.NewUI()
+	common.UI = ui.NewUI()
 }

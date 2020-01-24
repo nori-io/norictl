@@ -25,6 +25,7 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
+	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
@@ -73,7 +74,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 				XXX_sizecache:        0,
 			})
 			if err != nil {
-				UI.UploadFailure(path)
+				common.UI.UploadFailure(path)
 				log.Fatal("%s", err)
 				if reply != nil {
 					log.Fatal("%s", protoNori.ErrorReply{
@@ -85,7 +86,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 					})
 				}
 			} else {
-				UI.UploadSuccess(path)
+				common.UI.UploadSuccess(path)
 			}
 		},
 	}
