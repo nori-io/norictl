@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
@@ -29,6 +31,7 @@ import (
 )
 
 func interfaceCmd(log logger.Logger) *cobra.Command {
+
 	return &cobra.Command{
 		Use:   "norictl plugin interface [InterfaceName]",
 		Short: "Shows list of plugins that implement specify interface.",

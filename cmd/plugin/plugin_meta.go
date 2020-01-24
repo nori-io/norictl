@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
@@ -39,6 +41,7 @@ var (
 )
 
 func metaCmd(log logger.Logger) *cobra.Command {
+
 	return &cobra.Command{
 		Use:   "norictl plugin meta [PLUGIN_ID] [OPTIONS]",
 		Short: "Show plugin meta data.",
@@ -88,9 +91,7 @@ func metaCmd(log logger.Logger) *cobra.Command {
 			if err != nil {
 				log.Fatal("%s", err)
 			}
-
 			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
-
 		},
 	}
 }

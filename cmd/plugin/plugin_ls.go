@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
@@ -40,6 +42,7 @@ var (
 )
 
 func lsCmd(log logger.Logger) *cobra.Command {
+
 	return &cobra.Command{
 		Use:     "norictl plugin ls [OPTIONS]",
 		Aliases: []string{"list"},
@@ -126,7 +129,7 @@ func lsCmd(log logger.Logger) *cobra.Command {
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-					plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsInstalled(plugins)
@@ -206,16 +209,14 @@ func lsCmd(log logger.Logger) *cobra.Command {
 }
 
 func init() {
-
 }
 
 func setFlagsLs(log logger.Logger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), lsCmd(log))
-	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                       // TODO
-	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")              // TODO
-	flags.Bool(&listInactive, "inactive", "--inactive", false, "Show plugins that are not running")       // TODO
+	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                          // TODO
+	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")                 // TODO
+	flags.Bool(&listInactive, "inactive", "--inactive", false, "Show plugins that are not running")          // TODO
 	flags.Bool(&listInstallable, "installable", "--installable", false, "Show plugins that need to install") // TODO
 	flags.Bool(&listInstalled, "installed", "-i", false, "Show only installed plugins")
 	flags.Bool(&listRunning, "running", "-r", false, "Show only running plugins")
-
 }

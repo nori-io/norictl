@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
@@ -36,6 +38,7 @@ var (
 )
 
 func startCmd(log logger.Logger) *cobra.Command {
+
 	return &cobra.Command{
 		Use:   "norictl plugin start [PLUGIN_ID] [OPTIONS]",
 		Short: "Start one plugin or all plugins.",
@@ -93,13 +96,11 @@ func startCmd(log logger.Logger) *cobra.Command {
 				log.Fatal("%s", err)
 			}
 			common.UI.StartSuccess(pluginId)
-
 		},
 	}
 }
 
 func init() {
-
 }
 
 func setFlagsStart(log logger.Logger) {

@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
@@ -39,7 +41,6 @@ var (
 func uninstallCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-
 		Use:   "norictl plugin uninstall [PLUGIN_ID] [OPTIONS]",
 		Short: "Uninstall plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -95,7 +96,6 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 }
 
 func init() {
-
 }
 
 func setFlagsUninstall(log logger.Logger) {

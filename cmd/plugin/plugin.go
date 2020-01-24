@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
@@ -42,9 +44,7 @@ func PluginCmd(log logger.Logger) *cobra.Command {
 	PluginCmd.AddCommand(uninstallCmd(log))
 	PluginCmd.AddCommand(uploadCmd(log))
 	return PluginCmd
-
 }
-
 
 func init() {
 	common.UI = ui.NewUI()
