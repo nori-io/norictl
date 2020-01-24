@@ -18,10 +18,7 @@
 package plugin_cmd
 
 import (
-	"os"
-
 	"github.com/nori-io/nori-common/v2/logger"
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -84,9 +81,6 @@ func lsCmd(log logger.Logger) *cobra.Command {
 				}
 				log.Fatal("%s", err)
 			}
-
-			table := tablewriter.NewWriter(os.Stdout)
-			table.SetHeader([]string{"#", "ID", "Name", "Author"})
 
 			list := []*protoNori.PluginListWithStatus{{
 				MetaID:               nil,

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugins"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 	"github.com/nori-io/norictl/internal/ui"
 )
 

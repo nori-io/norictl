@@ -83,6 +83,7 @@ func stopCmd(log logger.Logger) *cobra.Command {
 			})
 			defer close(closeCh)
 			if err != nil {
+				log.Fatal("%s", err)
 				common.UI.StopFailure(pluginId)
 				if reply != nil {
 					log.Fatal("%s", protoNori.ErrorReply{
@@ -93,7 +94,6 @@ func stopCmd(log logger.Logger) *cobra.Command {
 						XXX_sizecache:        0,
 					})
 				}
-				log.Fatal("%s", err)
 			}
 
 			common.UI.StopFailure(pluginId)
