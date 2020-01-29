@@ -17,10 +17,6 @@ import (
 	"github.com/nori-io/norictl/internal/generated/protobuf/config_messages"
 )
 
-var (
-	getVerbose func() bool
-)
-
 func getCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{

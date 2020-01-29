@@ -164,3 +164,11 @@ func (u *UI) ConfigGetSuccess(keyValueMap map[string]string) {
 func (u *UI) ConfigGetFailure(pluginId string) {
 	Red("GET FAILURE: Plugin %q\n", pluginId)
 }
+
+func (u *UI) ConfigSetSuccess(pluginId, key, value string) {
+	Green("SET SUCCESSFUL: Plugin %q, key: %s, value, %s,\n", pluginId, key, value)
+}
+
+func (u *UI) ConfigSetFailure(pluginId, key, value string) {
+	Red("SET FAILURE: Plugin %q, key: %s, value, %s,\n", pluginId, key, value)
+}

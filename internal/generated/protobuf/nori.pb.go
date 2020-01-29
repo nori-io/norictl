@@ -13,10 +13,11 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 
-	common_messages "github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
+	plugin_messages "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
+
 	config_messages "github.com/nori-io/norictl/internal/generated/protobuf/config_messages"
 
-	plugin_messages "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
+	common_messages "github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
