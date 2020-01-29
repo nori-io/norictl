@@ -183,5 +183,5 @@ func (u *UI) ConfigUploadSuccess(keyValueMap map[string]string) {
 }
 
 func (u *UI) ConfigUploadFailure(path string) {
-	Red("Upload FAILURE: Config's path %q\n", path)
+	Red("Upload FAILURE: Config's path: %q\n", path)
 }

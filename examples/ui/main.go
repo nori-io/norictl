@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
 	"github.com/nori-io/norictl/internal/ui"
 )
 
@@ -21,7 +22,7 @@ func main() {
 
 	uiExample.PluginMetaExist(fmt.Sprintf("%v", protoNori.PluginMetaReply{
 		ArrayPluginListWithoutStatus: []*protoNori.PluginListWithoutStatus{&protoNori.PluginListWithoutStatus{
-			MetaID: &protoNori.ID{
+			MetaID: &common_messages.ID{
 				Id:                   "nori/session",
 				Version:              "0.0.6",
 				XXX_NoUnkeyedLiteral: struct{}{},
@@ -48,7 +49,7 @@ func main() {
 			XXX_sizecache:        0,
 		},
 			&protoNori.PluginListWithoutStatus{
-				MetaID: &protoNori.ID{
+				MetaID: &common_messages.ID{
 					Id:                   "nori/session",
 					Version:              "0.0.7",
 					XXX_NoUnkeyedLiteral: struct{}{},
@@ -90,5 +91,12 @@ func main() {
 	uiExample.PluginUninstallFailure("nori/session:0.0.15")
 	uiExample.PluginUploadSuccess("/plugins")
 	uiExample.PluginUploadFailure("/plugins")
+	mapKeyValue := map[string]string{"port": "8080", "address": "http://localhost"}
+	uiExample.ConfigGetSuccess(mapKeyValue)
+	uiExample.ConfigGetFailure("nori/session:0.0.16")
+	uiExample.ConfigSetSuccess("nori/session:0.0.17", "port", "8080")
+	uiExample.ConfigSetFailure("nori/session:0.0.18", "port", "0000")
+	uiExample.ConfigUploadSuccess(mapKeyValue)
+	uiExample.ConfigUploadFailure("/path")
 
 }
