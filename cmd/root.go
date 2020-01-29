@@ -24,6 +24,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/nori-io/norictl/cmd/common"
+	config_cmd "github.com/nori-io/norictl/cmd/config"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -64,6 +65,7 @@ func init() {
 	flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
 
 	rootCmd.AddCommand(plugin_cmd.PluginCmd(common.LoggerNoriCtl))
+	rootCmd.AddCommand(config_cmd.ConfigCmd(common.LoggerNoriCtl))
 	rootCmd.AddCommand(certs_cmd.CertsCmd)
 	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }

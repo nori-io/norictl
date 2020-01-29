@@ -172,3 +172,16 @@ func (u *UI) ConfigSetSuccess(pluginId, key, value string) {
 func (u *UI) ConfigSetFailure(pluginId, key, value string) {
 	Red("SET FAILURE: Plugin %q, key: %s, value, %s,\n", pluginId, key, value)
 }
+
+func (u *UI) ConfigUploadSuccess(keyValueMap map[string]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Key", "Value"})
+	for key, value := range keyValueMap {
+		table.Append([]string{key, value})
+	}
+	table.Render() // Send output
+}
+
+func (u *UI) ConfigUploadFailure(path string) {
+	Red("Upload FAILURE: Config's path %q\n", path)
+}
