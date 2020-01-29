@@ -85,7 +85,7 @@ func stopCmd(log logger.Logger) *cobra.Command {
 			defer close(closeCh)
 			if err != nil {
 				log.Fatal("%s", err)
-				common.UI.StopFailure(pluginId)
+				common.UI.PluginStopFailure(pluginId)
 				if reply != nil {
 					log.Fatal("%s", common_messages.ErrorReply{
 						Status:               false,
@@ -97,7 +97,7 @@ func stopCmd(log logger.Logger) *cobra.Command {
 				}
 			}
 
-			common.UI.StopFailure(pluginId)
+			common.UI.PluginStopFailure(pluginId)
 		},
 	}
 }

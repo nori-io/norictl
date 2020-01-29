@@ -80,7 +80,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 			defer close(closeCh)
 			if err != nil {
 				if reply != nil {
-					common.UI.UninstallFailure(pluginId)
+					common.UI.PluginUninstallFailure(pluginId)
 					log.Fatal("%s", common_messages.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
@@ -91,7 +91,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 				}
 				log.Fatal("%s", err)
 			}
-			common.UI.UninstallSuccess(pluginId)
+			common.UI.PluginUninstallSuccess(pluginId)
 		},
 	}
 }

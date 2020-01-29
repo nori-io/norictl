@@ -78,7 +78,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 				XXX_sizecache:        0,
 			})
 			if err != nil {
-				common.UI.UploadFailure(path)
+				common.UI.PluginUploadFailure(path)
 				log.Fatal("%s", err)
 				if reply != nil {
 					log.Fatal("%s", common_messages.ErrorReply{
@@ -90,7 +90,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 					})
 				}
 			} else {
-				common.UI.UploadSuccess(path)
+				common.UI.PluginUploadSuccess(path)
 			}
 		},
 	}

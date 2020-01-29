@@ -97,9 +97,9 @@ func installCmd(log logger.Logger) *cobra.Command {
 						XXX_sizecache:        0,
 					})
 				}
-				common.UI.InstallFailure(pluginId)
+				common.UI.PluginInstallFailure(pluginId)
 			}
-			common.UI.InstallSuccess(pluginId)
+			common.UI.PluginInstallSuccess(pluginId)
 		},
 	}
 }

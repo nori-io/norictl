@@ -88,7 +88,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 
 			if err != nil {
 				log.Fatal("%s", err)
-				common.UI.GetFailure(pluginId)
+				common.UI.PluginGetFailure(pluginId)
 				if reply != nil {
 					log.Fatal("%s", common_messages.ErrorReply{
 						Status:               false,
@@ -99,7 +99,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 					})
 				}
 			} else {
-				common.UI.GetSuccess(pluginId)
+				common.UI.PluginGetSuccess(pluginId)
 			}
 		},
 	}
