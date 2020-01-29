@@ -30,7 +30,8 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
 )
 
 var (
@@ -63,7 +64,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 			)
 
 			reply, err := cli.PluginUninstallCommand(context.Background(), &protoNori.PluginUninstallRequest{
-				Id: &protoNori.ID{
+				Id: &common_messages.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
@@ -80,7 +81,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 			if err != nil {
 				if reply != nil {
 					common.UI.UninstallFailure(pluginId)
-					log.Fatal("%s", protoNori.ErrorReply{
+					log.Fatal("%s", common_messages.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},

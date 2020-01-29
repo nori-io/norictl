@@ -26,7 +26,8 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
 )
 
 var (
@@ -71,7 +72,7 @@ func lsCmd(log logger.Logger) *cobra.Command {
 			close(closeCh)
 			if err != nil {
 				if reply != nil {
-					log.Fatal("%s", protoNori.ErrorReply{
+					log.Fatal("%s", common_messages.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},

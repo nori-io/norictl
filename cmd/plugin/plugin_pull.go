@@ -30,7 +30,8 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
 )
 
 var (
@@ -70,7 +71,7 @@ func pullCmd(log logger.Logger) *cobra.Command {
 			)
 
 			reply, err := client.PluginPullCommand(context.Background(), &protoNori.PluginPullRequest{
-				Id: &protoNori.ID{
+				Id: &common_messages.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
@@ -88,7 +89,7 @@ func pullCmd(log logger.Logger) *cobra.Command {
 				log.Fatal("%s", err)
 				common.UI.PullFailure(pluginId)
 				if reply != nil {
-					log.Fatal("%s", protoNori.ErrorReply{
+					log.Fatal("%s", common_messages.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},

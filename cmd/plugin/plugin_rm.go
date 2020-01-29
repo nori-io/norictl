@@ -29,7 +29,8 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
 )
 
 func rmCmd(log logger.Logger) *cobra.Command {
@@ -64,7 +65,7 @@ func rmCmd(log logger.Logger) *cobra.Command {
 			)
 
 			reply, err := client.PluginRemoveCommand(context.Background(), &protoNori.PluginRemoveRequest{
-				Id: &protoNori.ID{
+				Id: &common_messages.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
@@ -81,7 +82,7 @@ func rmCmd(log logger.Logger) *cobra.Command {
 				common.UI.RmFailure(pluginId)
 				log.Fatal("%s", err)
 				if reply != nil {
-					log.Fatal("%s", protoNori.ErrorReply{
+					log.Fatal("%s", common_messages.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
