@@ -13,8 +13,8 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
-	"github.com/nori-io/norictl/internal/generated/protobuf/config_messages"
+	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
+	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 )
 
 func getCmd(log logger.Logger) *cobra.Command {
@@ -47,8 +47,8 @@ func getCmd(log logger.Logger) *cobra.Command {
 				"",
 			)
 
-			reply, err := client.ConfigGetCommand(context.Background(), &config_messages.ConfigGetRequest{
-				Id: &common_messages.ID{
+			reply, err := client.ConfigGetCommand(context.Background(), &config.ConfigGetRequest{
+				Id: &commonProtoGenerated.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
@@ -66,7 +66,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 				log.Fatal("%s", err)
 				common.UI.ConfigGetFailure(pluginId)
 				if reply != nil {
-					log.Fatal("%s", common_messages.ErrorReply{
+					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},

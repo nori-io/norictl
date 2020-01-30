@@ -30,8 +30,8 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
+	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
@@ -71,7 +71,7 @@ func installCmd(log logger.Logger) *cobra.Command {
 			)
 
 			reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
-				Id: &common_messages.ID{
+				Id: &commonProtoGenerated.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 					XXX_NoUnkeyedLiteral: struct{}{},
@@ -89,7 +89,7 @@ func installCmd(log logger.Logger) *cobra.Command {
 			if err != nil {
 				log.Fatal("%s", err)
 				if reply != nil {
-					log.Fatal("%s", common_messages.ErrorReply{
+					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},

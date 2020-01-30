@@ -8,16 +8,16 @@ import (
 	fmt "fmt"
 	math "math"
 
+	plugin "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 
-	plugin_messages "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
+	config "github.com/nori-io/norictl/internal/generated/protobuf/config"
 
-	config_messages "github.com/nori-io/norictl/internal/generated/protobuf/config_messages"
-
-	common_messages "github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
+	common "github.com/nori-io/norictl/internal/generated/protobuf/common"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -34,30 +34,29 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 func init() { proto.RegisterFile("nori.proto", fileDescriptor_05be84f81a338c15) }
 
 var fileDescriptor_05be84f81a338c15 = []byte{
-	// 360 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x94, 0x4f, 0x4b, 0xc3, 0x30,
-	0x18, 0xc6, 0x3d, 0x88, 0x87, 0xf7, 0x34, 0x3b, 0xf1, 0x30, 0xc1, 0x3f, 0xd3, 0xe1, 0xad, 0x82,
-	0x7e, 0x84, 0x21, 0x22, 0xa8, 0x8c, 0xd5, 0x89, 0xa8, 0x30, 0xe3, 0x96, 0x8d, 0x42, 0x93, 0xd4,
-	0x24, 0x15, 0xfc, 0x22, 0x7e, 0x5e, 0x69, 0xb2, 0xa4, 0x36, 0x98, 0x25, 0x7a, 0xda, 0x92, 0xfe,
-	0x9e, 0xdf, 0x5b, 0x1e, 0xd2, 0x00, 0x50, 0xc6, 0xf3, 0xb4, 0xe4, 0x4c, 0xb2, 0x04, 0xd4, 0xcf,
-	0xb4, 0xde, 0xe9, 0xed, 0x97, 0x45, 0xb5, 0xcc, 0xe9, 0x94, 0x60, 0x21, 0xd0, 0x12, 0x8b, 0x33,
-	0xf3, 0x47, 0xb3, 0xbd, 0xc1, 0x8c, 0xd1, 0x45, 0xbe, 0x6c, 0x9e, 0x3b, 0xeb, 0x06, 0x23, 0x84,
-	0xd1, 0x9f, 0x58, 0x6b, 0xad, 0xb1, 0xf3, 0x2f, 0x80, 0xcd, 0x3b, 0xc6, 0xf3, 0xe4, 0x1e, 0x3a,
-	0x23, 0x35, 0xf8, 0x0a, 0xcb, 0x21, 0x23, 0x04, 0xd1, 0x79, 0x72, 0x94, 0x3a, 0xef, 0x92, 0x5a,
-	0x64, 0x8c, 0xdf, 0x2b, 0x2c, 0x64, 0x6f, 0x2f, 0x75, 0xbd, 0x97, 0x9c, 0x33, 0x3e, 0xc6, 0x65,
-	0xf1, 0xd9, 0xdf, 0x48, 0x5e, 0x60, 0x47, 0x47, 0xae, 0xa9, 0x90, 0xa8, 0x28, 0x8c, 0x79, 0xe0,
-	0x31, 0xaf, 0xb0, 0x48, 0x3b, 0x86, 0x5d, 0x13, 0x93, 0x98, 0x2f, 0xd0, 0x0c, 0x1b, 0xff, 0xa9,
-	0xd7, 0xbf, 0x02, 0xcd, 0x84, 0x43, 0x0f, 0x78, 0x93, 0x0b, 0x69, 0xc6, 0x3c, 0xc3, 0x76, 0xb3,
-	0x69, 0x26, 0xf4, 0xd7, 0x06, 0xff, 0x21, 0xbf, 0xc5, 0x12, 0x85, 0xe4, 0x35, 0x13, 0x92, 0x6b,
-	0x46, 0xcb, 0x1f, 0x8c, 0x7c, 0x54, 0x35, 0xdd, 0xfb, 0xe4, 0x35, 0x13, 0x59, 0xfc, 0x13, 0x74,
-	0x75, 0x66, 0x8c, 0x09, 0xfb, 0xb0, 0xad, 0x9f, 0x78, 0xcc, 0x9a, 0x8a, 0x74, 0x3f, 0x42, 0xa2,
-	0x53, 0x99, 0x44, 0xdc, 0xd6, 0x7d, 0xec, 0x51, 0x2b, 0x28, 0xd2, 0x6c, 0xdb, 0xc8, 0x24, 0x2b,
-	0x43, 0x6d, 0xd4, 0x4c, 0xa4, 0xf7, 0xd5, 0x1c, 0xc3, 0x09, 0xcd, 0xdb, 0xc7, 0xdc, 0x77, 0x0c,
-	0x2d, 0xf8, 0xd7, 0xbe, 0x27, 0x65, 0xc1, 0xd0, 0x3c, 0xd4, 0xb7, 0xa6, 0xa2, 0xfb, 0xee, 0x0c,
-	0xd5, 0x0d, 0xd2, 0xfa, 0xf0, 0xdd, 0x4b, 0xc5, 0x22, 0xc6, 0x7a, 0xb0, 0x0e, 0x71, 0xcc, 0x59,
-	0xd8, 0x9c, 0x85, 0xcd, 0x59, 0x63, 0x46, 0xd0, 0xd5, 0x7b, 0x6e, 0x1f, 0xbf, 0x27, 0xdb, 0x7d,
-	0xf4, 0x03, 0x94, 0x1a, 0xf1, 0xb6, 0xa5, 0xee, 0xc7, 0x8b, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0x42, 0xbd, 0x9a, 0x52, 0xa7, 0x05, 0x00, 0x00,
+	// 339 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x94, 0xdf, 0x4a, 0xc3, 0x30,
+	0x14, 0x87, 0xbd, 0x10, 0x91, 0x5c, 0xcd, 0x54, 0xa6, 0xab, 0xe2, 0x85, 0x0f, 0xb0, 0x82, 0xbe,
+	0x81, 0xf3, 0xdf, 0x44, 0xe7, 0x68, 0xd8, 0xb5, 0xc4, 0x2d, 0x1b, 0x81, 0x36, 0xa9, 0x69, 0x2a,
+	0xf8, 0x2a, 0x3e, 0xad, 0x34, 0xa7, 0x49, 0x49, 0x69, 0xea, 0xae, 0x0e, 0x9c, 0xef, 0xf4, 0x83,
+	0xf3, 0x23, 0xa7, 0x08, 0x09, 0xa9, 0xf8, 0xb4, 0x50, 0x52, 0x4b, 0x8c, 0x4c, 0xf9, 0xa8, 0x3b,
+	0x71, 0x54, 0x64, 0xd5, 0x8e, 0x8b, 0x04, 0x0a, 0x0c, 0xc4, 0xd1, 0x5a, 0x8a, 0x2d, 0xdf, 0x25,
+	0x50, 0xda, 0x66, 0x9e, 0x4b, 0x91, 0x40, 0x81, 0xe6, 0xcd, 0xef, 0x31, 0x3a, 0x5c, 0x48, 0xc5,
+	0xf1, 0x1d, 0x1a, 0x2d, 0x8d, 0xe2, 0x89, 0xe9, 0x99, 0xcc, 0x73, 0x2a, 0x36, 0xf8, 0x7c, 0xda,
+	0x58, 0x1d, 0x49, 0xd9, 0x57, 0xc5, 0x4a, 0x1d, 0xe3, 0x69, 0x63, 0x79, 0x50, 0x4a, 0xaa, 0x94,
+	0x15, 0xd9, 0xcf, 0xf5, 0x01, 0x7e, 0x41, 0xa7, 0x30, 0x39, 0x17, 0xa5, 0xa6, 0x59, 0x66, 0x3d,
+	0x97, 0xbe, 0xa7, 0xa1, 0xc3, 0x2e, 0x82, 0xc6, 0x76, 0x5a, 0x33, 0xb5, 0xa5, 0x6b, 0x66, 0x6d,
+	0x57, 0x5d, 0x5b, 0xc3, 0xad, 0xef, 0xcc, 0xe7, 0xaf, 0xbc, 0xd4, 0x56, 0x3a, 0x47, 0x27, 0x6d,
+	0xd3, 0xfa, 0x26, 0x7d, 0xf3, 0xfb, 0xab, 0xde, 0x98, 0xa6, 0x01, 0x55, 0x8d, 0x02, 0x2a, 0x40,
+	0xa0, 0xba, 0xb7, 0xaa, 0x65, 0xd5, 0x66, 0xd6, 0x51, 0xd5, 0x68, 0x38, 0xb0, 0x67, 0x14, 0xc1,
+	0x68, 0xca, 0x72, 0xf9, 0xed, 0xd2, 0xba, 0xf0, 0x3d, 0x00, 0x87, 0x4d, 0x8f, 0x08, 0xc3, 0x30,
+	0xd1, 0x54, 0xb9, 0x98, 0x62, 0x5f, 0x64, 0xd8, 0xb0, 0xc7, 0xed, 0x45, 0xb4, 0x2c, 0x02, 0x7b,
+	0xd5, 0x68, 0xd8, 0xb2, 0xb0, 0x0f, 0x61, 0x25, 0xb8, 0xff, 0xac, 0x3a, 0x0f, 0xc1, 0xf1, 0x3d,
+	0x73, 0x5a, 0x15, 0x99, 0xa4, 0x9b, 0x40, 0x4e, 0x00, 0xff, 0xcb, 0x69, 0x34, 0x33, 0x07, 0xe6,
+	0x9d, 0x4c, 0x73, 0x73, 0x8e, 0x58, 0xc7, 0xb8, 0x87, 0x74, 0x3c, 0x24, 0xe8, 0x21, 0x41, 0x0f,
+	0x69, 0x3d, 0xef, 0x28, 0x82, 0x5e, 0x77, 0x33, 0xef, 0x03, 0x7f, 0xb3, 0x49, 0x3f, 0x34, 0xc2,
+	0xcf, 0x23, 0xf3, 0x8f, 0xb8, 0xfd, 0x0b, 0x00, 0x00, 0xff, 0xff, 0x4c, 0x8d, 0x63, 0xbb, 0x7c,
+	0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -73,21 +72,21 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type NoriClient interface {
 	//plugin
-	PluginGetCommand(ctx context.Context, in *plugin_messages.PluginGetRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
-	PluginInstallCommand(ctx context.Context, in *plugin_messages.PluginInstallRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
-	PluginInterfaceCommand(ctx context.Context, in *plugin_messages.PluginInterfaceRequest, opts ...grpc.CallOption) (*plugin_messages.PluginListReply, error)
-	PluginListCommand(ctx context.Context, in *plugin_messages.PluginListRequest, opts ...grpc.CallOption) (*plugin_messages.PluginListReply, error)
-	PluginMetaCommand(ctx context.Context, in *plugin_messages.PluginMetaRequest, opts ...grpc.CallOption) (*plugin_messages.PluginMetaReply, error)
-	PluginPullCommand(ctx context.Context, in *plugin_messages.PluginPullRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
-	PluginRemoveCommand(ctx context.Context, in *plugin_messages.PluginRemoveRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
-	PluginStartCommand(ctx context.Context, in *plugin_messages.PluginStartRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
-	PluginStopCommand(ctx context.Context, in *plugin_messages.PluginStopRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
-	PluginUninstallCommand(ctx context.Context, in *plugin_messages.PluginUninstallRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
-	PluginUploadCommand(ctx context.Context, in *plugin_messages.PluginUploadRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error)
+	PluginGetCommand(ctx context.Context, in *plugin.PluginGetRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
+	PluginInstallCommand(ctx context.Context, in *plugin.PluginInstallRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
+	PluginInterfaceCommand(ctx context.Context, in *plugin.PluginInterfaceRequest, opts ...grpc.CallOption) (*plugin.PluginListReply, error)
+	PluginListCommand(ctx context.Context, in *plugin.PluginListRequest, opts ...grpc.CallOption) (*plugin.PluginListReply, error)
+	PluginMetaCommand(ctx context.Context, in *plugin.PluginMetaRequest, opts ...grpc.CallOption) (*plugin.PluginMetaReply, error)
+	PluginPullCommand(ctx context.Context, in *plugin.PluginPullRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
+	PluginRemoveCommand(ctx context.Context, in *plugin.PluginRemoveRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
+	PluginStartCommand(ctx context.Context, in *plugin.PluginStartRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
+	PluginStopCommand(ctx context.Context, in *plugin.PluginStopRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
+	PluginUninstallCommand(ctx context.Context, in *plugin.PluginUninstallRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
+	PluginUploadCommand(ctx context.Context, in *plugin.PluginUploadRequest, opts ...grpc.CallOption) (*common.ErrorReply, error)
 	//config
-	ConfigGetCommand(ctx context.Context, in *config_messages.ConfigGetRequest, opts ...grpc.CallOption) (*config_messages.ConfigGetReply, error)
-	ConfigSetCommand(ctx context.Context, in *config_messages.ConfigSetRequest, opts ...grpc.CallOption) (*config_messages.ConfigSetReply, error)
-	ConfigUploadCommand(ctx context.Context, in *config_messages.ConfigUploadRequest, opts ...grpc.CallOption) (*config_messages.ConfigUploadReply, error)
+	ConfigGetCommand(ctx context.Context, in *config.ConfigGetRequest, opts ...grpc.CallOption) (*config.ConfigGetReply, error)
+	ConfigSetCommand(ctx context.Context, in *config.ConfigSetRequest, opts ...grpc.CallOption) (*config.ConfigSetReply, error)
+	ConfigUploadCommand(ctx context.Context, in *config.ConfigUploadRequest, opts ...grpc.CallOption) (*config.ConfigUploadReply, error)
 }
 
 type noriClient struct {
@@ -98,8 +97,8 @@ func NewNoriClient(cc *grpc.ClientConn) NoriClient {
 	return &noriClient{cc}
 }
 
-func (c *noriClient) PluginGetCommand(ctx context.Context, in *plugin_messages.PluginGetRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginGetCommand(ctx context.Context, in *plugin.PluginGetRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginGetCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -107,8 +106,8 @@ func (c *noriClient) PluginGetCommand(ctx context.Context, in *plugin_messages.P
 	return out, nil
 }
 
-func (c *noriClient) PluginInstallCommand(ctx context.Context, in *plugin_messages.PluginInstallRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginInstallCommand(ctx context.Context, in *plugin.PluginInstallRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginInstallCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -116,8 +115,8 @@ func (c *noriClient) PluginInstallCommand(ctx context.Context, in *plugin_messag
 	return out, nil
 }
 
-func (c *noriClient) PluginInterfaceCommand(ctx context.Context, in *plugin_messages.PluginInterfaceRequest, opts ...grpc.CallOption) (*plugin_messages.PluginListReply, error) {
-	out := new(plugin_messages.PluginListReply)
+func (c *noriClient) PluginInterfaceCommand(ctx context.Context, in *plugin.PluginInterfaceRequest, opts ...grpc.CallOption) (*plugin.PluginListReply, error) {
+	out := new(plugin.PluginListReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginInterfaceCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -125,8 +124,8 @@ func (c *noriClient) PluginInterfaceCommand(ctx context.Context, in *plugin_mess
 	return out, nil
 }
 
-func (c *noriClient) PluginListCommand(ctx context.Context, in *plugin_messages.PluginListRequest, opts ...grpc.CallOption) (*plugin_messages.PluginListReply, error) {
-	out := new(plugin_messages.PluginListReply)
+func (c *noriClient) PluginListCommand(ctx context.Context, in *plugin.PluginListRequest, opts ...grpc.CallOption) (*plugin.PluginListReply, error) {
+	out := new(plugin.PluginListReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginListCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -134,8 +133,8 @@ func (c *noriClient) PluginListCommand(ctx context.Context, in *plugin_messages.
 	return out, nil
 }
 
-func (c *noriClient) PluginMetaCommand(ctx context.Context, in *plugin_messages.PluginMetaRequest, opts ...grpc.CallOption) (*plugin_messages.PluginMetaReply, error) {
-	out := new(plugin_messages.PluginMetaReply)
+func (c *noriClient) PluginMetaCommand(ctx context.Context, in *plugin.PluginMetaRequest, opts ...grpc.CallOption) (*plugin.PluginMetaReply, error) {
+	out := new(plugin.PluginMetaReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginMetaCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -143,8 +142,8 @@ func (c *noriClient) PluginMetaCommand(ctx context.Context, in *plugin_messages.
 	return out, nil
 }
 
-func (c *noriClient) PluginPullCommand(ctx context.Context, in *plugin_messages.PluginPullRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginPullCommand(ctx context.Context, in *plugin.PluginPullRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginPullCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -152,8 +151,8 @@ func (c *noriClient) PluginPullCommand(ctx context.Context, in *plugin_messages.
 	return out, nil
 }
 
-func (c *noriClient) PluginRemoveCommand(ctx context.Context, in *plugin_messages.PluginRemoveRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginRemoveCommand(ctx context.Context, in *plugin.PluginRemoveRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginRemoveCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -161,8 +160,8 @@ func (c *noriClient) PluginRemoveCommand(ctx context.Context, in *plugin_message
 	return out, nil
 }
 
-func (c *noriClient) PluginStartCommand(ctx context.Context, in *plugin_messages.PluginStartRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginStartCommand(ctx context.Context, in *plugin.PluginStartRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginStartCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -170,8 +169,8 @@ func (c *noriClient) PluginStartCommand(ctx context.Context, in *plugin_messages
 	return out, nil
 }
 
-func (c *noriClient) PluginStopCommand(ctx context.Context, in *plugin_messages.PluginStopRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginStopCommand(ctx context.Context, in *plugin.PluginStopRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginStopCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -179,8 +178,8 @@ func (c *noriClient) PluginStopCommand(ctx context.Context, in *plugin_messages.
 	return out, nil
 }
 
-func (c *noriClient) PluginUninstallCommand(ctx context.Context, in *plugin_messages.PluginUninstallRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginUninstallCommand(ctx context.Context, in *plugin.PluginUninstallRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginUninstallCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -188,8 +187,8 @@ func (c *noriClient) PluginUninstallCommand(ctx context.Context, in *plugin_mess
 	return out, nil
 }
 
-func (c *noriClient) PluginUploadCommand(ctx context.Context, in *plugin_messages.PluginUploadRequest, opts ...grpc.CallOption) (*common_messages.ErrorReply, error) {
-	out := new(common_messages.ErrorReply)
+func (c *noriClient) PluginUploadCommand(ctx context.Context, in *plugin.PluginUploadRequest, opts ...grpc.CallOption) (*common.ErrorReply, error) {
+	out := new(common.ErrorReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/PluginUploadCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -197,8 +196,8 @@ func (c *noriClient) PluginUploadCommand(ctx context.Context, in *plugin_message
 	return out, nil
 }
 
-func (c *noriClient) ConfigGetCommand(ctx context.Context, in *config_messages.ConfigGetRequest, opts ...grpc.CallOption) (*config_messages.ConfigGetReply, error) {
-	out := new(config_messages.ConfigGetReply)
+func (c *noriClient) ConfigGetCommand(ctx context.Context, in *config.ConfigGetRequest, opts ...grpc.CallOption) (*config.ConfigGetReply, error) {
+	out := new(config.ConfigGetReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/ConfigGetCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -206,8 +205,8 @@ func (c *noriClient) ConfigGetCommand(ctx context.Context, in *config_messages.C
 	return out, nil
 }
 
-func (c *noriClient) ConfigSetCommand(ctx context.Context, in *config_messages.ConfigSetRequest, opts ...grpc.CallOption) (*config_messages.ConfigSetReply, error) {
-	out := new(config_messages.ConfigSetReply)
+func (c *noriClient) ConfigSetCommand(ctx context.Context, in *config.ConfigSetRequest, opts ...grpc.CallOption) (*config.ConfigSetReply, error) {
+	out := new(config.ConfigSetReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/ConfigSetCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -215,8 +214,8 @@ func (c *noriClient) ConfigSetCommand(ctx context.Context, in *config_messages.C
 	return out, nil
 }
 
-func (c *noriClient) ConfigUploadCommand(ctx context.Context, in *config_messages.ConfigUploadRequest, opts ...grpc.CallOption) (*config_messages.ConfigUploadReply, error) {
-	out := new(config_messages.ConfigUploadReply)
+func (c *noriClient) ConfigUploadCommand(ctx context.Context, in *config.ConfigUploadRequest, opts ...grpc.CallOption) (*config.ConfigUploadReply, error) {
+	out := new(config.ConfigUploadReply)
 	err := c.cc.Invoke(ctx, "/proto_nori.Nori/ConfigUploadCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -227,67 +226,67 @@ func (c *noriClient) ConfigUploadCommand(ctx context.Context, in *config_message
 // NoriServer is the server API for Nori service.
 type NoriServer interface {
 	//plugin
-	PluginGetCommand(context.Context, *plugin_messages.PluginGetRequest) (*common_messages.ErrorReply, error)
-	PluginInstallCommand(context.Context, *plugin_messages.PluginInstallRequest) (*common_messages.ErrorReply, error)
-	PluginInterfaceCommand(context.Context, *plugin_messages.PluginInterfaceRequest) (*plugin_messages.PluginListReply, error)
-	PluginListCommand(context.Context, *plugin_messages.PluginListRequest) (*plugin_messages.PluginListReply, error)
-	PluginMetaCommand(context.Context, *plugin_messages.PluginMetaRequest) (*plugin_messages.PluginMetaReply, error)
-	PluginPullCommand(context.Context, *plugin_messages.PluginPullRequest) (*common_messages.ErrorReply, error)
-	PluginRemoveCommand(context.Context, *plugin_messages.PluginRemoveRequest) (*common_messages.ErrorReply, error)
-	PluginStartCommand(context.Context, *plugin_messages.PluginStartRequest) (*common_messages.ErrorReply, error)
-	PluginStopCommand(context.Context, *plugin_messages.PluginStopRequest) (*common_messages.ErrorReply, error)
-	PluginUninstallCommand(context.Context, *plugin_messages.PluginUninstallRequest) (*common_messages.ErrorReply, error)
-	PluginUploadCommand(context.Context, *plugin_messages.PluginUploadRequest) (*common_messages.ErrorReply, error)
+	PluginGetCommand(context.Context, *plugin.PluginGetRequest) (*common.ErrorReply, error)
+	PluginInstallCommand(context.Context, *plugin.PluginInstallRequest) (*common.ErrorReply, error)
+	PluginInterfaceCommand(context.Context, *plugin.PluginInterfaceRequest) (*plugin.PluginListReply, error)
+	PluginListCommand(context.Context, *plugin.PluginListRequest) (*plugin.PluginListReply, error)
+	PluginMetaCommand(context.Context, *plugin.PluginMetaRequest) (*plugin.PluginMetaReply, error)
+	PluginPullCommand(context.Context, *plugin.PluginPullRequest) (*common.ErrorReply, error)
+	PluginRemoveCommand(context.Context, *plugin.PluginRemoveRequest) (*common.ErrorReply, error)
+	PluginStartCommand(context.Context, *plugin.PluginStartRequest) (*common.ErrorReply, error)
+	PluginStopCommand(context.Context, *plugin.PluginStopRequest) (*common.ErrorReply, error)
+	PluginUninstallCommand(context.Context, *plugin.PluginUninstallRequest) (*common.ErrorReply, error)
+	PluginUploadCommand(context.Context, *plugin.PluginUploadRequest) (*common.ErrorReply, error)
 	//config
-	ConfigGetCommand(context.Context, *config_messages.ConfigGetRequest) (*config_messages.ConfigGetReply, error)
-	ConfigSetCommand(context.Context, *config_messages.ConfigSetRequest) (*config_messages.ConfigSetReply, error)
-	ConfigUploadCommand(context.Context, *config_messages.ConfigUploadRequest) (*config_messages.ConfigUploadReply, error)
+	ConfigGetCommand(context.Context, *config.ConfigGetRequest) (*config.ConfigGetReply, error)
+	ConfigSetCommand(context.Context, *config.ConfigSetRequest) (*config.ConfigSetReply, error)
+	ConfigUploadCommand(context.Context, *config.ConfigUploadRequest) (*config.ConfigUploadReply, error)
 }
 
 // UnimplementedNoriServer can be embedded to have forward compatible implementations.
 type UnimplementedNoriServer struct {
 }
 
-func (*UnimplementedNoriServer) PluginGetCommand(ctx context.Context, req *plugin_messages.PluginGetRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginGetCommand(ctx context.Context, req *plugin.PluginGetRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginGetCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginInstallCommand(ctx context.Context, req *plugin_messages.PluginInstallRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginInstallCommand(ctx context.Context, req *plugin.PluginInstallRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginInstallCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginInterfaceCommand(ctx context.Context, req *plugin_messages.PluginInterfaceRequest) (*plugin_messages.PluginListReply, error) {
+func (*UnimplementedNoriServer) PluginInterfaceCommand(ctx context.Context, req *plugin.PluginInterfaceRequest) (*plugin.PluginListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginInterfaceCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginListCommand(ctx context.Context, req *plugin_messages.PluginListRequest) (*plugin_messages.PluginListReply, error) {
+func (*UnimplementedNoriServer) PluginListCommand(ctx context.Context, req *plugin.PluginListRequest) (*plugin.PluginListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginListCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginMetaCommand(ctx context.Context, req *plugin_messages.PluginMetaRequest) (*plugin_messages.PluginMetaReply, error) {
+func (*UnimplementedNoriServer) PluginMetaCommand(ctx context.Context, req *plugin.PluginMetaRequest) (*plugin.PluginMetaReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginMetaCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginPullCommand(ctx context.Context, req *plugin_messages.PluginPullRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginPullCommand(ctx context.Context, req *plugin.PluginPullRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginPullCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginRemoveCommand(ctx context.Context, req *plugin_messages.PluginRemoveRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginRemoveCommand(ctx context.Context, req *plugin.PluginRemoveRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginRemoveCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginStartCommand(ctx context.Context, req *plugin_messages.PluginStartRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginStartCommand(ctx context.Context, req *plugin.PluginStartRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginStartCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginStopCommand(ctx context.Context, req *plugin_messages.PluginStopRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginStopCommand(ctx context.Context, req *plugin.PluginStopRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginStopCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginUninstallCommand(ctx context.Context, req *plugin_messages.PluginUninstallRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginUninstallCommand(ctx context.Context, req *plugin.PluginUninstallRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginUninstallCommand not implemented")
 }
-func (*UnimplementedNoriServer) PluginUploadCommand(ctx context.Context, req *plugin_messages.PluginUploadRequest) (*common_messages.ErrorReply, error) {
+func (*UnimplementedNoriServer) PluginUploadCommand(ctx context.Context, req *plugin.PluginUploadRequest) (*common.ErrorReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginUploadCommand not implemented")
 }
-func (*UnimplementedNoriServer) ConfigGetCommand(ctx context.Context, req *config_messages.ConfigGetRequest) (*config_messages.ConfigGetReply, error) {
+func (*UnimplementedNoriServer) ConfigGetCommand(ctx context.Context, req *config.ConfigGetRequest) (*config.ConfigGetReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigGetCommand not implemented")
 }
-func (*UnimplementedNoriServer) ConfigSetCommand(ctx context.Context, req *config_messages.ConfigSetRequest) (*config_messages.ConfigSetReply, error) {
+func (*UnimplementedNoriServer) ConfigSetCommand(ctx context.Context, req *config.ConfigSetRequest) (*config.ConfigSetReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigSetCommand not implemented")
 }
-func (*UnimplementedNoriServer) ConfigUploadCommand(ctx context.Context, req *config_messages.ConfigUploadRequest) (*config_messages.ConfigUploadReply, error) {
+func (*UnimplementedNoriServer) ConfigUploadCommand(ctx context.Context, req *config.ConfigUploadRequest) (*config.ConfigUploadReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigUploadCommand not implemented")
 }
 
@@ -296,7 +295,7 @@ func RegisterNoriServer(s *grpc.Server, srv NoriServer) {
 }
 
 func _Nori_PluginGetCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginGetRequest)
+	in := new(plugin.PluginGetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -308,13 +307,13 @@ func _Nori_PluginGetCommand_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/proto_nori.Nori/PluginGetCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginGetCommand(ctx, req.(*plugin_messages.PluginGetRequest))
+		return srv.(NoriServer).PluginGetCommand(ctx, req.(*plugin.PluginGetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginInstallCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginInstallRequest)
+	in := new(plugin.PluginInstallRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -326,13 +325,13 @@ func _Nori_PluginInstallCommand_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/proto_nori.Nori/PluginInstallCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginInstallCommand(ctx, req.(*plugin_messages.PluginInstallRequest))
+		return srv.(NoriServer).PluginInstallCommand(ctx, req.(*plugin.PluginInstallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginInterfaceCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginInterfaceRequest)
+	in := new(plugin.PluginInterfaceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -344,13 +343,13 @@ func _Nori_PluginInterfaceCommand_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/proto_nori.Nori/PluginInterfaceCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginInterfaceCommand(ctx, req.(*plugin_messages.PluginInterfaceRequest))
+		return srv.(NoriServer).PluginInterfaceCommand(ctx, req.(*plugin.PluginInterfaceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginListCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginListRequest)
+	in := new(plugin.PluginListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -362,13 +361,13 @@ func _Nori_PluginListCommand_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto_nori.Nori/PluginListCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginListCommand(ctx, req.(*plugin_messages.PluginListRequest))
+		return srv.(NoriServer).PluginListCommand(ctx, req.(*plugin.PluginListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginMetaCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginMetaRequest)
+	in := new(plugin.PluginMetaRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -380,13 +379,13 @@ func _Nori_PluginMetaCommand_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto_nori.Nori/PluginMetaCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginMetaCommand(ctx, req.(*plugin_messages.PluginMetaRequest))
+		return srv.(NoriServer).PluginMetaCommand(ctx, req.(*plugin.PluginMetaRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginPullCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginPullRequest)
+	in := new(plugin.PluginPullRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -398,13 +397,13 @@ func _Nori_PluginPullCommand_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto_nori.Nori/PluginPullCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginPullCommand(ctx, req.(*plugin_messages.PluginPullRequest))
+		return srv.(NoriServer).PluginPullCommand(ctx, req.(*plugin.PluginPullRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginRemoveCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginRemoveRequest)
+	in := new(plugin.PluginRemoveRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -416,13 +415,13 @@ func _Nori_PluginRemoveCommand_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/proto_nori.Nori/PluginRemoveCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginRemoveCommand(ctx, req.(*plugin_messages.PluginRemoveRequest))
+		return srv.(NoriServer).PluginRemoveCommand(ctx, req.(*plugin.PluginRemoveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginStartCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginStartRequest)
+	in := new(plugin.PluginStartRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -434,13 +433,13 @@ func _Nori_PluginStartCommand_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/proto_nori.Nori/PluginStartCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginStartCommand(ctx, req.(*plugin_messages.PluginStartRequest))
+		return srv.(NoriServer).PluginStartCommand(ctx, req.(*plugin.PluginStartRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginStopCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginStopRequest)
+	in := new(plugin.PluginStopRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -452,13 +451,13 @@ func _Nori_PluginStopCommand_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/proto_nori.Nori/PluginStopCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginStopCommand(ctx, req.(*plugin_messages.PluginStopRequest))
+		return srv.(NoriServer).PluginStopCommand(ctx, req.(*plugin.PluginStopRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginUninstallCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginUninstallRequest)
+	in := new(plugin.PluginUninstallRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -470,13 +469,13 @@ func _Nori_PluginUninstallCommand_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/proto_nori.Nori/PluginUninstallCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginUninstallCommand(ctx, req.(*plugin_messages.PluginUninstallRequest))
+		return srv.(NoriServer).PluginUninstallCommand(ctx, req.(*plugin.PluginUninstallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_PluginUploadCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(plugin_messages.PluginUploadRequest)
+	in := new(plugin.PluginUploadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -488,13 +487,13 @@ func _Nori_PluginUploadCommand_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/proto_nori.Nori/PluginUploadCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).PluginUploadCommand(ctx, req.(*plugin_messages.PluginUploadRequest))
+		return srv.(NoriServer).PluginUploadCommand(ctx, req.(*plugin.PluginUploadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_ConfigGetCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(config_messages.ConfigGetRequest)
+	in := new(config.ConfigGetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -506,13 +505,13 @@ func _Nori_ConfigGetCommand_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/proto_nori.Nori/ConfigGetCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).ConfigGetCommand(ctx, req.(*config_messages.ConfigGetRequest))
+		return srv.(NoriServer).ConfigGetCommand(ctx, req.(*config.ConfigGetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_ConfigSetCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(config_messages.ConfigSetRequest)
+	in := new(config.ConfigSetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -524,13 +523,13 @@ func _Nori_ConfigSetCommand_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/proto_nori.Nori/ConfigSetCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).ConfigSetCommand(ctx, req.(*config_messages.ConfigSetRequest))
+		return srv.(NoriServer).ConfigSetCommand(ctx, req.(*config.ConfigSetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Nori_ConfigUploadCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(config_messages.ConfigUploadRequest)
+	in := new(config.ConfigUploadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -542,7 +541,7 @@ func _Nori_ConfigUploadCommand_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/proto_nori.Nori/ConfigUploadCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoriServer).ConfigUploadCommand(ctx, req.(*config_messages.ConfigUploadRequest))
+		return srv.(NoriServer).ConfigUploadCommand(ctx, req.(*config.ConfigUploadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

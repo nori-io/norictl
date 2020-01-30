@@ -10,8 +10,8 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
-	"github.com/nori-io/norictl/internal/generated/protobuf/config_messages"
+	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
+	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 )
 
 func uploadCmd(log logger.Logger) *cobra.Command {
@@ -38,7 +38,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 				"",
 			)
 
-			reply, err := client.ConfigUploadCommand(context.Background(), &config_messages.ConfigUploadRequest{
+			reply, err := client.ConfigUploadCommand(context.Background(), &config.ConfigUploadRequest{
 				Path:                 path,
 				XXX_NoUnkeyedLiteral: struct{}{},
 				XXX_unrecognized:     nil,
@@ -51,7 +51,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 				log.Fatal("%s", err)
 				common.UI.ConfigUploadFailure(path)
 				if reply != nil {
-					log.Fatal("%s", common_messages.ErrorReply{
+					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},

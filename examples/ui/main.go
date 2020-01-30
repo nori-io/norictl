@@ -22,7 +22,7 @@ func main() {
 
 	uiExample.PluginMetaExist(fmt.Sprintf("%v", protoNori.PluginMetaReply{
 		ArrayPluginListWithoutStatus: []*protoNori.PluginListWithoutStatus{&protoNori.PluginListWithoutStatus{
-			MetaID: &common_messages.ID{
+			MetaID: &common.ID{
 				Id:                   "nori/session",
 				Version:              "0.0.6",
 				XXX_NoUnkeyedLiteral: struct{}{},
@@ -49,7 +49,7 @@ func main() {
 			XXX_sizecache:        0,
 		},
 			&protoNori.PluginListWithoutStatus{
-				MetaID: &common_messages.ID{
+				MetaID: &common.ID{
 					Id:                   "nori/session",
 					Version:              "0.0.7",
 					XXX_NoUnkeyedLiteral: struct{}{},

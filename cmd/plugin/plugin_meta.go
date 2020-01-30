@@ -30,7 +30,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (

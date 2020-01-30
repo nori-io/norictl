@@ -30,8 +30,8 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
-	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
+	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
@@ -81,7 +81,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 				common.UI.PluginUploadFailure(path)
 				log.Fatal("%s", err)
 				if reply != nil {
-					log.Fatal("%s", common_messages.ErrorReply{
+					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
