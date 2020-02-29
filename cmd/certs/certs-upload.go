@@ -15,7 +15,7 @@
 
 package certs_cmd
 
-import (
+/*import (
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -27,7 +27,8 @@ import (
 
 	"github.com/nori-io/nori/core/grpc"
 	"github.com/nori-io/nori/proto"
-	"github.com/nori-io/norictl/client"
+
+	"github.com/nori-io/norictl/internal/client"
 )
 
 var uploadCertsCmd = &cobra.Command{
@@ -121,3 +122,4 @@ var uploadCertsCmd = &cobra.Command{
 func init() {
 	CertsCmd.AddCommand(uploadCertsCmd)
 }
+*/

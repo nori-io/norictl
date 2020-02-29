@@ -13,16 +13,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
+
+	"github.com/nori-io/norictl/cmd/common"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
-var PluginCmd = &cobra.Command{
-	Use:   "plugin",
-	Short: "plugin",
+func PluginCmd(log logger.Logger) *cobra.Command {
+
+	PluginCmd := &cobra.Command{
+		Use:   "norictl plugin",
+		Short: "norictl plugin COMMAND",
+	}
+
+	PluginCmd.AddCommand(getCmd(log))
+	PluginCmd.AddCommand(installCmd(log))
+	PluginCmd.AddCommand(interfaceCmd(log))
+	PluginCmd.AddCommand(lsCmd(log))
+	PluginCmd.AddCommand(metaCmd(log))
+	PluginCmd.AddCommand(pullCmd(log))
+	PluginCmd.AddCommand(rmCmd(log))
+	PluginCmd.AddCommand(startCmd(log))
+	PluginCmd.AddCommand(stopCmd(log))
+	PluginCmd.AddCommand(uninstallCmd(log))
+	PluginCmd.AddCommand(uploadCmd(log))
+	return PluginCmd
 }
 
 func init() {
+	common.UI = ui.NewUI()
 }

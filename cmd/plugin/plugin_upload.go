@@ -18,11 +18,11 @@
 package plugin_cmd
 
 import (
-	"fmt"
-	"strings"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/nori-io/nori-common/v2/logger"
-	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -35,52 +35,52 @@ import (
 )
 
 var (
-	uninstallAll       func() bool
-	uninstallDependent func() bool
+	uploadFile func() string
 )
 
-func uninstallCmd(log logger.Logger) *cobra.Command {
+func uploadCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin uninstall [PLUGIN_ID] [OPTIONS]",
-		Short: "Uninstall plugin or plugins.",
+		Use:   "norictl plugin upload [OPTIONS]",
+		Short: "Upload the plugin from local machine.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsUninstall(log)
-			pluginId := viper.GetString("id")
-			if len(pluginId) == 0 && len(args) > 0 {
-				pluginId = args[0]
-			}
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err := version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
+			setFlagsUpload(log)
+			path := viper.GetString("file")
+
+			if len(path) == 0 && len(args) > 0 {
+				path = args[0]
 			}
 
-			cli, closeCh := client.NewClient(
+			client, closeCh := client.NewClient(
 				viper.GetString("grpc-address"),
 				viper.GetString("ca"),
 				viper.GetString("ServerHostOverride"),
 			)
+			defer close(closeCh)
 
-			reply, err := cli.PluginUninstallCommand(context.Background(), &protoNori.PluginUninstallRequest{
-				Id: &commonProtoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
-				},
-				FlagAll:              uninstallAll(),
-				FlagDependent:        uninstallDependent(),
+			f, err := os.Open(path)
+			if err != nil {
+				log.Fatal("%s", err)
+			}
+
+			defer f.Close()
+
+			_, err = ioutil.ReadAll(f)
+			if err != nil {
+				log.Fatal("%s", err)
+			}
+			path = filepath.Base(path)
+
+			reply, err := client.PluginUploadCommand(context.Background(), &protoNori.PluginUploadRequest{
+				Filepath:             path,
 				XXX_NoUnkeyedLiteral: struct{}{},
 				XXX_unrecognized:     nil,
 				XXX_sizecache:        0,
 			})
-			defer close(closeCh)
 			if err != nil {
+				common.UI.PluginUploadFailure(path)
+				log.Fatal("%s", err)
 				if reply != nil {
-					common.UI.PluginUninstallFailure(pluginId)
 					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
@@ -89,9 +89,9 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 						XXX_sizecache:        0,
 					})
 				}
-				log.Fatal("%s", err)
+			} else {
+				common.UI.PluginUploadSuccess(path)
 			}
-			common.UI.PluginUninstallSuccess(pluginId)
 		},
 	}
 }
@@ -99,8 +99,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsUninstall(log logger.Logger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), uninstallCmd(log))
-	flags.Bool(&uninstallAll, "all", "--all", false, "Uninstall all installed plugins")                       // TODO
-	flags.Bool(&uninstallDependent, "dependent", "--dependent", false, "Uninstall plugin and depend plugins") // TODO
+func setFlagsUpload(log logger.Logger) {
+	flags := utils.NewFlagBuilder(PluginCmd(log), uploadCmd(log))
+	flags.String(&uploadFile, "file", "--file", "", "Specify path to plugin") // TODO
 }

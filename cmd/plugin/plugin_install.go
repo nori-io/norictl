@@ -13,55 +13,103 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Package plugin_cmd implements commands for work with plugins
+//by command prompt*/
 package plugin_cmd
 
 import (
 	"fmt"
+	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/nori-io/nori-common/v2/logger"
+	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
-	"github.com/fzzy/radix/redis/resp"
-	"github.com/nori-io/nori/proto"
-	"github.com/nori-io/norictl/client"
-	"github.com/nori-io/norictl/client/connection"
+	"github.com/nori-io/norictl/cmd/common"
+	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/client/utils"
+	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-var installCmd = &cobra.Command{
-	Use:   "install [OPTIONS] PLUGIN_ID",
-	Short: "Install downloaded plugin.",
-	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := connection.CurrentConnection()
-		if err != nil {
-			log.Fatal(err)
-		}
+var (
+	installVerbose func() bool
+	installDeps    func() bool
+	installAll     func() bool
+)
 
-		if len(args) == 0 {
-			log.Fatal("PLUGIN_ID required!")
-		}
+func installCmd(log logger.Logger) *cobra.Command {
 
-		pluginId := args[0]
-
-		cli, closeCh := client.NewClient(
-			conn.HostPort(),
-			conn.CertPath,
-			"",
-		)
-
-		reply, err := cli.PluginInstallCommand(context.Background(), &commands.PluginInstallRequest{Id: pluginId})
-		defer close(closeCh)
-		if err != nil {
-			if reply != nil {
-				log.Fatal(reply.Error)
+	return &cobra.Command{
+		Use:   "norictl plugin install [PLUGIN_ID] [OPTIONS]",
+		Short: "Install downloaded plugin or plugins.",
+		Run: func(cmd *cobra.Command, args []string) {
+			setFlagsInstall(log)
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal("%s", err)
 			}
-			log.Fatal(err)
-		}
 
-		fmt.Printf("Plugin %s installed, %3d :\n", pluginId, resp.Int)
-	},
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
+
+			pluginId := args[0]
+			pluginIdSplit := strings.Split(pluginId, ":")
+			versionPlugin := pluginIdSplit[1]
+			_, err = version.NewVersion(versionPlugin)
+			if err != nil {
+				fmt.Println("Format of plugin's version is incorrect:", err)
+			}
+
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
+			)
+
+			reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
+				Id: &commonProtoGenerated.ID{
+					Id:                   pluginIdSplit[0],
+					Version:              pluginIdSplit[1],
+					XXX_NoUnkeyedLiteral: struct{}{},
+					XXX_unrecognized:     nil,
+					XXX_sizecache:        0,
+				},
+				FlagVerbose:          installVerbose(),
+				FlagDeps:             installDeps(),
+				FlagAll:              installAll(),
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     nil,
+				XXX_sizecache:        0,
+			})
+			defer close(closeCh)
+			if err != nil {
+				log.Fatal("%s", err)
+				if reply != nil {
+					log.Fatal("%s", commonProtoGenerated.ErrorReply{
+						Status:               false,
+						Error:                err.Error(),
+						XXX_NoUnkeyedLiteral: struct{}{},
+						XXX_unrecognized:     nil,
+						XXX_sizecache:        0,
+					})
+				}
+				common.UI.PluginInstallFailure(pluginId)
+			}
+			common.UI.PluginInstallSuccess(pluginId)
+		},
+	}
+}
+
+func setFlagsInstall(log logger.Logger) {
+	flags := utils.NewFlagBuilder(PluginCmd(log), installCmd(log))
+	flags.Bool(&installVerbose, "--verbose", "-v", false, "Verbose progress and debug output")
+	flags.Bool(&installDeps, "--deps", "-d", false, "Install plugin with dependencies")
+	flags.Bool(&installAll, "--all", "-all", false, "Install all installable plugins")
 }
 
 func init() {
-	PluginCmd.AddCommand(installCmd)
 }

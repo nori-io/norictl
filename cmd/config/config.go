@@ -13,44 +13,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-package plugin_cmd
+// Package config_cmd implements commands for work with plugins's config
+//by command prompt*/
+package config_cmd
 
 import (
-	"fmt"
-
-	"github.com/sirupsen/logrus"
+	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
-	"github.com/nori-io/nori/core/grpc"
+	"github.com/nori-io/norictl/cmd/common"
+	"github.com/nori-io/norictl/internal/ui"
 )
 
-var buildCmd = &cobra.Command{
-	Use:   "build",
-	Short: "build plugin",
-	Run: func(cmd *cobra.Command, args []string) {
-		path := viper.GetString("plugin-path")
+func ConfigCmd(log logger.Logger) *cobra.Command {
 
-		if len(path) == 0 && len(args) > 0 {
-			logrus.Fatal("plugin-path is required")
-		}
+	ConfigCmd := &cobra.Command{
+		Use:   "norictl config",
+		Short: "norictl config COMMAND",
+	}
 
-		toolchain, err := grpc.SetupToolChain()
-		if err != nil {
-			logrus.Fatal(err)
-		}
-
-		toolchain.InstallDependencies = viper.GetBool("dependencies")
-
-		err = toolchain.Do(path)
-		if err != nil {
-			logrus.Fatal(err)
-		} else {
-			fmt.Printf("Plugin %q successfully built\n", path)
-		}
-	},
+	ConfigCmd.AddCommand(getCmd(log))
+	ConfigCmd.AddCommand(setCmd(log))
+	ConfigCmd.AddCommand(uploadCmd(log))
+	return ConfigCmd
 }
 
 func init() {
-	PluginCmd.AddCommand(buildCmd)
+	common.UI = ui.NewUI()
 }

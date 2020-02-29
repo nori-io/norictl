@@ -16,18 +16,24 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 
+	logger "github.com/nori-io/logger"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/nori-io/norictl/cmd/common"
+	config_cmd "github.com/nori-io/norictl/cmd/config"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/nori-io/norictl/client/consts"
-	"github.com/nori-io/norictl/client/utils"
 	"github.com/nori-io/norictl/cmd/certs"
 	"github.com/nori-io/norictl/cmd/connection"
 	"github.com/nori-io/norictl/cmd/plugin"
+	"github.com/nori-io/norictl/internal/client/consts"
+	"github.com/nori-io/norictl/internal/client/utils"
 )
 
 var cfgFile string
@@ -50,13 +56,16 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	buf := bytes.Buffer{}
 
+	common.LoggerNoriCtl = logger.New(logger.SetJsonFormatter(""), logger.SetOutWriter(&buf))
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 
 	flags := utils.NewFlagBuilder(nil, rootCmd)
 	flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
 
-	rootCmd.AddCommand(plugin_cmd.PluginCmd)
+	rootCmd.AddCommand(plugin_cmd.PluginCmd(common.LoggerNoriCtl))
+	rootCmd.AddCommand(config_cmd.ConfigCmd(common.LoggerNoriCtl))
 	rootCmd.AddCommand(certs_cmd.CertsCmd)
 	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }

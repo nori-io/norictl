@@ -24,46 +24,53 @@ import (
 	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
+	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
 	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
-	uninstallAll       func() bool
-	uninstallDependent func() bool
+	pullDeps func() bool
 )
 
-func uninstallCmd(log logger.Logger) *cobra.Command {
+func pullCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin uninstall [PLUGIN_ID] [OPTIONS]",
-		Short: "Uninstall plugin or plugins.",
+		Use:   "norictl plugin pull [PLUGIN_ID] [OPTIONS]",
+		Short: "downloading plugin",
+		Long:  `Pull downloads the plugin, with or without it's dependencies.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsUninstall(log)
-			pluginId := viper.GetString("id")
-			if len(pluginId) == 0 && len(args) > 0 {
-				pluginId = args[0]
+			setFlagsPull(log)
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				log.Fatal("%s", err)
 			}
+
+			if len(args) == 0 {
+				log.Fatal("PLUGIN_ID required!")
+			}
+
+			pluginId := args[0]
+
 			pluginIdSplit := strings.Split(pluginId, ":")
 			versionPlugin := pluginIdSplit[1]
-			_, err := version.NewVersion(versionPlugin)
+			_, err = version.NewVersion(versionPlugin)
 			if err != nil {
 				fmt.Println("Format of plugin's version is incorrect:", err)
 			}
 
-			cli, closeCh := client.NewClient(
-				viper.GetString("grpc-address"),
-				viper.GetString("ca"),
-				viper.GetString("ServerHostOverride"),
+			client, closeCh := client.NewClient(
+				conn.HostPort(),
+				conn.CertPath,
+				"",
 			)
 
-			reply, err := cli.PluginUninstallCommand(context.Background(), &protoNori.PluginUninstallRequest{
+			reply, err := client.PluginPullCommand(context.Background(), &protoNori.PluginPullRequest{
 				Id: &commonProtoGenerated.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
@@ -71,16 +78,17 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 					XXX_unrecognized:     nil,
 					XXX_sizecache:        0,
 				},
-				FlagAll:              uninstallAll(),
-				FlagDependent:        uninstallDependent(),
+				FlagDeps:             pullDeps(),
 				XXX_NoUnkeyedLiteral: struct{}{},
 				XXX_unrecognized:     nil,
 				XXX_sizecache:        0,
 			})
-			defer close(closeCh)
+
+			close(closeCh)
 			if err != nil {
+				log.Fatal("%s", err)
+				common.UI.PluginPullFailure(pluginId)
 				if reply != nil {
-					common.UI.PluginUninstallFailure(pluginId)
 					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
@@ -89,9 +97,9 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 						XXX_sizecache:        0,
 					})
 				}
-				log.Fatal("%s", err)
+			} else {
+				common.UI.PluginPullSuccess(pluginId)
 			}
-			common.UI.PluginUninstallSuccess(pluginId)
 		},
 	}
 }
@@ -99,8 +107,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsUninstall(log logger.Logger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), uninstallCmd(log))
-	flags.Bool(&uninstallAll, "all", "--all", false, "Uninstall all installed plugins")                       // TODO
-	flags.Bool(&uninstallDependent, "dependent", "--dependent", false, "Uninstall plugin and depend plugins") // TODO
+func setFlagsPull(log logger.Logger) {
+	flags := utils.NewFlagBuilder(PluginCmd(log), pullCmd(log))
+	flags.Bool(&pullDeps, "deps", "-d", false, "	Download plugin with it's dependencies")
 }
