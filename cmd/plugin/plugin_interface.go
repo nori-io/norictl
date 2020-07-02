@@ -34,7 +34,7 @@ import (
 func interfaceCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin interface [InterfaceName]",
+		Use:   "interface [InterfaceName]",
 		Short: "Shows list of plugins that implement specify interface.",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {

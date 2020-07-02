@@ -21,7 +21,7 @@ import (
 func setCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl config set [PLUGIN_ID][KEY] [VALUE]",
+		Use:   "set [PLUGIN_ID][KEY] [VALUE]",
 		Short: "set plugin's config",
 		Long:  `Set sets key's value for specify plugin's config.`,
 		Run: func(cmd *cobra.Command, args []string) {

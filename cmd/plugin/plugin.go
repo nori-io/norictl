@@ -28,8 +28,8 @@ import (
 func PluginCmd(log logger.Logger) *cobra.Command {
 
 	PluginCmd := &cobra.Command{
-		Use:   "norictl plugin",
-		Short: "norictl plugin COMMAND",
+		Use:   "plugin",
+		Short: "plugin COMMAND",
 	}
 
 	PluginCmd.AddCommand(getCmd(log))

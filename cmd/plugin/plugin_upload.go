@@ -41,7 +41,7 @@ var (
 func uploadCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin upload [OPTIONS]",
+		Use:   "upload [OPTIONS]",
 		Short: "Upload the plugin from local machine.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setFlagsUpload(log)

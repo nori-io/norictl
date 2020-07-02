@@ -43,7 +43,7 @@ var (
 func installCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin install [PLUGIN_ID] [OPTIONS]",
+		Use:   "install [PLUGIN_ID] [OPTIONS]",
 		Short: "Install downloaded plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setFlagsInstall(log)

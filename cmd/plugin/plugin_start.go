@@ -41,7 +41,7 @@ var (
 func startCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin start [PLUGIN_ID] [OPTIONS]",
+		Use:   "start [PLUGIN_ID] [OPTIONS]",
 		Short: "Start one plugin or all plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setFlagsStart(log)

@@ -43,7 +43,7 @@ var (
 func metaCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin meta [PLUGIN_ID] [OPTIONS]",
+		Use:   "meta [PLUGIN_ID] [OPTIONS]",
 		Short: "Show plugin meta data.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setFlagsMeta(log)

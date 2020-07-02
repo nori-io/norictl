@@ -41,7 +41,7 @@ var (
 func pullCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin pull [PLUGIN_ID] [OPTIONS]",
+		Use:   "pull [PLUGIN_ID] [OPTIONS]",
 		Short: "downloading plugin",
 		Long:  `Pull downloads the plugin, with or without it's dependencies.`,
 		Run: func(cmd *cobra.Command, args []string) {

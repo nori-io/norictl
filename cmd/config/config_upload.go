@@ -17,7 +17,7 @@ import (
 func uploadCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl config upload [PATH]",
+		Use:   "upload [PATH]",
 		Short: "upload plugin's config",
 		Long:  `Upload shows config file from specify path.`,
 		Run: func(cmd *cobra.Command, args []string) {

@@ -42,7 +42,7 @@ var (
 func uninstallCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin uninstall [PLUGIN_ID] [OPTIONS]",
+		Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
 		Short: "Uninstall plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setFlagsUninstall(log)

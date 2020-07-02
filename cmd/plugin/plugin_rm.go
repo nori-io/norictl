@@ -36,7 +36,7 @@ import (
 func rmCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin rm [PLUGIN_ID] [OPTIONS]",
+		Use:   "rm [PLUGIN_ID] [OPTIONS]",
 		Short: "remove plugin",
 		Long:  `Remove plugin from local machine.`,
 		Run: func(cmd *cobra.Command, args []string) {

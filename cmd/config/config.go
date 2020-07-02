@@ -28,8 +28,8 @@ import (
 func ConfigCmd(log logger.Logger) *cobra.Command {
 
 	ConfigCmd := &cobra.Command{
-		Use:   "norictl config",
-		Short: "norictl config COMMAND",
+		Use:   "config",
+		Short: "config COMMAND",
 	}
 
 	ConfigCmd.AddCommand(getCmd(log))

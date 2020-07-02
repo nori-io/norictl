@@ -42,7 +42,7 @@ var (
 func lsCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:     "norictl plugin ls [OPTIONS]",
+		Use:     "ls [OPTIONS]",
 		Aliases: []string{"list"},
 		Short:   "Shows list of plugins on remote Nori node.",
 		Run: func(cmd *cobra.Command, args []string) {

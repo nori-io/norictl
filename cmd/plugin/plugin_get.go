@@ -41,7 +41,7 @@ var (
 func getCmd(log logger.Logger) *cobra.Command {
 
 	return &cobra.Command{
-		Use:   "norictl plugin get [PLUGIN_ID] [OPTIONS]",
+		Use:   "get [PLUGIN_ID] [OPTIONS]",
 		Short: "downloading plugin",
 		Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
