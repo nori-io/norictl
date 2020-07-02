@@ -8,7 +8,6 @@ require (
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.3 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/nori-io/nori-common v1.1.0
 	github.com/nori-io/nori-common/v2 v2.0.2-0.20200607181206-365b4c1636cc
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pelletier/go-toml v1.4.0 // indirect

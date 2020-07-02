@@ -28,7 +28,6 @@ import (
 	"github.com/nori-io/norictl/cmd/connection"
 	"github.com/nori-io/norictl/cmd/plugin"
 	"github.com/nori-io/norictl/internal/client/consts"
-	"github.com/nori-io/norictl/internal/client/utils"
 )
 
 var cfgFile string
@@ -54,8 +53,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 
-	flags := utils.NewFlagBuilder(nil, rootCmd)
-	flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
+	//flags := utils.NewFlagBuilder(nil, rootCmd)
+	//flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
 
 	rootCmd.AddCommand(plugin_cmd.PluginCmd())
 	rootCmd.AddCommand(config_cmd.ConfigCmd())

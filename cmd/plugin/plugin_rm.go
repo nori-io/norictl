@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/version"
+	"github.com/nori-io/nori-common/v2/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
