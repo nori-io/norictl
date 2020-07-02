@@ -73,9 +73,6 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 
 			reply, err := client.PluginUploadCommand(context.Background(), &protoNori.PluginUploadRequest{
 				Filepath:             path,
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
 			})
 			if err != nil {
 				common.UI.PluginUploadFailure(path)
@@ -84,9 +81,6 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
 					})
 				}
 			} else {

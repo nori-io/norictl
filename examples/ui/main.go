@@ -25,16 +25,10 @@ func main() {
 			MetaID: &common.ID{
 				Id:                   "nori/session",
 				Version:              "0.0.6",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
 			},
 			Author: &protoNori.Author{
 				Name:                 "author",
 				URI:                  "",
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
 			},
 			DependenciesArray:    nil,
 			Description:          nil,
@@ -44,24 +38,15 @@ func main() {
 			Links:                nil,
 			Repository:           nil,
 			Tags:                 nil,
-			XXX_NoUnkeyedLiteral: struct{}{},
-			XXX_unrecognized:     nil,
-			XXX_sizecache:        0,
 		},
 			&protoNori.PluginListWithoutStatus{
 				MetaID: &common.ID{
 					Id:                   "nori/session",
 					Version:              "0.0.7",
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
 				},
 				Author: &protoNori.Author{
 					Name:                 "author",
 					URI:                  "",
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
 				},
 				DependenciesArray:    nil,
 				Description:          nil,
@@ -71,13 +56,8 @@ func main() {
 				Links:                nil,
 				Repository:           nil,
 				Tags:                 nil,
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
 			}},
-		XXX_NoUnkeyedLiteral: struct{}{},
-		XXX_unrecognized:     nil,
-		XXX_sizecache:        0},
+	},
 	))
 	uiExample.PluginPullSuccess("nori/session:0.0.8")
 	uiExample.PluginPullFailure("nori/session:0.0.9")

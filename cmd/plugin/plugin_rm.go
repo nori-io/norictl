@@ -68,13 +68,7 @@ func rmCmd(log logger.Logger) *cobra.Command {
 				Id: &commonProtoGenerated.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
 				},
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
 			})
 
 			close(closeCh)
@@ -85,9 +79,6 @@ func rmCmd(log logger.Logger) *cobra.Command {
 					log.Fatal("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
 					})
 				}
 			} else {

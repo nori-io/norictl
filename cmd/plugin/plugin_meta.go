@@ -73,17 +73,11 @@ func metaCmd(log logger.Logger) *cobra.Command {
 			meta := &protoNori.PluginMetaRequest{
 				ID: &protoNori.PluginID{
 					MetaId:               pluginId,
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
 				},
 				FlagDeps:             metaDeps(),
 				FlagDepsStatus:       metaDepsStatus(),
 				FlagDependent:        metaDependent(),
 				FlagDependentStatus:  metaDependentStatus(),
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
 			}
 
 			reply, err := client.PluginMetaCommand(context.Background(), meta)
