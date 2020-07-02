@@ -1,10 +1,10 @@
 package consts
 
 import (
+	"fmt"
 	"path/filepath"
 
 	homedir "github.com/mitchellh/go-homedir"
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 func init() {
 	home, err := homedir.Dir()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	ConfigDir = filepath.Join(home, configDir)

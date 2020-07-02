@@ -18,11 +18,11 @@
 package plugin_cmd
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -38,13 +38,13 @@ var (
 	uploadFile func() string
 )
 
-func uploadCmd(log logger.FieldLogger) *cobra.Command {
+func uploadCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "upload [OPTIONS]",
 		Short: "Upload the plugin from local machine.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsUpload(log)
+			setFlagsUpload()
 			path := viper.GetString("file")
 
 			if len(path) == 0 && len(args) > 0 {
@@ -60,14 +60,16 @@ func uploadCmd(log logger.FieldLogger) *cobra.Command {
 
 			f, err := os.Open(path)
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 
 			defer f.Close()
 
 			_, err = ioutil.ReadAll(f)
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 			path = filepath.Base(path)
 
@@ -76,13 +78,15 @@ func uploadCmd(log logger.FieldLogger) *cobra.Command {
 			})
 			if err != nil {
 				common.UI.PluginUploadFailure(path)
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
+					return
 				}
+				return
 			} else {
 				common.UI.PluginUploadSuccess(path)
 			}
@@ -93,7 +97,7 @@ func uploadCmd(log logger.FieldLogger) *cobra.Command {
 func init() {
 }
 
-func setFlagsUpload(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), uploadCmd(log))
+func setFlagsUpload() {
+	flags := utils.NewFlagBuilder(PluginCmd(), uploadCmd())
 	flags.String(&uploadFile, "file", "--file", "", "Specify path to plugin") // TODO
 }

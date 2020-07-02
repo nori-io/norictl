@@ -16,11 +16,11 @@
 package connection_cmd
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"strconv"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/internal/client/connection"
@@ -41,7 +41,7 @@ var createCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := os.MkdirAll(consts.ConnectionsDir, os.ModePerm)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		var host, portStr string
@@ -54,11 +54,11 @@ var createCmd = &cobra.Command{
 			//A literal IPv6 address in hostport must be enclosed in square brackets, as in "[::1]:80", "[::1%lo0]:80".
 			host, portStr, err = net.SplitHostPort(args[0])
 			if err != nil {
-				log.Fatal(err)
+				fmt.Println(err)
 			}
 			port, err = strconv.ParseUint(portStr, 10, 64)
 			if err != nil {
-				log.Fatal(err)
+				fmt.Println(err)
 			}
 		}
 
@@ -70,7 +70,7 @@ var createCmd = &cobra.Command{
 		}
 		err = conn.Save(consts.ConnectionsDir, force())
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 	},
 	DisableFlagsInUseLine: true,

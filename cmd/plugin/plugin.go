@@ -18,31 +18,30 @@
 package plugin_cmd
 
 import (
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/ui"
 )
 
-func PluginCmd(log logger.FieldLogger) *cobra.Command {
+func PluginCmd() *cobra.Command {
 
 	PluginCmd := &cobra.Command{
 		Use:   "plugin",
 		Short: "plugin COMMAND",
 	}
 
-	PluginCmd.AddCommand(getCmd(log))
-	PluginCmd.AddCommand(installCmd(log))
-	PluginCmd.AddCommand(interfaceCmd(log))
-	PluginCmd.AddCommand(lsCmd(log))
-	PluginCmd.AddCommand(metaCmd(log))
-	PluginCmd.AddCommand(pullCmd(log))
-	PluginCmd.AddCommand(rmCmd(log))
-	PluginCmd.AddCommand(startCmd(log))
-	PluginCmd.AddCommand(stopCmd(log))
-	PluginCmd.AddCommand(uninstallCmd(log))
-	PluginCmd.AddCommand(uploadCmd(log))
+	PluginCmd.AddCommand(getCmd())
+	PluginCmd.AddCommand(installCmd())
+	PluginCmd.AddCommand(interfaceCmd())
+	PluginCmd.AddCommand(lsCmd())
+	PluginCmd.AddCommand(metaCmd())
+	PluginCmd.AddCommand(pullCmd())
+	PluginCmd.AddCommand(rmCmd())
+	PluginCmd.AddCommand(startCmd())
+	PluginCmd.AddCommand(stopCmd())
+	PluginCmd.AddCommand(uninstallCmd())
+	PluginCmd.AddCommand(uploadCmd())
 	return PluginCmd
 }
 

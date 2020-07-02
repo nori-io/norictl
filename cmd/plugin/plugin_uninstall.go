@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -39,13 +38,13 @@ var (
 	uninstallDependent func() bool
 )
 
-func uninstallCmd(log logger.FieldLogger) *cobra.Command {
+func uninstallCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
 		Short: "Uninstall plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsUninstall(log)
+			setFlagsUninstall()
 			pluginId := viper.GetString("id")
 			if len(pluginId) == 0 && len(args) > 0 {
 				pluginId = args[0]
@@ -75,12 +74,12 @@ func uninstallCmd(log logger.FieldLogger) *cobra.Command {
 			if err != nil {
 				if reply != nil {
 					common.UI.PluginUninstallFailure(pluginId)
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
 				}
-				log.Fatal("%s", err)
+				fmt.Println("%s", err)
 			}
 			common.UI.PluginUninstallSuccess(pluginId)
 		},
@@ -90,8 +89,8 @@ func uninstallCmd(log logger.FieldLogger) *cobra.Command {
 func init() {
 }
 
-func setFlagsUninstall(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), uninstallCmd(log))
+func setFlagsUninstall() {
+	flags := utils.NewFlagBuilder(PluginCmd(), uninstallCmd())
 	flags.Bool(&uninstallAll, "all", "--all", false, "Uninstall all installed plugins")                       // TODO
 	flags.Bool(&uninstallDependent, "dependent", "--dependent", false, "Uninstall plugin and depend plugins") // TODO
 }

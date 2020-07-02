@@ -17,7 +17,6 @@ package connection_cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -33,7 +32,7 @@ var rmCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := os.MkdirAll(consts.ConnectionsDir, os.ModePerm)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		var name string
@@ -47,17 +46,17 @@ var rmCmd = &cobra.Command{
 
 		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		conn, err := list.FilterByName(name)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		err = conn.Remove()
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 	},
 	DisableFlagsInUseLine: true,

@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -40,20 +39,21 @@ var (
 	installAll     func() bool
 )
 
-func installCmd(log logger.FieldLogger) *cobra.Command {
+func installCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "install [PLUGIN_ID] [OPTIONS]",
 		Short: "Install downloaded plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsInstall(log)
+			setFlagsInstall()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 			}
 
 			if len(args) == 0 {
-				log.Error("PLUGIN_ID required!")
+				fmt.Println("PLUGIN_ID required!")
+				return
 			}
 
 			pluginId := args[0]
@@ -81,9 +81,9 @@ func installCmd(log logger.FieldLogger) *cobra.Command {
 			})
 			defer close(closeCh)
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
@@ -95,8 +95,8 @@ func installCmd(log logger.FieldLogger) *cobra.Command {
 	}
 }
 
-func setFlagsInstall(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), installCmd(log))
+func setFlagsInstall() {
+	flags := utils.NewFlagBuilder(PluginCmd(), installCmd())
 	flags.Bool(&installVerbose, "--verbose", "-v", false, "Verbose progress and debug output")
 	flags.Bool(&installDeps, "--deps", "-d", false, "Install plugin with dependencies")
 	flags.Bool(&installAll, "--all", "-all", false, "Install all installable plugins")

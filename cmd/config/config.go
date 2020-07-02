@@ -18,23 +18,21 @@
 package config_cmd
 
 import (
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
-
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/ui"
 )
 
-func ConfigCmd(log logger.FieldLogger) *cobra.Command {
+func ConfigCmd() *cobra.Command {
 
 	ConfigCmd := &cobra.Command{
 		Use:   "config",
 		Short: "config COMMAND",
 	}
 
-	ConfigCmd.AddCommand(getCmd(log))
-	ConfigCmd.AddCommand(setCmd(log))
-	ConfigCmd.AddCommand(uploadCmd(log))
+	ConfigCmd.AddCommand(getCmd())
+	ConfigCmd.AddCommand(setCmd())
+	ConfigCmd.AddCommand(uploadCmd())
 	return ConfigCmd
 }
 

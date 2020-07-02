@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -40,20 +39,22 @@ var (
 	metaDependentStatus func() bool
 )
 
-func metaCmd(log logger.FieldLogger) *cobra.Command {
+func metaCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "meta [PLUGIN_ID] [OPTIONS]",
 		Short: "Show plugin meta data.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsMeta(log)
+			setFlagsMeta()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 
 			if len(args) == 0 {
-				log.Error("PLUGIN_ID required!")
+				fmt.Println("PLUGIN_ID required!")
+				return
 			}
 
 			pluginId := args[0]
@@ -83,7 +84,8 @@ func metaCmd(log logger.FieldLogger) *cobra.Command {
 			reply, err := client.PluginMetaCommand(context.Background(), meta)
 			defer close(closeCh)
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 		},
@@ -93,8 +95,8 @@ func metaCmd(log logger.FieldLogger) *cobra.Command {
 func init() {
 }
 
-func setFlagsMeta(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), metaCmd(log))
+func setFlagsMeta() {
+	flags := utils.NewFlagBuilder(PluginCmd(), metaCmd())
 	flags.Bool(&metaDeps, "deps", "--deps", false, "Show only plugin dependencies")
 	flags.Bool(&metaDepsStatus, "deps-status", "--deps-status", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
 	flags.Bool(&metaDependent, "dependent", "--dependent", false, "Show only plugins, that depend on specified plugin")

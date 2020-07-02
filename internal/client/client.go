@@ -16,9 +16,9 @@
 package client
 
 import (
+	"fmt"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
@@ -30,16 +30,16 @@ func NewClient(addr string, caFile string, serverHostOverride string) (protoNori
 	if len(caFile) != 0 && fileExists(caFile) {
 		creds, err := credentials.NewClientTLSFromFile(caFile, serverHostOverride)
 		if err != nil {
-			log.Fatalf("Failed to create TLS credentials %v", err)
+			fmt.Println("Failed to create TLS credentials %v", err)
 		}
 		opts = append(opts, grpc.WithTransportCredentials(creds))
-		log.Printf("Created gRPC client with cert: %s", caFile)
+		fmt.Println("Created gRPC client with cert: %s", caFile)
 	} else {
 		opts = append(opts, grpc.WithInsecure())
 	}
 	conn, err := grpc.Dial(addr, opts...)
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		fmt.Println("did not connect: %v", err)
 	}
 
 	closeCh := make(chan struct{})

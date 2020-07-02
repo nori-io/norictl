@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -38,20 +37,22 @@ var (
 	startAll func() bool
 )
 
-func startCmd(log logger.FieldLogger) *cobra.Command {
+func startCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "start [PLUGIN_ID] [OPTIONS]",
 		Short: "Start one plugin or all plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsStart(log)
+			setFlagsStart()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 
 			if len(args) == 0 {
-				log.Error("PLUGIN_ID required!")
+				fmt.Println("PLUGIN_ID required!")
+				return
 			}
 
 			pluginId := args[0]
@@ -61,6 +62,7 @@ func startCmd(log logger.FieldLogger) *cobra.Command {
 			_, err = version.NewVersion(versionPlugin)
 			if err != nil {
 				fmt.Println("Format of plugin's version is incorrect:", err)
+				return
 			}
 
 			client, closeCh := client.NewClient(
@@ -78,14 +80,16 @@ func startCmd(log logger.FieldLogger) *cobra.Command {
 			})
 			defer close(closeCh)
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				common.UI.PluginStartFailure(pluginId)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
+					return
 				}
+				return
 			}
 			common.UI.PluginStartSuccess(pluginId)
 		},
@@ -95,7 +99,7 @@ func startCmd(log logger.FieldLogger) *cobra.Command {
 func init() {
 }
 
-func setFlagsStart(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), startCmd(log))
+func setFlagsStart() {
+	flags := utils.NewFlagBuilder(PluginCmd(), startCmd())
 	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
 }

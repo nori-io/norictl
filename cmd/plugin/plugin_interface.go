@@ -19,8 +19,6 @@ package plugin_cmd
 
 import (
 	"fmt"
-
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -31,14 +29,15 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-func interfaceCmd(log logger.FieldLogger) *cobra.Command {
+func interfaceCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "interface [InterfaceName]",
 		Short: "Shows list of plugins that implement specify interface.",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
-				log.Error("InterfaceName required!!!")
+				fmt.Println("InterfaceName required!!!")
+				return
 			}
 
 			interfaceName := args[0]
@@ -54,13 +53,14 @@ func interfaceCmd(log logger.FieldLogger) *cobra.Command {
 				InterfaceName:        interfaceName,
 			})
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
 				}
+				return
 			} else {
 				common.UI.InterfacePluginList(fmt.Sprintf("%s", reply))
 			}

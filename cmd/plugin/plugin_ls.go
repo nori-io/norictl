@@ -18,7 +18,7 @@
 package plugin_cmd
 
 import (
-	"github.com/nori-io/nori-common/v2/logger"
+	"fmt"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -39,17 +39,17 @@ var (
 	listRunning     func() bool
 )
 
-func lsCmd(log logger.FieldLogger) *cobra.Command {
+func lsCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:     "ls [OPTIONS]",
 		Aliases: []string{"list"},
 		Short:   "Shows list of plugins on remote Nori node.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsLs(log)
+			setFlagsLs()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 			}
 
 			client, closeCh := client.NewClient(
@@ -72,15 +72,12 @@ func lsCmd(log logger.FieldLogger) *cobra.Command {
 			close(closeCh)
 			if err != nil {
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
 					})
 				}
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 			}
 
 			list := []*protoNori.PluginListWithStatus{{
@@ -206,8 +203,8 @@ func lsCmd(log logger.FieldLogger) *cobra.Command {
 func init() {
 }
 
-func setFlagsLs(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), lsCmd(log))
+func setFlagsLs() {
+	flags := utils.NewFlagBuilder(PluginCmd(), lsCmd())
 	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                          // TODO
 	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")                 // TODO
 	flags.Bool(&listInactive, "inactive", "--inactive", false, "Show plugins that are not running")          // TODO

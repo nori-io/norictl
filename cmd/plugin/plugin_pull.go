@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -38,21 +37,23 @@ var (
 	pullDeps func() bool
 )
 
-func pullCmd(log logger.FieldLogger) *cobra.Command {
+func pullCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "pull [PLUGIN_ID] [OPTIONS]",
 		Short: "downloading plugin",
 		Long:  `Pull downloads the plugin, with or without it's dependencies.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsPull(log)
+			setFlagsPull()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 
 			if len(args) == 0 {
-				log.Error("PLUGIN_ID required!")
+				fmt.Println("PLUGIN_ID required!")
+				return
 			}
 
 			pluginId := args[0]
@@ -80,14 +81,16 @@ func pullCmd(log logger.FieldLogger) *cobra.Command {
 
 			close(closeCh)
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				common.UI.PluginPullFailure(pluginId)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
+					return
 				}
+				return
 			} else {
 				common.UI.PluginPullSuccess(pluginId)
 			}
@@ -98,7 +101,7 @@ func pullCmd(log logger.FieldLogger) *cobra.Command {
 func init() {
 }
 
-func setFlagsPull(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), pullCmd(log))
+func setFlagsPull() {
+	flags := utils.NewFlagBuilder(PluginCmd(), pullCmd())
 	flags.Bool(&pullDeps, "deps", "-d", false, "	Download plugin with it's dependencies")
 }

@@ -16,14 +16,9 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 
-	logger "github.com/nori-io/logger"
-	log "github.com/sirupsen/logrus"
-
-	"github.com/nori-io/norictl/cmd/common"
 	config_cmd "github.com/nori-io/norictl/cmd/config"
 
 	"github.com/spf13/cobra"
@@ -37,7 +32,7 @@ import (
 )
 
 var cfgFile string
-var logLevel func() string
+//var logLevel func() string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -56,16 +51,14 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	buf := bytes.Buffer{}
 
-	common.LoggerNoriCtl = logger.New(logger.SetJsonFormatter(""), logger.SetOutWriter(&buf))
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 
 	flags := utils.NewFlagBuilder(nil, rootCmd)
 	flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
 
-	rootCmd.AddCommand(plugin_cmd.PluginCmd(common.LoggerNoriCtl))
-	rootCmd.AddCommand(config_cmd.ConfigCmd(common.LoggerNoriCtl))
+	rootCmd.AddCommand(plugin_cmd.PluginCmd())
+	rootCmd.AddCommand(config_cmd.ConfigCmd())
 	rootCmd.AddCommand(certs_cmd.CertsCmd)
 	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }
@@ -82,12 +75,12 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		lvl, err := log.ParseLevel(logLevel())
+		//lvl, err := log.ParseLevel(logLevel())
 		if err != nil {
-			log.Error(err)
+			fmt.Println(err)
 		} else {
-			log.SetLevel(lvl)
+			//log.SetLevel(lvl)
 		}
-		log.Info("Using config file: ", viper.ConfigFileUsed())
+		fmt.Println("Using config file: ", viper.ConfigFileUsed())
 	}
 }

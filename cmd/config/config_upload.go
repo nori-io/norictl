@@ -2,10 +2,8 @@ package config_cmd
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/spf13/cobra"
-
-	"github.com/nori-io/nori-common/v2/logger"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
@@ -14,7 +12,7 @@ import (
 	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 )
 
-func uploadCmd(log logger.FieldLogger) *cobra.Command {
+func uploadCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "upload [PATH]",
@@ -23,11 +21,11 @@ func uploadCmd(log logger.FieldLogger) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 			}
 
 			if len(args) == 0 {
-				log.Error("PLUGIN_ID required!")
+				fmt.Println("PLUGIN_ID required!")
 			}
 
 			path := args[0]
@@ -45,10 +43,10 @@ func uploadCmd(log logger.FieldLogger) *cobra.Command {
 			close(closeCh)
 
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				common.UI.ConfigUploadFailure(path)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

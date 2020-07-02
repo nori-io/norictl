@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -33,7 +32,7 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-func rmCmd(log logger.FieldLogger) *cobra.Command {
+func rmCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "rm [PLUGIN_ID] [OPTIONS]",
@@ -42,11 +41,13 @@ func rmCmd(log logger.FieldLogger) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 
 			if len(args) == 0 {
-				log.Error("PLUGIN_ID required!")
+				fmt.Println("PLUGIN_ID required!")
+				return
 			}
 
 			pluginId := args[0]
@@ -74,13 +75,15 @@ func rmCmd(log logger.FieldLogger) *cobra.Command {
 			close(closeCh)
 			if err != nil {
 				common.UI.PluginRmFailure(pluginId)
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
+					return
 				}
+				return
 			} else {
 				common.UI.PluginRmSuccess(pluginId)
 			}

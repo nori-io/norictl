@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
 	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -38,7 +37,7 @@ var (
 	getVerbose func() bool
 )
 
-func getCmd(log logger.FieldLogger) *cobra.Command {
+func getCmd() *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "get [PLUGIN_ID] [OPTIONS]",
@@ -46,14 +45,16 @@ func getCmd(log logger.FieldLogger) *cobra.Command {
 		Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsGet(log)
+			setFlagsGet()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
+				return
 			}
 
 			if len(args) == 0 {
-				log.Error("PLUGIN_ID required!")
+				fmt.Println("PLUGIN_ID required!")
+				return
 			}
 
 			pluginId := args[0]
@@ -81,14 +82,15 @@ func getCmd(log logger.FieldLogger) *cobra.Command {
 			close(closeCh)
 
 			if err != nil {
-				log.Error("%s", err)
+				fmt.Println("%s", err)
 				common.UI.PluginGetFailure(pluginId)
 				if reply != nil {
-					log.Error("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
 				}
+				return
 			} else {
 				common.UI.PluginGetSuccess(pluginId)
 			}
@@ -100,7 +102,7 @@ func init() {
 
 }
 
-func setFlagsGet(log logger.FieldLogger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), getCmd(log))
+func setFlagsGet() {
+	flags := utils.NewFlagBuilder(PluginCmd(), getCmd())
 	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
 }
