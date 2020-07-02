@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/nori-io/norictl/internal/generated/protobuf/common_messages"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin_messages"
+	"github.com/nori-io/norictl/internal/generated/protobuf/common"
+	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 	"github.com/nori-io/norictl/internal/ui"
 )
 
