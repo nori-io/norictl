@@ -49,11 +49,11 @@ func metaCmd(log logger.FieldLogger) *cobra.Command {
 			setFlagsMeta(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 			}
 
 			if len(args) == 0 {
-				log.Fatal("PLUGIN_ID required!")
+				log.Error("PLUGIN_ID required!")
 			}
 
 			pluginId := args[0]
@@ -83,7 +83,7 @@ func metaCmd(log logger.FieldLogger) *cobra.Command {
 			reply, err := client.PluginMetaCommand(context.Background(), meta)
 			defer close(closeCh)
 			if err != nil {
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 			}
 			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 		},

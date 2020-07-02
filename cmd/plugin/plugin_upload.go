@@ -60,14 +60,14 @@ func uploadCmd(log logger.FieldLogger) *cobra.Command {
 
 			f, err := os.Open(path)
 			if err != nil {
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 			}
 
 			defer f.Close()
 
 			_, err = ioutil.ReadAll(f)
 			if err != nil {
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 			}
 			path = filepath.Base(path)
 
@@ -76,9 +76,9 @@ func uploadCmd(log logger.FieldLogger) *cobra.Command {
 			})
 			if err != nil {
 				common.UI.PluginUploadFailure(path)
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
+					log.Error("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

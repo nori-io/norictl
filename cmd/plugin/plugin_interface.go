@@ -38,7 +38,7 @@ func interfaceCmd(log logger.FieldLogger) *cobra.Command {
 		Short: "Shows list of plugins that implement specify interface.",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
-				log.Fatal("InterfaceName required!!!")
+				log.Error("InterfaceName required!!!")
 			}
 
 			interfaceName := args[0]
@@ -54,9 +54,9 @@ func interfaceCmd(log logger.FieldLogger) *cobra.Command {
 				InterfaceName:        interfaceName,
 			})
 			if err != nil {
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
+					log.Error("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

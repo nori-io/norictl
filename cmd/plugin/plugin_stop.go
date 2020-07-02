@@ -47,11 +47,11 @@ func stopCmd(log logger.FieldLogger) *cobra.Command {
 			setFlagsStop(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal("%s ", err)
+				log.Error("%s ", err)
 			}
 
 			if len(args) == 0 {
-				log.Fatal("PLUGIN_ID required!")
+				log.Error("PLUGIN_ID required!")
 			}
 
 			pluginId := args[0]
@@ -78,10 +78,10 @@ func stopCmd(log logger.FieldLogger) *cobra.Command {
 			})
 			defer close(closeCh)
 			if err != nil {
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 				common.UI.PluginStopFailure(pluginId)
 				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
+					log.Error("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

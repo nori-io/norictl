@@ -49,7 +49,7 @@ func lsCmd(log logger.FieldLogger) *cobra.Command {
 			setFlagsLs(log)
 			conn, err := connection.CurrentConnection()
 			if err != nil {
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 			}
 
 			client, closeCh := client.NewClient(
@@ -72,7 +72,7 @@ func lsCmd(log logger.FieldLogger) *cobra.Command {
 			close(closeCh)
 			if err != nil {
 				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
+					log.Error("%s", commonProtoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 						XXX_NoUnkeyedLiteral: struct{}{},
@@ -80,7 +80,7 @@ func lsCmd(log logger.FieldLogger) *cobra.Command {
 						XXX_sizecache:        0,
 					})
 				}
-				log.Fatal("%s", err)
+				log.Error("%s", err)
 			}
 
 			list := []*protoNori.PluginListWithStatus{{
