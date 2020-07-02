@@ -39,7 +39,7 @@ var (
 	uninstallDependent func() bool
 )
 
-func uninstallCmd(log logger.Logger) *cobra.Command {
+func uninstallCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
@@ -90,7 +90,7 @@ func uninstallCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsUninstall(log logger.Logger) {
+func setFlagsUninstall(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), uninstallCmd(log))
 	flags.Bool(&uninstallAll, "all", "--all", false, "Uninstall all installed plugins")                       // TODO
 	flags.Bool(&uninstallDependent, "dependent", "--dependent", false, "Uninstall plugin and depend plugins") // TODO

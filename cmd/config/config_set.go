@@ -18,7 +18,7 @@ import (
 	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
 )
 
-func setCmd(log logger.Logger) *cobra.Command {
+func setCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "set [PLUGIN_ID][KEY] [VALUE]",

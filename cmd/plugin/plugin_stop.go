@@ -38,7 +38,7 @@ var (
 	stopAll func() bool
 )
 
-func stopCmd(log logger.Logger) *cobra.Command {
+func stopCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "stop [PLUGIN_ID] [OPTIONS]",
@@ -96,7 +96,7 @@ func stopCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsStop(log logger.Logger) {
+func setFlagsStop(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), stopCmd(log))
 	flags.Bool(&stopAll, "all", "--all", false, "Stop all plugins") // TODO
 }

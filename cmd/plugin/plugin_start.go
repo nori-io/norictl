@@ -38,7 +38,7 @@ var (
 	startAll func() bool
 )
 
-func startCmd(log logger.Logger) *cobra.Command {
+func startCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "start [PLUGIN_ID] [OPTIONS]",
@@ -95,7 +95,7 @@ func startCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsStart(log logger.Logger) {
+func setFlagsStart(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), startCmd(log))
 	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
 }

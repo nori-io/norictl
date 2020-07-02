@@ -39,7 +39,7 @@ var (
 	listRunning     func() bool
 )
 
-func lsCmd(log logger.Logger) *cobra.Command {
+func lsCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:     "ls [OPTIONS]",
@@ -206,7 +206,7 @@ func lsCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsLs(log logger.Logger) {
+func setFlagsLs(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), lsCmd(log))
 	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                          // TODO
 	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")                 // TODO

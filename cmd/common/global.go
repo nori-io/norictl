@@ -6,5 +6,5 @@ import (
 	"github.com/nori-io/norictl/internal/ui"
 )
 
-var LoggerNoriCtl logger2.Logger
+var LoggerNoriCtl logger2.FieldLogger
 var UI *ui.UI

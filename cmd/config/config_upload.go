@@ -14,7 +14,7 @@ import (
 	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 )
 
-func uploadCmd(log logger.Logger) *cobra.Command {
+func uploadCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "upload [PATH]",

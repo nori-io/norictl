@@ -38,7 +38,7 @@ var (
 	uploadFile func() string
 )
 
-func uploadCmd(log logger.Logger) *cobra.Command {
+func uploadCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "upload [OPTIONS]",
@@ -93,7 +93,7 @@ func uploadCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsUpload(log logger.Logger) {
+func setFlagsUpload(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), uploadCmd(log))
 	flags.String(&uploadFile, "file", "--file", "", "Specify path to plugin") // TODO
 }

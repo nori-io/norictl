@@ -31,7 +31,7 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-func interfaceCmd(log logger.Logger) *cobra.Command {
+func interfaceCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "interface [InterfaceName]",

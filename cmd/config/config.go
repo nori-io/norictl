@@ -25,7 +25,7 @@ import (
 	"github.com/nori-io/norictl/internal/ui"
 )
 
-func ConfigCmd(log logger.Logger) *cobra.Command {
+func ConfigCmd(log logger.FieldLogger) *cobra.Command {
 
 	ConfigCmd := &cobra.Command{
 		Use:   "config",

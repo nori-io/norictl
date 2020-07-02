@@ -33,7 +33,7 @@ import (
 	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-func rmCmd(log logger.Logger) *cobra.Command {
+func rmCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "rm [PLUGIN_ID] [OPTIONS]",

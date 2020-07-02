@@ -40,7 +40,7 @@ var (
 	metaDependentStatus func() bool
 )
 
-func metaCmd(log logger.Logger) *cobra.Command {
+func metaCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "meta [PLUGIN_ID] [OPTIONS]",
@@ -93,7 +93,7 @@ func metaCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsMeta(log logger.Logger) {
+func setFlagsMeta(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), metaCmd(log))
 	flags.Bool(&metaDeps, "deps", "--deps", false, "Show only plugin dependencies")
 	flags.Bool(&metaDepsStatus, "deps-status", "--deps-status", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")

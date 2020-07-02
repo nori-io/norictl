@@ -40,7 +40,7 @@ var (
 	installAll     func() bool
 )
 
-func installCmd(log logger.Logger) *cobra.Command {
+func installCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "install [PLUGIN_ID] [OPTIONS]",
@@ -95,7 +95,7 @@ func installCmd(log logger.Logger) *cobra.Command {
 	}
 }
 
-func setFlagsInstall(log logger.Logger) {
+func setFlagsInstall(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), installCmd(log))
 	flags.Bool(&installVerbose, "--verbose", "-v", false, "Verbose progress and debug output")
 	flags.Bool(&installDeps, "--deps", "-d", false, "Install plugin with dependencies")

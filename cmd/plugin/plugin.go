@@ -25,7 +25,7 @@ import (
 	"github.com/nori-io/norictl/internal/ui"
 )
 
-func PluginCmd(log logger.Logger) *cobra.Command {
+func PluginCmd(log logger.FieldLogger) *cobra.Command {
 
 	PluginCmd := &cobra.Command{
 		Use:   "plugin",

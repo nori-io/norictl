@@ -38,7 +38,7 @@ var (
 	pullDeps func() bool
 )
 
-func pullCmd(log logger.Logger) *cobra.Command {
+func pullCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "pull [PLUGIN_ID] [OPTIONS]",
@@ -98,7 +98,7 @@ func pullCmd(log logger.Logger) *cobra.Command {
 func init() {
 }
 
-func setFlagsPull(log logger.Logger) {
+func setFlagsPull(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), pullCmd(log))
 	flags.Bool(&pullDeps, "deps", "-d", false, "	Download plugin with it's dependencies")
 }

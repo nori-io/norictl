@@ -38,7 +38,7 @@ var (
 	getVerbose func() bool
 )
 
-func getCmd(log logger.Logger) *cobra.Command {
+func getCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "get [PLUGIN_ID] [OPTIONS]",
@@ -100,7 +100,7 @@ func init() {
 
 }
 
-func setFlagsGet(log logger.Logger) {
+func setFlagsGet(log logger.FieldLogger) {
 	flags := utils.NewFlagBuilder(PluginCmd(log), getCmd(log))
 	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
 }

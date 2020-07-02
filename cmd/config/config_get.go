@@ -17,7 +17,7 @@ import (
 	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 )
 
-func getCmd(log logger.Logger) *cobra.Command {
+func getCmd(log logger.FieldLogger) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "get [PLUGIN_ID]",
@@ -30,7 +30,7 @@ func getCmd(log logger.Logger) *cobra.Command {
 			}
 
 			if len(args) == 0 {
-				log.Fatal("PLUGIN_ID required!")
+				log.Error("PLUGIN_ID required!")
 			}
 
 			pluginId := args[0]
