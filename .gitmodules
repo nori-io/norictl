@@ -1,5 +1,5 @@
 [submodule "api/protobuf"]
 	path = api/protobuf
-	url = http://github.com/nori-io/nori-grpc
-[submodule "nori-grpc"]
-	branch = task-10
+	url = git@github.com:nori-io/nori-grpc.git
+	branch = refactor
+
