@@ -101,4 +101,5 @@ func init() {
 func setFlagsStart() {
 	flags := utils.NewFlagBuilder(PluginCmd(), startCmd())
 	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
+	//--all вместо -a
 }
