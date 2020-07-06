@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 	"github.com/nori-io/norictl/internal/ui"
 )
 
@@ -20,17 +19,17 @@ func main() {
 	uiExample.PluginsAll(plugins)
 	uiExample.PluginsInstalled(plugins)
 
-	uiExample.PluginMetaExist(fmt.Sprintf("%v", protoNori.PluginMetaReply{
-		ArrayPluginListWithoutStatus: []*protoNori.PluginListWithoutStatus{&protoNori.PluginListWithoutStatus{
-			MetaID: &common.ID{
+	uiExample.PluginMetaExist(fmt.Sprintf("%v", protoGenerated.PluginMetaReply{
+		Data: []*protoGenerated.PluginListWithoutStatus{ &protoGenerated.PluginListWithoutStatus{
+			Id: &protoGenerated.ID{
 				Id:                   "nori/session",
 				Version:              "0.0.6",
 			},
-			Author: &protoNori.Author{
+			Author: &protoGenerated.Author{
 				Name:                 "author",
 				URI:                  "",
 			},
-			DependenciesArray:    nil,
+			Dependencies: nil,
 			Description:          nil,
 			Core:                 nil,
 			Interface:            nil,
@@ -39,16 +38,16 @@ func main() {
 			Repository:           nil,
 			Tags:                 nil,
 		},
-			&protoNori.PluginListWithoutStatus{
-				MetaID: &common.ID{
+			&protoGenerated.PluginListWithoutStatus{
+				Id: &protoGenerated.ID{
 					Id:                   "nori/session",
 					Version:              "0.0.7",
 				},
-				Author: &protoNori.Author{
+				Author: &protoGenerated.Author{
 					Name:                 "author",
 					URI:                  "",
 				},
-				DependenciesArray:    nil,
+				Dependencies: nil,
 				Description:          nil,
 				Core:                 nil,
 				Interface:            nil,

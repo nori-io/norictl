@@ -8,8 +8,7 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	"github.com/nori-io/norictl/internal/generated/protobuf/config"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 )
 
 func uploadCmd() *cobra.Command {
@@ -36,7 +35,7 @@ func uploadCmd() *cobra.Command {
 				"",
 			)
 
-			reply, err := client.ConfigUploadCommand(context.Background(), &config.ConfigUploadRequest{
+			reply, err := client.ConfigUploadCommand(context.Background(), &protoGenerated.ConfigUploadRequest{
 				Path:                 path,
 			})
 
@@ -46,7 +45,7 @@ func uploadCmd() *cobra.Command {
 				fmt.Println("%s", err)
 				common.UI.ConfigUploadFailure(path)
 				if reply != nil {
-					fmt.Println("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", protoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

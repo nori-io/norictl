@@ -29,7 +29,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 )
 
 var (
@@ -71,8 +71,8 @@ func metaCmd() *cobra.Command {
 				"",
 			)
 
-			meta := &protoNori.PluginMetaRequest{
-				ID: &protoNori.PluginID{
+			meta := &protoGenerated.PluginMetaRequest{
+				Id: &protoGenerated.PluginID{
 					MetaId:               pluginId,
 				},
 				FlagDeps:             metaDeps(),

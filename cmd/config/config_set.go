@@ -11,9 +11,8 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 )
 
 func setCmd() *cobra.Command {
@@ -47,8 +46,8 @@ func setCmd() *cobra.Command {
 				"",
 			)
 
-			reply, err := client.ConfigSetCommand(context.Background(), &config.ConfigSetRequest{
-				Id: &commonProtoGenerated.ID{
+			reply, err := client.ConfigSetCommand(context.Background(), &protoGenerated.ConfigSetRequest{
+				Id: &protoGenerated.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 				},
@@ -62,7 +61,7 @@ func setCmd() *cobra.Command {
 				fmt.Println("%s", err)
 				common.UI.ConfigSetFailure(pluginId, args[1], args[2])
 				if reply != nil {
-					fmt.Println("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", protoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

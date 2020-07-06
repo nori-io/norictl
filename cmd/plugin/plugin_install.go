@@ -29,8 +29,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 )
 
 var (
@@ -70,8 +69,8 @@ func installCmd() *cobra.Command {
 				"",
 			)
 
-			reply, err := client.PluginInstallCommand(context.Background(), &protoNori.PluginInstallRequest{
-				Id: &commonProtoGenerated.ID{
+			reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
+				Id: &protoGenerated.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 				},
@@ -83,7 +82,7 @@ func installCmd() *cobra.Command {
 			if err != nil {
 				fmt.Println("%s", err)
 				if reply != nil {
-					fmt.Println("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", protoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

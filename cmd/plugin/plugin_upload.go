@@ -30,8 +30,7 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/utils"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 )
 
 var (
@@ -73,14 +72,14 @@ func uploadCmd() *cobra.Command {
 			}
 			path = filepath.Base(path)
 
-			reply, err := client.PluginUploadCommand(context.Background(), &protoNori.PluginUploadRequest{
+			reply, err := client.PluginUploadCommand(context.Background(), &protoGenerated.PluginUploadRequest{
 				Filepath:             path,
 			})
 			if err != nil {
 				common.UI.PluginUploadFailure(path)
 				fmt.Println("%s", err)
 				if reply != nil {
-					fmt.Println("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", protoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})

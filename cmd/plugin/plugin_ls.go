@@ -26,8 +26,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 )
 
 var (
@@ -58,21 +57,19 @@ func lsCmd() *cobra.Command {
 				"",
 			)
 
-			reply, err := client.PluginListCommand(context.Background(), &protoNori.PluginListRequest{
+			reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
 				FlagAll:              listAll(),
 				FlagError:            listError(),
 				FlagInstalled:        listInstalled(),
 				FlagRunning:          listRunning(),
 				FlagInstallable:      listInstallable(),
 				FlagInactive:         listInactive(),
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
+
 			})
 			close(closeCh)
 			if err != nil {
 				if reply != nil {
-					fmt.Println("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s", protoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
@@ -80,35 +77,32 @@ func lsCmd() *cobra.Command {
 				fmt.Println("%s", err)
 			}
 
-			list := []*protoNori.PluginListWithStatus{{
-				MetaID:               nil,
-				Author:               nil,
-				DependenciesArray:    nil,
-				Description:          nil,
-				Core:                 nil,
-				Interface:            nil,
-				License:              nil,
-				Links:                nil,
-				Repository:           nil,
-				Tags:                 nil,
-				FlagAll:              true,
-				FlagError:            false,
-				FlagInstalled:        false,
-				FlagRunning:          false,
-				FlagInstallable:      false,
-				FlagInactive:         false,
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
+			list := []*protoGenerated.PluginListWithStatus{{
+				Id:              nil,
+				Author:          nil,
+				Dependencies:    nil,
+				Description:     nil,
+				Core:            nil,
+				Interface:       "",
+				License:         nil,
+				Links:           nil,
+				Repository:      nil,
+				Tags:            nil,
+				FlagAll:         true,
+				FlagError:       false,
+				FlagInstalled:   false,
+				FlagRunning:     false,
+				FlagInstallable: false,
+				FlagInactive:    false,
 			}}
 
-			filter := func(list []*protoNori.PluginListWithStatus, f func(p protoNori.PluginListWithStatus) bool) []*protoNori.PluginListWithStatus {
-				newList := make([]*protoNori.PluginListWithStatus, 0)
+			filter := func(list []*protoGenerated.PluginListWithStatus, f func(p protoGenerated.PluginListWithStatus) bool) []*protoGenerated.PluginListWithStatus {
+				newList := make([]*protoGenerated.PluginListWithStatus, 0)
 				plugins := make([][]string, len(list))
 				for _, l := range list {
 					if f(*l) {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 				}
 				common.UI.PluginsAll(plugins)
@@ -116,12 +110,12 @@ func lsCmd() *cobra.Command {
 			}
 
 			if listAll() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
+					newList := make([]*protoGenerated.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 					common.UI.PluginsAll(plugins)
 					return p.FlagAll
@@ -129,12 +123,12 @@ func lsCmd() *cobra.Command {
 			}
 
 			if listError() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
+					newList := make([]*protoGenerated.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsError(plugins)
@@ -143,12 +137,12 @@ func lsCmd() *cobra.Command {
 			}
 
 			if listInactive() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
+					newList := make([]*protoGenerated.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 					common.UI.PluginsInactive(plugins)
 					return p.FlagInactive
@@ -156,12 +150,12 @@ func lsCmd() *cobra.Command {
 			}
 
 			if listInstallable() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
+					newList := make([]*protoGenerated.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsInstallable(plugins)
@@ -170,12 +164,12 @@ func lsCmd() *cobra.Command {
 			}
 
 			if listInstalled() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
+					newList := make([]*protoGenerated.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsInstalled(plugins)
@@ -184,12 +178,12 @@ func lsCmd() *cobra.Command {
 			}
 
 			if listRunning() {
-				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
-					newList := make([]*protoNori.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
+					newList := make([]*protoGenerated.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 					common.UI.PluginsRunning(plugins)
 					return p.FlagRunning

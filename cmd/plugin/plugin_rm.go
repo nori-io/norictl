@@ -28,8 +28,7 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
+	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
 )
 
 func rmCmd() *cobra.Command {
@@ -65,8 +64,8 @@ func rmCmd() *cobra.Command {
 				"",
 			)
 
-			reply, err := client.PluginRemoveCommand(context.Background(), &protoNori.PluginRemoveRequest{
-				Id: &commonProtoGenerated.ID{
+			reply, err := client.PluginRemoveCommand(context.Background(), &protoGenerated.PluginRemoveRequest{
+				Id: &protoGenerated.ID{
 					Id:                   pluginIdSplit[0],
 					Version:              pluginIdSplit[1],
 				},
@@ -77,7 +76,7 @@ func rmCmd() *cobra.Command {
 				common.UI.PluginRmFailure(pluginId)
 				fmt.Println("%s", err)
 				if reply != nil {
-					fmt.Println("%s", commonProtoGenerated.ErrorReply{
+					fmt.Println("%s",protoGenerated.ErrorReply{
 						Status:               false,
 						Error:                err.Error(),
 					})
