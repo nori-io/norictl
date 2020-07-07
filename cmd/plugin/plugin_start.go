@@ -72,10 +72,10 @@ func startCmd() *cobra.Command {
 
 			reply, err := client.PluginStartCommand(context.Background(), &protoGenerated.PluginStartRequest{
 				Id: &protoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
+					Id:      pluginIdSplit[0],
+					Version: pluginIdSplit[1],
 				},
-				FlagAll:              startAll(),
+				FlagAll: startAll(),
 			})
 			defer close(closeCh)
 			if err != nil {
@@ -83,8 +83,8 @@ func startCmd() *cobra.Command {
 				common.UI.PluginStartFailure(pluginId)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 					return
 				}
@@ -95,11 +95,7 @@ func startCmd() *cobra.Command {
 	}
 }
 
-func init() {
-}
-
 func setFlagsStart() {
 	flags := utils.NewFlagBuilder(PluginCmd(), startCmd())
-	flags.Bool(&startAll, "all", "--all", false, "Start all plugins") // TODO
-	//--all вместо -a
+	flags.Bool(&startAll, "all", "a", false, "Start all plugins")
 }

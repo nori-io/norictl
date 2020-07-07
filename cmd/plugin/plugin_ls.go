@@ -58,20 +58,19 @@ func lsCmd() *cobra.Command {
 			)
 
 			reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
-				FlagAll:              listAll(),
-				FlagError:            listError(),
-				FlagInstalled:        listInstalled(),
-				FlagRunning:          listRunning(),
-				FlagInstallable:      listInstallable(),
-				FlagInactive:         listInactive(),
-
+				FlagAll:         listAll(),
+				FlagError:       listError(),
+				FlagInstalled:   listInstalled(),
+				FlagRunning:     listRunning(),
+				FlagInstallable: listInstallable(),
+				FlagInactive:    listInactive(),
 			})
 			close(closeCh)
 			if err != nil {
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 				}
 				fmt.Println("%s", err)
@@ -192,9 +191,6 @@ func lsCmd() *cobra.Command {
 
 		},
 	}
-}
-
-func init() {
 }
 
 func setFlagsLs() {

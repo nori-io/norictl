@@ -71,20 +71,20 @@ func installCmd() *cobra.Command {
 
 			reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
 				Id: &protoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
+					Id:      pluginIdSplit[0],
+					Version: pluginIdSplit[1],
 				},
-				FlagVerbose:          installVerbose(),
-				FlagDeps:             installDeps(),
-				FlagAll:              installAll(),
+				FlagVerbose: installVerbose(),
+				FlagDeps:    installDeps(),
+				FlagAll:     installAll(),
 			})
 			defer close(closeCh)
 			if err != nil {
 				fmt.Println("%s", err)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 				}
 				common.UI.PluginInstallFailure(pluginId)
@@ -99,7 +99,4 @@ func setFlagsInstall() {
 	flags.Bool(&installVerbose, "--verbose", "-v", false, "Verbose progress and debug output")
 	flags.Bool(&installDeps, "--deps", "-d", false, "Install plugin with dependencies")
 	flags.Bool(&installAll, "--all", "-all", false, "Install all installable plugins")
-}
-
-func init() {
 }

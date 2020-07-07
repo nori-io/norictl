@@ -36,7 +36,7 @@ func uploadCmd() *cobra.Command {
 			)
 
 			reply, err := client.ConfigUploadCommand(context.Background(), &protoGenerated.ConfigUploadRequest{
-				Path:                 path,
+				Path: path,
 			})
 
 			close(closeCh)
@@ -46,8 +46,8 @@ func uploadCmd() *cobra.Command {
 				common.UI.ConfigUploadFailure(path)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 				}
 			} else {
@@ -55,8 +55,4 @@ func uploadCmd() *cobra.Command {
 			}
 		},
 	}
-}
-
-func init() {
-
 }

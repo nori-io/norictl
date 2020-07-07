@@ -49,14 +49,14 @@ func interfaceCmd() *cobra.Command {
 			defer close(closeCh)
 
 			reply, err := client.PluginInterfaceCommand(context.Background(), &protoGenerated.PluginInterfaceRequest{
-				InterfaceName:        interfaceName,
+				InterfaceName: interfaceName,
 			})
 			if err != nil {
 				fmt.Println("%s", err)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 				}
 				return
@@ -65,7 +65,4 @@ func interfaceCmd() *cobra.Command {
 			}
 		},
 	}
-}
-
-func init() {
 }

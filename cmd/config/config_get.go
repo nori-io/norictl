@@ -48,8 +48,8 @@ func getCmd() *cobra.Command {
 
 			reply, err := client.ConfigGetCommand(context.Background(), &protoGenerated.ConfigGetRequest{
 				Id: &protoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
+					Id:      pluginIdSplit[0],
+					Version: pluginIdSplit[1],
 				},
 			})
 
@@ -60,8 +60,8 @@ func getCmd() *cobra.Command {
 				common.UI.ConfigGetFailure(pluginId)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 				}
 			} else {
@@ -69,8 +69,4 @@ func getCmd() *cobra.Command {
 			}
 		},
 	}
-}
-
-func init() {
-
 }

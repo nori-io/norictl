@@ -73,12 +73,12 @@ func metaCmd() *cobra.Command {
 
 			meta := &protoGenerated.PluginMetaRequest{
 				Id: &protoGenerated.PluginID{
-					MetaId:               pluginId,
+					MetaId: pluginId,
 				},
-				FlagDeps:             metaDeps(),
-				FlagDepsStatus:       metaDepsStatus(),
-				FlagDependent:        metaDependent(),
-				FlagDependentStatus:  metaDependentStatus(),
+				FlagDeps:            metaDeps(),
+				FlagDepsStatus:      metaDepsStatus(),
+				FlagDependent:       metaDependent(),
+				FlagDependentStatus: metaDependentStatus(),
 			}
 
 			reply, err := client.PluginMetaCommand(context.Background(), meta)
@@ -90,9 +90,6 @@ func metaCmd() *cobra.Command {
 			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 		},
 	}
-}
-
-func init() {
 }
 
 func setFlagsMeta() {

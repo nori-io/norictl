@@ -48,11 +48,11 @@ func setCmd() *cobra.Command {
 
 			reply, err := client.ConfigSetCommand(context.Background(), &protoGenerated.ConfigSetRequest{
 				Id: &protoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
+					Id:      pluginIdSplit[0],
+					Version: pluginIdSplit[1],
 				},
-				Key:                  args[1],
-				Value:                args[2],
+				Key:   args[1],
+				Value: args[2],
 			})
 
 			close(closeCh)
@@ -62,8 +62,8 @@ func setCmd() *cobra.Command {
 				common.UI.ConfigSetFailure(pluginId, args[1], args[2])
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 				}
 			} else {
@@ -71,8 +71,4 @@ func setCmd() *cobra.Command {
 			}
 		},
 	}
-}
-
-func init() {
-
 }

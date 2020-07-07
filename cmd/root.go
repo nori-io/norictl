@@ -31,6 +31,7 @@ import (
 )
 
 var cfgFile string
+
 //var logLevel func() string
 
 // rootCmd represents the base command when called without any subcommands

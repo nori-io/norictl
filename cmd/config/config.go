@@ -18,9 +18,9 @@
 package config_cmd
 
 import (
-	"github.com/spf13/cobra"
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/ui"
+	"github.com/spf13/cobra"
 )
 
 func ConfigCmd() *cobra.Command {

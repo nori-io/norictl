@@ -63,19 +63,19 @@ func uninstallCmd() *cobra.Command {
 
 			reply, err := cli.PluginUninstallCommand(context.Background(), &protoGenerated.PluginUninstallRequest{
 				Id: &protoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
+					Id:      pluginIdSplit[0],
+					Version: pluginIdSplit[1],
 				},
-				FlagAll:              uninstallAll(),
-				FlagDependent:        uninstallDependent(),
+				FlagAll:       uninstallAll(),
+				FlagDependent: uninstallDependent(),
 			})
 			defer close(closeCh)
 			if err != nil {
 				if reply != nil {
 					common.UI.PluginUninstallFailure(pluginId)
 					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
+						Status: false,
+						Error:  err.Error(),
 					})
 				}
 				fmt.Println("%s", err)
@@ -83,9 +83,6 @@ func uninstallCmd() *cobra.Command {
 			common.UI.PluginUninstallSuccess(pluginId)
 		},
 	}
-}
-
-func init() {
 }
 
 func setFlagsUninstall() {
