@@ -21,10 +21,12 @@ func uploadCmd() *cobra.Command {
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
+				return
 			}
 
 			if len(args) == 0 {
-				fmt.Println("PLUGIN_ID required!")
+				fmt.Println("Path to config's file required")
+				return
 			}
 
 			path := args[0]

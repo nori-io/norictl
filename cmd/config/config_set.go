@@ -3,6 +3,7 @@ package config_cmd
 import (
 	"context"
 	"fmt"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
 	"github.com/nori-io/nori-common/v2/version"
@@ -25,19 +26,34 @@ func setCmd() *cobra.Command {
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
+				return
 			}
 
 			if len(args) == 0 {
-				fmt.Println("PLUGIN_ID required!")
+				errors.ErrorEmptyPluginId()
+				return
+			}
+
+			if len (args)==1{
+				fmt.Println("key and value required")
+				return
+			}
+			if len (args)==2{
+				fmt.Println("value required")
 				return
 			}
 
 			pluginId := args[0]
 			pluginIdSplit := strings.Split(pluginId, ":")
+			if len(pluginIdSplit) != 2 {
+				errors.ErrorFormatPluginId()
+				return
+			}
 			versionPlugin := pluginIdSplit[1]
 			_, err = version.NewVersion(versionPlugin)
 			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
+				errors.ErrorFormatPluginVersion(err)
+				return
 			}
 
 			client, closeCh := client.NewClient(
@@ -45,7 +61,7 @@ func setCmd() *cobra.Command {
 				conn.CertPath,
 				"",
 			)
-
+			fmt.Println("args2 is", args[2])
 			reply, err := client.ConfigSetCommand(context.Background(), &protoGenerated.ConfigSetRequest{
 				Id: &protoGenerated.ID{
 					Id:      pluginIdSplit[0],

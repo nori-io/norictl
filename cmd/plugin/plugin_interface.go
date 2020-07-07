@@ -19,8 +19,8 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
@@ -34,17 +34,19 @@ func interfaceCmd() *cobra.Command {
 		Use:   "interface [InterfaceName]",
 		Short: "Shows list of plugins that implement specify interface.",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 0 {
-				fmt.Println("InterfaceName required!!!")
+			setFlagsGet()
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				fmt.Println("%s", err)
 				return
 			}
 
 			interfaceName := args[0]
 
 			client, closeCh := client.NewClient(
-				viper.GetString("grpc-address"),
-				viper.GetString("ca"),
-				viper.GetString("ServerHostOverride"),
+				conn.HostPort(),
+				conn.CertPath,
+				"",
 			)
 			defer close(closeCh)
 

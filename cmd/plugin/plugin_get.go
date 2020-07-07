@@ -19,6 +19,7 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
 	"github.com/nori-io/nori-common/v2/version"
@@ -52,16 +53,21 @@ func getCmd() *cobra.Command {
 			}
 
 			if len(args) == 0 {
-				fmt.Println("PLUGIN_ID required!")
+				errors.ErrorEmptyPluginId()
 				return
 			}
 
 			pluginId := args[0]
 			pluginIdSplit := strings.Split(pluginId, ":")
+			if len(pluginIdSplit) != 2 {
+				errors.ErrorFormatPluginId()
+				return
+			}
 			versionPlugin := pluginIdSplit[1]
 			_, err = version.NewVersion(versionPlugin)
 			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
+				errors.ErrorFormatPluginVersion(err)
+				return
 			}
 
 			client, closeCh := client.NewClient(
@@ -70,6 +76,7 @@ func getCmd() *cobra.Command {
 				"",
 			)
 
+			defer close(closeCh)
 			reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
 				Id: &protoGenerated.ID{
 					Id:      pluginIdSplit[0],
@@ -78,7 +85,7 @@ func getCmd() *cobra.Command {
 				FlagVerbose: getVerbose(),
 			})
 
-			close(closeCh)
+
 
 			if err != nil {
 				fmt.Println("%s", err)
@@ -99,5 +106,5 @@ func getCmd() *cobra.Command {
 
 func setFlagsGet() {
 	flags := utils.NewFlagBuilder(PluginCmd(), getCmd())
-	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
+	flags.Bool(&getVerbose, "verbose", "v", false, "Verbose progress and debug output")
 }
