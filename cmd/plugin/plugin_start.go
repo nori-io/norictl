@@ -19,6 +19,7 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
 	"github.com/nori-io/nori-common/v2/version"
@@ -50,17 +51,21 @@ func startCmd() *cobra.Command {
 			}
 
 			if len(args) == 0 {
-				fmt.Println("PLUGIN_ID required!")
+				errors.ErrorEmptyPluginId()
 				return
 			}
 
 			pluginId := args[0]
 
 			pluginIdSplit := strings.Split(pluginId, ":")
+			if len(pluginIdSplit) != 2 {
+				errors.ErrorFormatPluginId()
+				return
+			}
 			versionPlugin := pluginIdSplit[1]
 			_, err = version.NewVersion(versionPlugin)
 			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
+				errors.ErrorFormatPluginVersion(err)
 				return
 			}
 
