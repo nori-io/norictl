@@ -89,7 +89,7 @@ func lsCmd() *cobra.Command {
 				for _, l := range list {
 					if f(*l) {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+	//					plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 				}
 				common.UI.PluginsAll(plugins)
@@ -97,95 +97,102 @@ func lsCmd() *cobra.Command {
 			}
 
 			if 1==1 {
-				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
-					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListReply) bool {
+					newList := make([]*protoGenerated.PluginListReply, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+					//	plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 					common.UI.PluginsAll(plugins)
-					return p.FlagAll
+					return true
+					//return listAll()
 				})
 			}
 
 			if listError() {
-				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
-					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListReply) bool {
+					newList := make([]*protoGenerated.PluginListReply, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+					//	plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsError(plugins)
-					return p.FlagError
+					return true
+					//return p.FlagError
 				})
 			}
 
 			if listInactive() {
-				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
-					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListReply) bool {
+					newList := make([]*protoGenerated.PluginListReply, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 					common.UI.PluginsInactive(plugins)
-					return p.FlagInactive
+					return true
+					//return p.FlagInactive
 				})
 			}
 
 			if listInstallable() {
-				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
-					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListReply) bool {
+					newList := make([]*protoGenerated.PluginListReply, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsInstallable(plugins)
-					return p.FlagInstallable
+					return true
+					//return p.FlagInstallable
 				})
 			}
 
 			if listInstalled() {
-				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
-					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListReply) bool {
+					newList := make([]*protoGenerated.PluginListReply, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsInstalled(plugins)
-					return p.FlagInstalled
+					return true
+					//return p.FlagInstalled
 				})
 			}
 
 			if listRunning() {
-				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
-					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListReply) bool {
+					newList := make([]*protoGenerated.PluginListReply, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 					common.UI.PluginsRunning(plugins)
-					return p.FlagRunning
+					return true
+					//return p.FlagRunning
 				})
 			}
 			if listAll()==listError()==listInactive()==listInstallable()==listInstalled()==listRunning()==false{
-				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
-					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+				list = filter(list, func(p protoGenerated.PluginListReply) bool {
+					newList := make([]*protoGenerated.PluginListReply, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+					//	plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
 					}
 					common.UI.PluginsAll(plugins)
-					return p.FlagAll
+					return true
+					//return p.FlagAll
 				})
 			}
 
