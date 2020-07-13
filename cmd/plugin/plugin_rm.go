@@ -66,8 +66,8 @@ func rmCmd() *cobra.Command {
 
 			reply, err := client.PluginRemoveCommand(context.Background(), &protoGenerated.PluginRemoveRequest{
 				Id: &protoGenerated.ID{
-					Id:      pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					PluginId: pluginIdSplit[0],
+					Version:  pluginIdSplit[1],
 				},
 			})
 
@@ -76,9 +76,9 @@ func rmCmd() *cobra.Command {
 				common.UI.PluginRmFailure(pluginId)
 				fmt.Println("%s", err)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code: reply.Code   ,
+						Message: reply.Message,
 					})
 					return
 				}

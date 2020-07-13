@@ -72,13 +72,14 @@ func metaCmd() *cobra.Command {
 			)
 
 			meta := &protoGenerated.PluginMetaRequest{
-				Id: &protoGenerated.PluginID{
-					MetaId: pluginId,
+				Id:                  &protoGenerated.ID{
+					PluginId:pluginId,
+					Version: versionPlugin,
 				},
-				FlagDeps:            metaDeps(),
-				FlagDepsStatus:      metaDepsStatus(),
-				FlagDependent:       metaDependent(),
-				FlagDependentStatus: metaDependentStatus(),
+				FlagDeps:            false,
+				FlagDepsStatus:      false,
+				FlagDependent:       false,
+				FlagDependentStatus: false,
 			}
 
 			reply, err := client.PluginMetaCommand(context.Background(), meta)

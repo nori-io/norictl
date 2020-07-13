@@ -72,16 +72,14 @@ func uploadCmd() *cobra.Command {
 			}
 			path = filepath.Base(path)
 
-			reply, err := client.PluginUploadCommand(context.Background(), &protoGenerated.PluginUploadRequest{
-				Filepath: path,
-			})
+			reply, err := client.PluginUploadCommand(context.Background())
 			if err != nil {
 				common.UI.PluginUploadFailure(path)
 				fmt.Println("%s", err)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    "",
+						Message: "",
 					})
 					return
 				}

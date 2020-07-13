@@ -72,10 +72,9 @@ func pullCmd() *cobra.Command {
 
 			reply, err := client.PluginPullCommand(context.Background(), &protoGenerated.PluginPullRequest{
 				Id: &protoGenerated.ID{
-					Id:      pluginIdSplit[0],
+					PluginId: pluginIdSplit[0],
 					Version: pluginIdSplit[1],
 				},
-				FlagDeps: pullDeps(),
 			})
 
 			close(closeCh)
@@ -83,9 +82,9 @@ func pullCmd() *cobra.Command {
 				fmt.Println("%s", err)
 				common.UI.PluginPullFailure(pluginId)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    reply.GetCode(),
+						Message: reply.GetMessage(),
 					})
 					return
 				}

@@ -77,7 +77,7 @@ func startCmd() *cobra.Command {
 
 			reply, err := client.PluginStartCommand(context.Background(), &protoGenerated.PluginStartRequest{
 				Id: &protoGenerated.ID{
-					Id:      pluginIdSplit[0],
+					PluginId:  pluginIdSplit[0],
 					Version: pluginIdSplit[1],
 				},
 				FlagAll: startAll(),
@@ -87,9 +87,9 @@ func startCmd() *cobra.Command {
 				fmt.Println("%s", err)
 				common.UI.PluginStartFailure(pluginId)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    reply.GetCode(),
+						Message: reply.GetMessage(),
 					})
 					return
 				}

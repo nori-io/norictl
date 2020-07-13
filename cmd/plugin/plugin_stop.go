@@ -71,7 +71,7 @@ func stopCmd() *cobra.Command {
 
 			reply, err := client.PluginStopCommand(context.Background(), &protoGenerated.PluginStopRequest{
 				Id: &protoGenerated.ID{
-					Id:      pluginIdSplit[0],
+					PluginId:  pluginIdSplit[0],
 					Version: pluginIdSplit[1],
 				},
 				FlagAll: stopAll(),
@@ -81,9 +81,9 @@ func stopCmd() *cobra.Command {
 				fmt.Println("%s", err)
 				common.UI.PluginStopFailure(pluginId)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    reply.GetCode(),
+						Message: reply.GetMessage(),
 					})
 				}
 			}
