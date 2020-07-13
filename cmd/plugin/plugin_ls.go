@@ -56,7 +56,9 @@ func lsCmd() *cobra.Command {
 				conn.CertPath,
 				"",
 			)
+			defer close(closeCh)
 
+			fmt.Println(listAll(), listError(), listInstalled(),  listRunning(), listInstallable(), listInactive())
 			reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
 				FlagAll:         listAll(),
 				FlagError:       listError(),
@@ -65,7 +67,7 @@ func lsCmd() *cobra.Command {
 				FlagInstallable: listInstallable(),
 				FlagInactive:    listInactive(),
 			})
-			close(closeCh)
+
 			if err != nil {
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.ErrorReply{
@@ -108,7 +110,7 @@ func lsCmd() *cobra.Command {
 				return newList
 			}
 
-			if listAll() {
+			if 1==1 {
 				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
 					newList := make([]*protoGenerated.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
@@ -188,6 +190,18 @@ func lsCmd() *cobra.Command {
 					return p.FlagRunning
 				})
 			}
+			if listAll()==listError()==listInactive()==listInstallable()==listInstalled()==listRunning()==false{
+				list = filter(list, func(p protoGenerated.PluginListWithStatus) bool {
+					newList := make([]*protoGenerated.PluginListWithStatus, 0)
+					plugins := make([][]string, len(list))
+					for _, l := range list {
+						newList = append(newList, l)
+						plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+					}
+					common.UI.PluginsAll(plugins)
+					return p.FlagAll
+				})
+			}
 
 		},
 	}
@@ -195,10 +209,10 @@ func lsCmd() *cobra.Command {
 
 func setFlagsLs() {
 	flags := utils.NewFlagBuilder(PluginCmd(), lsCmd())
-	flags.Bool(&listAll, "all", "--all", false, "Show all plugins")                                          // TODO
-	flags.Bool(&listError, "error", "-e", false, "Show plugins with errors (not implement)")                 // TODO
-	flags.Bool(&listInactive, "inactive", "--inactive", false, "Show plugins that are not running")          // TODO
-	flags.Bool(&listInstallable, "installable", "--installable", false, "Show plugins that need to install") // TODO
-	flags.Bool(&listInstalled, "installed", "-i", false, "Show only installed plugins")
-	flags.Bool(&listRunning, "running", "-r", false, "Show only running plugins")
+	flags.Bool(&listAll, "all", "a", false, "Show all plugins")                                          // TODO
+	flags.Bool(&listError, "error", "e", true, "Show plugins with errors (not implement)")                 // TODO
+	flags.Bool(&listInactive, "inactive", "", false, "Show plugins that are not running")          // TODO
+	flags.Bool(&listInstallable, "installable", "", false, "Show plugins that need to install") // TODO
+	flags.Bool(&listInstalled, "installed", "i", false, "Show only installed plugins")
+	flags.Bool(&listRunning, "running", "r", false, "Show only running plugins")
 }

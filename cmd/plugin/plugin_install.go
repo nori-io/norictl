@@ -74,6 +74,7 @@ func installCmd() *cobra.Command {
 				conn.CertPath,
 				"",
 			)
+			defer close(closeCh)
 
 			reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
 				Id: &protoGenerated.ID{
@@ -84,7 +85,7 @@ func installCmd() *cobra.Command {
 				FlagDeps:    installDeps(),
 				FlagAll:     installAll(),
 			})
-			defer close(closeCh)
+
 			if err != nil {
 				fmt.Println("%s", err)
 				if reply != nil {
