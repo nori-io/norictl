@@ -28,7 +28,7 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
+	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 func rmCmd() *cobra.Command {

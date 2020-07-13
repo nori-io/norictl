@@ -30,7 +30,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
+	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
@@ -79,7 +79,7 @@ func getCmd() *cobra.Command {
 			defer close(closeCh)
 			reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
 				Id: &protoGenerated.ID{
-					Id:      pluginIdSplit[0],
+					PluginId:      pluginIdSplit[0],
 					Version: pluginIdSplit[1],
 				},
 				FlagVerbose: getVerbose(),
@@ -91,9 +91,9 @@ func getCmd() *cobra.Command {
 				fmt.Println("%s", err)
 				common.UI.PluginGetFailure(pluginId)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    reply.GetMessage(),
+						Message: reply.GetCode(),
 					})
 				}
 				return

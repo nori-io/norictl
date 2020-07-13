@@ -30,7 +30,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
+	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
@@ -78,20 +78,19 @@ func installCmd() *cobra.Command {
 
 			reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
 				Id: &protoGenerated.ID{
-					Id:      pluginIdSplit[0],
+					PluginId:      pluginIdSplit[0],
 					Version: pluginIdSplit[1],
 				},
 				FlagVerbose: installVerbose(),
-				FlagDeps:    installDeps(),
 				FlagAll:     installAll(),
 			})
 
 			if err != nil {
 				fmt.Println("%s", err)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    reply.GetCode(),
+						Message: reply.GetMessage(),
 					})
 				}
 				common.UI.PluginInstallFailure(pluginId)

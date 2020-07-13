@@ -26,7 +26,7 @@ import (
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/client/utils"
-	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
+	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
@@ -70,35 +70,21 @@ func lsCmd() *cobra.Command {
 
 			if err != nil {
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    reply.Error.GetCode(),
+						Message: reply.Error.GetMessage(),
 					})
 				}
 				fmt.Println("%s", err)
 			}
 
-			list := []*protoGenerated.PluginListWithStatus{{
-				Id:              nil,
-				Author:          nil,
-				Dependencies:    nil,
-				Description:     nil,
-				Core:            nil,
-				Interface:       "",
-				License:         nil,
-				Links:           nil,
-				Repository:      nil,
-				Tags:            nil,
-				FlagAll:         true,
-				FlagError:       false,
-				FlagInstalled:   false,
-				FlagRunning:     false,
-				FlagInstallable: false,
-				FlagInactive:    false,
+			list := []*protoGenerated.PluginListReply{{
+				Plugin: nil,
+				Error:  nil,
 			}}
 
-			filter := func(list []*protoGenerated.PluginListWithStatus, f func(p protoGenerated.PluginListWithStatus) bool) []*protoGenerated.PluginListWithStatus {
-				newList := make([]*protoGenerated.PluginListWithStatus, 0)
+			filter := func(list []*protoGenerated.PluginListReply, f func(p protoGenerated.PluginListReply) bool) []*protoGenerated.PluginListReply {
+				newList := make([]*protoGenerated.PluginListReply, 0)
 				plugins := make([][]string, len(list))
 				for _, l := range list {
 					if f(*l) {

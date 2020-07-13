@@ -22,7 +22,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf"
+	protoNori "github.com/nori-io/norictl/pkg/proto"
 )
 
 func NewClient(addr string, caFile string, serverHostOverride string) (protoNori.NoriClient, chan<- struct{}) {

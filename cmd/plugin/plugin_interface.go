@@ -25,7 +25,7 @@ import (
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
-	protoGenerated "github.com/nori-io/norictl/internal/generated/protobuf"
+	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 func interfaceCmd() *cobra.Command {
@@ -51,14 +51,14 @@ func interfaceCmd() *cobra.Command {
 			defer close(closeCh)
 
 			reply, err := client.PluginInterfaceCommand(context.Background(), &protoGenerated.PluginInterfaceRequest{
-				InterfaceName: interfaceName,
+				Interface: interfaceName,
 			})
 			if err != nil {
 				fmt.Println("%s", err)
 				if reply != nil {
-					fmt.Println("%s", protoGenerated.ErrorReply{
-						Status: false,
-						Error:  err.Error(),
+					fmt.Println("%s", protoGenerated.Error{
+						Code:    reply.Error.GetCode(),
+						Message: reply.Error.GetMessage(),
 					})
 				}
 				return
