@@ -166,7 +166,7 @@ func (u *UI) ConfigGetFailure(pluginId string) {
 }
 
 func (u *UI) ConfigSetSuccess(pluginId, key, value string) {
-	Green("SET SUCCESSFUL: Plugin %q, key: %s, value, %s,\n", pluginId, key, value)
+	Green("SET SUCCESSFUL: Plugin %q, key: %s, value, %s\n", pluginId, key, value)
 }
 
 func (u *UI) ConfigSetFailure(pluginId, key, value string) {

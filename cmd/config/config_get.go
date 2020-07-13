@@ -67,11 +67,12 @@ func getCmd() *cobra.Command {
 				common.UI.ConfigGetFailure(pluginId)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.Error{
-						Code: "",
-						Message: "reply",
+						Code:"" ,
+						Message: err.Error(),
 					})
 				}
 			} else {
+				fmt.Println(reply.Map)
 				common.UI.ConfigGetSuccess(reply.Map)
 			}
 		},
