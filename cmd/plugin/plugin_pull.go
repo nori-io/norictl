@@ -98,5 +98,5 @@ func pullCmd() *cobra.Command {
 
 func setFlagsPull() {
 	flags := utils.NewFlagBuilder(PluginCmd(), pullCmd())
-	flags.Bool(&pullDeps, "deps", "-d", false, "	Download plugin with it's dependencies")
+	flags.Bool(&pullDeps, "deps", "d", false, "	Download plugin with it's dependencies")
 }
