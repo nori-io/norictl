@@ -63,8 +63,8 @@ func uninstallCmd() *cobra.Command {
 
 			reply, err := cli.PluginUninstallCommand(context.Background(), &protoGenerated.PluginUninstallRequest{
 				Id: &protoGenerated.ID{
-					PluginId:pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					PluginId: pluginIdSplit[0],
+					Version:  pluginIdSplit[1],
 				},
 				FlagAll:       uninstallAll(),
 				FlagDependent: uninstallDependent(),
@@ -87,6 +87,6 @@ func uninstallCmd() *cobra.Command {
 
 func setFlagsUninstall() {
 	flags := utils.NewFlagBuilder(PluginCmd(), uninstallCmd())
-	flags.Bool(&uninstallAll, "all", "--all", false, "Uninstall all installed plugins")                       // TODO
-	flags.Bool(&uninstallDependent, "dependent", "--dependent", false, "Uninstall plugin and depend plugins") // TODO
+	flags.Bool(&uninstallAll, "all", "a", true, "Uninstall all installed plugins")                 // TODO
+	flags.Bool(&uninstallDependent, "dependent", "d", true, "Uninstall plugin and depend plugins") // TODO
 }

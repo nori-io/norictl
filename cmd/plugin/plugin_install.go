@@ -78,8 +78,8 @@ func installCmd() *cobra.Command {
 
 			reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
 				Id: &protoGenerated.ID{
-					PluginId:      pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					PluginId: pluginIdSplit[0],
+					Version:  pluginIdSplit[1],
 				},
 				FlagVerbose: installVerbose(),
 				FlagAll:     installAll(),

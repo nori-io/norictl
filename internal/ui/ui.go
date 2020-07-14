@@ -6,7 +6,6 @@ import (
 
 	. "github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
-
 )
 
 type UI struct {
@@ -37,7 +36,7 @@ func (u *UI) PluginInstallFailure(pluginId string) {
 func (u *UI) PluginsList(plugins [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 
-	table.SetHeader([]string{"Plugin.ID", "Author","Interface", "Licenses", "Dependencies"})
+	table.SetHeader([]string{"Plugin.ID", "Author", "Interface", "Licenses", "Dependencies"})
 	for _, v := range plugins {
 		table.Append(v)
 	}

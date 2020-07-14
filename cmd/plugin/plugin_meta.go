@@ -72,9 +72,9 @@ func metaCmd() *cobra.Command {
 			)
 
 			meta := &protoGenerated.PluginMetaRequest{
-				Id:                  &protoGenerated.ID{
-					PluginId:pluginId,
-					Version: versionPlugin,
+				Id: &protoGenerated.ID{
+					PluginId: pluginId,
+					Version:  versionPlugin,
 				},
 				FlagDeps:            false,
 				FlagDepsStatus:      false,

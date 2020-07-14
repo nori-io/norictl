@@ -19,12 +19,12 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/client/connection"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
@@ -44,19 +44,26 @@ func uploadCmd() *cobra.Command {
 		Short: "Upload the plugin from local machine.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setFlagsUpload()
-			path := viper.GetString("file")
+			conn, err := connection.CurrentConnection()
+			if err != nil {
+				fmt.Println("%s", err)
+				return
+			}
 
-			if len(path) == 0 && len(args) > 0 {
+			//path := viper.GetString("file")
+			path:=args[1]
+			if len(path) == 0 && len(args) > 1 {
 				path = args[0]
 			}
 
 			client, closeCh := client.NewClient(
-				viper.GetString("grpc-address"),
-				viper.GetString("ca"),
-				viper.GetString("ServerHostOverride"),
+				conn.HostPort(),
+				conn.CertPath,
+				"",
 			)
 			defer close(closeCh)
 
+			fmt.Println("Current folder", path)
 			f, err := os.Open(path)
 			if err != nil {
 				fmt.Println("%s", err)
@@ -93,5 +100,5 @@ func uploadCmd() *cobra.Command {
 
 func setFlagsUpload() {
 	flags := utils.NewFlagBuilder(PluginCmd(), uploadCmd())
-	flags.String(&uploadFile, "file", "--file", "", "Specify path to plugin") // TODO
+	flags.String(&uploadFile, "file", "f", "", "Specify path to plugin") // TODO
 }

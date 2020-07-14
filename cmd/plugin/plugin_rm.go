@@ -77,7 +77,7 @@ func rmCmd() *cobra.Command {
 				fmt.Println("%s", err)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.Error{
-						Code: reply.Code   ,
+						Code:    reply.Code,
 						Message: reply.Message,
 					})
 					return

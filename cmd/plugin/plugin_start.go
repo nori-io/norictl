@@ -77,8 +77,8 @@ func startCmd() *cobra.Command {
 
 			reply, err := client.PluginStartCommand(context.Background(), &protoGenerated.PluginStartRequest{
 				Id: &protoGenerated.ID{
-					PluginId:  pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					PluginId: pluginIdSplit[0],
+					Version:  pluginIdSplit[1],
 				},
 				FlagAll: startAll(),
 			})

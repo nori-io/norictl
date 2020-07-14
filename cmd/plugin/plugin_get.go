@@ -79,13 +79,11 @@ func getCmd() *cobra.Command {
 			defer close(closeCh)
 			reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
 				Id: &protoGenerated.ID{
-					PluginId:      pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					PluginId: pluginIdSplit[0],
+					Version:  pluginIdSplit[1],
 				},
 				FlagVerbose: getVerbose(),
 			})
-
-
 
 			if err != nil {
 				fmt.Println("%s", err)

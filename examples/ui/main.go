@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 	"github.com/nori-io/norictl/internal/ui"
+	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 func main() {

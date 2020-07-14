@@ -34,11 +34,11 @@ func setCmd() *cobra.Command {
 				return
 			}
 
-			if len (args)==1{
+			if len(args) == 1 {
 				fmt.Println("key and value required")
 				return
 			}
-			if len (args)==2{
+			if len(args) == 2 {
 				fmt.Println("value required")
 				return
 			}
@@ -64,8 +64,8 @@ func setCmd() *cobra.Command {
 			fmt.Println("args2 is", args[2])
 			reply, err := client.ConfigSetCommand(context.Background(), &protoGenerated.ConfigSetRequest{
 				Id: &protoGenerated.ID{
-					PluginId:      pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					PluginId: pluginIdSplit[0],
+					Version:  pluginIdSplit[1],
 				},
 				Key:   args[1],
 				Value: args[2],

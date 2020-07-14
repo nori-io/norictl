@@ -73,7 +73,7 @@ func pullCmd() *cobra.Command {
 			reply, err := client.PluginPullCommand(context.Background(), &protoGenerated.PluginPullRequest{
 				Id: &protoGenerated.ID{
 					PluginId: pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					Version:  pluginIdSplit[1],
 				},
 			})
 

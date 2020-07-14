@@ -50,13 +50,13 @@ func getCmd() *cobra.Command {
 			client, closeCh := client.NewClient(
 				conn.HostPort(),
 				conn.CertPath,
-				 "",
+				"",
 			)
 
 			reply, err := client.ConfigGetCommand(context.Background(), &protoGenerated.ConfigGetRequest{
 				Id: &protoGenerated.ID{
 					PluginId: pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					Version:  pluginIdSplit[1],
 				},
 			})
 
@@ -67,7 +67,7 @@ func getCmd() *cobra.Command {
 				common.UI.ConfigGetFailure(pluginId)
 				if reply != nil {
 					fmt.Println("%s", protoGenerated.Error{
-						Code:"" ,
+						Code:    "",
 						Message: err.Error(),
 					})
 				}

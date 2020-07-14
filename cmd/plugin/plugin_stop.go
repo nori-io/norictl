@@ -71,8 +71,8 @@ func stopCmd() *cobra.Command {
 
 			reply, err := client.PluginStopCommand(context.Background(), &protoGenerated.PluginStopRequest{
 				Id: &protoGenerated.ID{
-					PluginId:  pluginIdSplit[0],
-					Version: pluginIdSplit[1],
+					PluginId: pluginIdSplit[0],
+					Version:  pluginIdSplit[1],
 				},
 				FlagAll: stopAll(),
 			})
@@ -88,12 +88,12 @@ func stopCmd() *cobra.Command {
 				}
 			}
 
-			common.UI.PluginStopFailure(pluginId)
+			common.UI.PluginStopSuccess(pluginId)
 		},
 	}
 }
 
 func setFlagsStop() {
 	flags := utils.NewFlagBuilder(PluginCmd(), stopCmd())
-	flags.Bool(&stopAll, "all", "--all", false, "Stop all plugins") // TODO
+	flags.Bool(&stopAll, "all", "a", true, "Stop all plugins") // TODO
 }
