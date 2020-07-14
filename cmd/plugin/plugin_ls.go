@@ -30,12 +30,12 @@ import (
 )
 
 var (
-	listAll         func() bool
 	listError       func() bool
-	listInactive    func() bool
 	listInstallable func() bool
 	listInstalled   func() bool
 	listRunning     func() bool
+	listStopped    func() bool
+
 )
 
 func lsCmd() *cobra.Command {
@@ -58,14 +58,11 @@ func lsCmd() *cobra.Command {
 			)
 			defer close(closeCh)
 
-			fmt.Println(listAll(), listError(), listInstalled(),  listRunning(), listInstallable(), listInactive())
 			reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
-				FlagAll:         listAll(),
 				FlagError:       listError(),
 				FlagInstalled:   listInstalled(),
 				FlagRunning:     listRunning(),
 				FlagInstallable: listInstallable(),
-				FlagInactive:    listInactive(),
 			})
 
 			if err != nil {
@@ -78,122 +75,97 @@ func lsCmd() *cobra.Command {
 				fmt.Println("%s", err)
 			}
 
-			list := []*protoGenerated.PluginListReply{{
-				Plugin: reply.Plugin,
-				Error:  nil,
-			}}
+			list := reply.Plugin
 
-			filter := func(list []*protoGenerated.PluginListReply, f func(p protoGenerated.PluginListReply) bool) []*protoGenerated.PluginListReply {
-				newList := make([]*protoGenerated.PluginListReply, 0)
-			//	plugins := make([][]string, len(list))
+			filter := func(list []*protoGenerated.Plugin, f func(p protoGenerated.Plugin) bool) []*protoGenerated.Plugin{
+				newList := make([]*protoGenerated.Plugin, 0)
+				plugins := make([][]string, len(list))
 				for _, l := range list {
 					if f(*l) {
 						newList = append(newList, l)
-	//					plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						var  licenses, dependecies string
+						for _, license:=range l.Meta.Licenses{
+							licenses=licenses+license.String()+"\n"
+						}
+						for _, dependency:=range l.Meta.Dependencies{
+							dependecies=dependecies+dependency.String()+"\n"
+						}
+						plugins = append(plugins, []string{l.Meta.Id.String(), l.Meta.Author.String(),l.Meta.Interface, licenses, dependecies})
 					}
 				}
-			//	common.UI.PluginsAll(plugins)
+				common.UI.PluginsList(plugins)
+
 				return newList
 			}
 
-			if listAll() {
-				list = filter(list , func(p protoGenerated.PluginListReply) bool {
-					newList := make([]*protoGenerated.PluginListReply, 0)
-					plugins := make([][]string, len(list))
-					for _, l := range list {
-						newList = append(newList, l)
-					//	plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
-					}
-					fmt.Println("list", list)
-					fmt.Println("newList", newList)
-					common.UI.PluginsAll(plugins)
-					return true
-					//return listAll()
-				})
-			}
-
 			if listError() {
-				list = filter(list, func(p protoGenerated.PluginListReply) bool {
-					newList := make([]*protoGenerated.PluginListReply, 0)
-					plugins := make([][]string, len(list))
-					for _, l := range list {
-						newList = append(newList, l)
-					//	plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
-
-					}
-					common.UI.PluginsError(plugins)
-					return true
-					//return p.FlagError
+				list = filter(list, func(p protoGenerated.Plugin) bool {
+					return p.Status.Enum().String()=="WithError"
 				})
 			}
 
-			if listInactive() {
-				list = filter(list, func(p protoGenerated.PluginListReply) bool {
-					newList := make([]*protoGenerated.PluginListReply, 0)
+/*			if listInactive() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 					}
 					common.UI.PluginsInactive(plugins)
-					return true
-					//return p.FlagInactive
+					return p.FlagInactive
 				})
 			}
-
-			if listInstallable() {
-				list = filter(list, func(p protoGenerated.PluginListReply) bool {
-					newList := make([]*protoGenerated.PluginListReply, 0)
+*/
+/*			if listInstallable() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsInstallable(plugins)
-					return true
-					//return p.FlagInstallable
+					return p.FlagInstallable
 				})
 			}
-
-			if listInstalled() {
-				list = filter(list, func(p protoGenerated.PluginListReply) bool {
-					newList := make([]*protoGenerated.PluginListReply, 0)
+*/
+/*			if listInstalled() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 
 					}
 					common.UI.PluginsInstalled(plugins)
-					return true
-					//return p.FlagInstalled
+					return p.FlagInstalled
 				})
 			}
-
-			if listRunning() {
-				list = filter(list, func(p protoGenerated.PluginListReply) bool {
-					newList := make([]*protoGenerated.PluginListReply, 0)
+*/
+/*			if listRunning() {
+				list = filter(list, func(p protoNori.PluginListWithStatus) bool {
+					newList := make([]*protoNori.PluginListWithStatus, 0)
 					plugins := make([][]string, len(list))
 					for _, l := range list {
 						newList = append(newList, l)
-						//plugins = append(plugins, []string{l.Id.String(), l.Author.String()})
+						plugins = append(plugins, []string{l.MetaID.String(), l.Author.String()})
 					}
 					common.UI.PluginsRunning(plugins)
-					return true
-					//return p.FlagRunning
+					return p.FlagRunning
 				})
 			}
-		},
+*/		},
 	}
 }
-
 func setFlagsLs() {
 	flags := utils.NewFlagBuilder(PluginCmd(), lsCmd())
-	flags.Bool(&listAll, "all", "a", true, "Show all plugins")                                          // TODO
-	flags.Bool(&listError, "error", "e", false, "Show plugins with errors (not implement)")                 // TODO
-	flags.Bool(&listInactive, "inactive", "", false, "Show plugins that are not running")          // TODO
-	flags.Bool(&listInstallable, "installable", "", false, "Show plugins that need to install") // TODO
-	flags.Bool(&listInstalled, "installed", "i", false, "Show only installed plugins")
-	flags.Bool(&listRunning, "running", "r", false, "Show only running plugins")
+	flags.Bool(&listError, "error", "e", true, "Show plugins with errors (not implement)")                 // TODO
+	flags.Bool(&listInstallable, "installable", "", true, "Show plugins that need to install") // TODO
+	flags.Bool(&listInstalled, "installed", "i", true, "Show only installed plugins")
+	flags.Bool(&listRunning, "running", "r", true, "Show only running plugins")
+	flags.Bool(&listRunning, "stopped", "s", true, "Show plugins that are not running")
+
 }

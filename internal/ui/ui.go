@@ -6,6 +6,7 @@ import (
 
 	. "github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
+
 )
 
 type UI struct {
@@ -33,18 +34,17 @@ func (u *UI) PluginInstallFailure(pluginId string) {
 	Red("INSTALL FAILURE: Plugin %s\n", pluginId)
 }
 
-func (u *UI) PluginsAll(plugins [][]string) {
+func (u *UI) PluginsList(plugins [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 
-	table.SetHeader([]string{"Plugin.MetaId", "Author"})
-
+	table.SetHeader([]string{"Plugin.ID", "Author","Interface", "Licenses", "Dependencies"})
 	for _, v := range plugins {
 		table.Append(v)
 	}
 	table.Render() // Send output
 }
 
-func (u *UI) PluginsError(plugins [][]string) {
+/*func (u *UI) PluginsError(plugins [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Plugin.MetaId", "Author"})
 	for _, v := range plugins {
@@ -90,7 +90,7 @@ func (u *UI) PluginsRunning(plugins [][]string) {
 	}
 	table.Render() // Send output
 }
-
+*/
 func (u *UI) PluginMetaExist(pluginInformation string) {
 	fmt.Printf("EXIST: Plugin  %s \n", pluginInformation)
 }
