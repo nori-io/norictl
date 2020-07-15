@@ -16,8 +16,7 @@ func main() {
 	plugins := make([][]string, 2)
 	plugins = append(plugins, []string{"nori/session:0.0.4", "author1"})
 	plugins = append(plugins, []string{"nori/session:0.0.5", "author2"})
-	uiExample.PluginsAll(plugins)
-	uiExample.PluginsInstalled(plugins)
+	uiExample.PluginsList(plugins)
 
 	uiExample.PluginMetaExist(fmt.Sprintf("%v", protoGenerated.PluginMetaReply{
 		Data: []*protoGenerated.PluginListWithoutStatus{&protoGenerated.PluginListWithoutStatus{

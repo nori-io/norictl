@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
@@ -36,12 +39,26 @@ func uploadCmd() *cobra.Command {
 				conn.CertPath,
 				"",
 			)
+			close(closeCh)
+
+			f, err := os.Open(path)
+			if err != nil {
+				fmt.Println("%s", err)
+				return
+			}
+
+			defer f.Close()
+
+			_, err = ioutil.ReadAll(f)
+			if err != nil {
+				fmt.Println("%s", err)
+				return
+			}
+			path = filepath.Base(path)
 
 			reply, err := client.ConfigUploadCommand(context.Background(), &protoGenerated.ConfigUploadRequest{
 				Config: []byte{},
 			})
-
-			close(closeCh)
 
 			if err != nil {
 				fmt.Println("%s", err)

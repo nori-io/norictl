@@ -103,6 +103,5 @@ func installCmd() *cobra.Command {
 func setFlagsInstall() {
 	flags := utils.NewFlagBuilder(PluginCmd(), installCmd())
 	flags.Bool(&installVerbose, "--verbose", "v", false, "Verbose progress and debug output")
-	flags.Bool(&installDeps, "--deps", "d", false, "Install plugin with dependencies")
 	flags.Bool(&installAll, "--all", "a", false, "Install all installable plugins")
 }
