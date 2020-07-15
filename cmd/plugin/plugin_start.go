@@ -102,5 +102,5 @@ func startCmd() *cobra.Command {
 
 func setFlagsStart() {
 	flags := utils.NewFlagBuilder(PluginCmd(), startCmd())
-	flags.Bool(&startAll, "all", "a", false, "Start all plugins")
+	flags.Bool(&startAll, "all", "a", true, "Start all plugins")
 }

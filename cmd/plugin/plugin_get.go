@@ -104,5 +104,5 @@ func getCmd() *cobra.Command {
 
 func setFlagsGet() {
 	flags := utils.NewFlagBuilder(PluginCmd(), getCmd())
-	flags.Bool(&getVerbose, "verbose", "v", false, "Verbose progress and debug output")
+	flags.Bool(&getVerbose, "verbose", "v", true, "Verbose progress and debug output")
 }
