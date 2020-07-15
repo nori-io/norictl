@@ -20,7 +20,7 @@ func getCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "get [PLUGIN_ID]",
 		Short: "get plugin's config",
-		Long:  `Get shows specify plugin's config.`,
+		Long:  `Get shows specify plugin's config`,
 		Run: func(cmd *cobra.Command, args []string) {
 			conn, err := connection.CurrentConnection()
 			if err != nil {

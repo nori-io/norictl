@@ -76,10 +76,10 @@ func metaCmd() *cobra.Command {
 					PluginId: pluginId,
 					Version:  versionPlugin,
 				},
-				FlagDeps:            false,
-				FlagDepsStatus:      false,
-				FlagDependent:       false,
-				FlagDependentStatus: false,
+				FlagDeps:            metaDeps(),
+				FlagDepsStatus:      metaDepsStatus(),
+				FlagDependent:       metaDependent(),
+				FlagDependentStatus: metaDependentStatus(),
 			}
 
 			reply, err := client.PluginMetaCommand(context.Background(), meta)
@@ -95,8 +95,8 @@ func metaCmd() *cobra.Command {
 
 func setFlagsMeta() {
 	flags := utils.NewFlagBuilder(PluginCmd(), metaCmd())
-	flags.Bool(&metaDeps, "deps", "--deps", false, "Show only plugin dependencies")
-	flags.Bool(&metaDepsStatus, "deps-status", "--deps-status", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-	flags.Bool(&metaDependent, "dependent", "--dependent", false, "Show only plugins, that depend on specified plugin")
-	flags.Bool(&metaDependentStatus, "dependent-status", "--dependent-status", false, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+	flags.Bool(&metaDeps, "deps", "d", false, "Show only plugin dependencies")
+	flags.Bool(&metaDepsStatus, "deps-status", "", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+	flags.Bool(&metaDependent, "dependent", "", false, "Show only plugins, that depend on specified plugin")
+	flags.Bool(&metaDependentStatus, "dependent-status", "", false, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
 }

@@ -27,7 +27,7 @@ func ConfigCmd() *cobra.Command {
 
 	ConfigCmd := &cobra.Command{
 		Use:   "config",
-		Short: "config COMMAND",
+		Short: "config command",
 	}
 
 	ConfigCmd.AddCommand(getCmd())
