@@ -44,7 +44,6 @@ func getCmd() *cobra.Command {
 		Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("flags",cmd.Flags().Args())
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -75,13 +74,19 @@ func getCmd() *cobra.Command {
 				"",
 			)
 
+			f,e:=cmd.Flags().GetBool("verbose")
+			if e!=nil{
+				fmt.Println(e)
+				return
+			}
+			fmt.Println("fe", f, e)
 			defer close(closeCh)
 			reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
 				Id: &protoGenerated.ID{
 					PluginId: pluginIdSplit[0],
 					Version:  pluginIdSplit[1],
 				},
-				FlagVerbose: getVerbose,
+				FlagVerbose: f,
 			})
 
 			if err != nil {
@@ -99,7 +104,6 @@ func getCmd() *cobra.Command {
 			}
 		},
 	}
-	cmd.Flags().BoolVarP(&getVerbose, "verbose", "v", false, "verbose output")
 	return cmd
 }
 

@@ -31,13 +31,10 @@ import (
 
 var (
 	cfgFile string
-	getVerbose bool
 )
 
-//var logLevel func() string
-
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "norictl",
 	Short: "A simple command line client for nori",
 }
@@ -45,7 +42,7 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -54,12 +51,12 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
-	rootCmd.PersistentFlags().BoolVarP(&getVerbose, "verbose", "v", false, "verbose output")
+	RootCmd.PersistentFlags().String( "config", "", "config file")
+	RootCmd.PersistentFlags().BoolP( "verbose", "v", false, "verbose output")
 
-	rootCmd.AddCommand(plugin_cmd.PluginCmd())
-	rootCmd.AddCommand(config_cmd.ConfigCmd())
-	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
+	RootCmd.AddCommand(plugin_cmd.PluginCmd())
+	RootCmd.AddCommand(config_cmd.ConfigCmd())
+	RootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
