@@ -19,11 +19,12 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/client/connection"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
 	"github.com/nori-io/nori-common/v2/version"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
@@ -36,49 +37,64 @@ var (
 	uninstallDependent bool
 )
 
-var uninstallCmd=&cobra.Command {
+var uninstallCmd = &cobra.Command{
 
-		Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
-		Short: "Uninstall plugin or plugins.",
-		Run: func(cmd *cobra.Command, args []string) {
-			pluginId := viper.GetString("id")
-			if len(pluginId) == 0 && len(args) > 0 {
-				pluginId = args[0]
-			}
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err := version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
-			}
+	Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
+	Short: "Uninstall plugin or plugins.",
+	Run: func(cmd *cobra.Command, args []string) {
 
-			cli, closeCh := client.NewClient(
-				viper.GetString("grpc-address"),
-				viper.GetString("ca"),
-				viper.GetString("ServerHostOverride"),
-			)
+		cmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "Uninstall all installed plugins")
+		cmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", false, "Uninstall plugin and depend plugins")
 
-			reply, err := cli.PluginUninstallCommand(context.Background(), &protoGenerated.PluginUninstallRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-				FlagAll:       uninstallAll,
-				FlagDependent: uninstallDependent,
-			})
-			defer close(closeCh)
-			if err != nil {
-				if reply != nil {
-					common.UI.PluginUninstallFailure(pluginId)
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.GetCode(),
-						Message: reply.GetMessage(),
-					})
-				}
-				fmt.Println("%s", err)
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+
+		reply, err := client.PluginUninstallCommand(context.Background(), &protoGenerated.PluginUninstallRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+			FlagAll:       uninstallAll,
+			FlagDependent: uninstallDependent,
+		})
+		defer close(closeCh)
+		if err != nil {
+			if reply != nil {
+				common.UI.PluginUninstallFailure(pluginId)
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetCode(),
+					Message: reply.GetMessage(),
+				})
 			}
-			common.UI.PluginUninstallSuccess(pluginId)
-			cmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "Uninstall all installed plugins")
-			cmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", false, "Uninstall plugin and depend plugins")
-		},
+			fmt.Println("%s", err)
+		}
+		common.UI.PluginUninstallSuccess(pluginId)
+
+	},
 }

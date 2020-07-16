@@ -28,41 +28,41 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-var interfaceCmd=&cobra.Command{
+var interfaceCmd = &cobra.Command{
 
-		Use:   "interface [InterfaceName]",
-		Short: "Shows list of plugins that implement specify interface.",
-		Run: func(cmd *cobra.Command, args []string) {
+	Use:   "interface [InterfaceName]",
+	Short: "Shows list of plugins that implement specify interface.",
+	Run: func(cmd *cobra.Command, args []string) {
 
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
-				return
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
+
+		interfaceName := args[0]
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
+
+		reply, err := client.PluginInterfaceCommand(context.Background(), &protoGenerated.PluginInterfaceRequest{
+			Interface: interfaceName,
+		})
+		if err != nil {
+			fmt.Println("%s", err)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.Error.GetCode(),
+					Message: reply.Error.GetMessage(),
+				})
 			}
-
-			interfaceName := args[0]
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-			defer close(closeCh)
-
-			reply, err := client.PluginInterfaceCommand(context.Background(), &protoGenerated.PluginInterfaceRequest{
-				Interface: interfaceName,
-			})
-			if err != nil {
-				fmt.Println("%s", err)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.Error.GetCode(),
-						Message: reply.Error.GetMessage(),
-					})
-				}
-				return
-			} else {
-				common.UI.InterfacePluginList(fmt.Sprintf("%s", reply))
-			}
-		},
+			return
+		} else {
+			common.UI.InterfacePluginList(fmt.Sprintf("%s", reply))
+		}
+	},
 }

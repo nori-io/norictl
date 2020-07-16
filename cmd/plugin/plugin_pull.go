@@ -19,6 +19,7 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
 	"github.com/nori-io/nori-common/v2/version"
@@ -35,59 +36,65 @@ var (
 	pullDeps bool
 )
 
-var pullCmd=&cobra.Command {
-		Use:   "pull [PLUGIN_ID] [OPTIONS]",
-		Short: "downloading plugin",
-		Long:  `Pull downloads the plugin, with or without it's dependencies.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
+var pullCmd = &cobra.Command{
+	Use:   "pull [PLUGIN_ID] [OPTIONS]",
+	Short: "downloading plugin",
+	Long:  `Pull downloads the plugin, with or without it's dependencies.`,
+	Run: func(cmd *cobra.Command, args []string) {
+
+		cmd.Flags().BoolVarP(&pullDeps, "deps", "d", false, "	Download plugin with it's dependencies")
+
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
+
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+
+		reply, err := client.PluginPullCommand(context.Background(), &protoGenerated.PluginPullRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+		})
+
+		close(closeCh)
+		if err != nil {
+			fmt.Println("%s", err)
+			common.UI.PluginPullFailure(pluginId)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetCode(),
+					Message: reply.GetMessage(),
+				})
 				return
 			}
-
-			if len(args) == 0 {
-				fmt.Println("PLUGIN_ID required!")
-				return
-			}
-
-			pluginId := args[0]
-
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
-			}
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-
-			reply, err := client.PluginPullCommand(context.Background(), &protoGenerated.PluginPullRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-			})
-
-			close(closeCh)
-			if err != nil {
-				fmt.Println("%s", err)
-				common.UI.PluginPullFailure(pluginId)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.GetCode(),
-						Message: reply.GetMessage(),
-					})
-					return
-				}
-				return
-			} else {
-				common.UI.PluginPullSuccess(pluginId)
-			}
-			cmd.Flags().BoolVarP(&pullDeps, "deps", "d", false, "	Download plugin with it's dependencies")
-		},
+			return
+		} else {
+			common.UI.PluginPullSuccess(pluginId)
+		}
+	},
 }

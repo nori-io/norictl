@@ -15,64 +15,63 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-var getCmd=&cobra.Command {
-		Use:   "get [PLUGIN_ID]",
-		Short: "get plugin's config",
-		Long:  `Get shows specify plugin's config`,
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println(err)
-				return
+var getCmd = &cobra.Command{
+	Use:   "get [PLUGIN_ID]",
+	Short: "get plugin's config",
+	Long:  `Get shows specify plugin's config`,
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+
+		reply, err := client.ConfigGetCommand(context.Background(), &protoGenerated.ConfigGetRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+		})
+
+		close(closeCh)
+
+		if err != nil {
+			fmt.Println("%s", err)
+			common.UI.ConfigGetFailure(pluginId)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    "",
+					Message: err.Error(),
+				})
 			}
-
-			if len(args) == 0 {
-				errors.ErrorEmptyPluginId()
-				return
-			}
-
-			pluginId := args[0]
-			pluginIdSplit := strings.Split(pluginId, ":")
-			if len(pluginIdSplit) != 2 {
-				errors.ErrorFormatPluginId()
-				return
-			}
-
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				errors.ErrorFormatPluginVersion(err)
-				return
-			}
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-
-			reply, err := client.ConfigGetCommand(context.Background(), &protoGenerated.ConfigGetRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-			})
-
-			close(closeCh)
-
-			if err != nil {
-				fmt.Println("%s", err)
-				common.UI.ConfigGetFailure(pluginId)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    "",
-						Message: err.Error(),
-					})
-				}
-			} else {
-				fmt.Println(reply.Map)
-				common.UI.ConfigGetSuccess(reply.Map)
-			}
-		},
-
+		} else {
+			fmt.Println(reply.Map)
+			common.UI.ConfigGetSuccess(reply.Map)
+		}
+	},
 }

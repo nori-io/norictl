@@ -19,6 +19,7 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
 	"github.com/nori-io/nori-common/v2/version"
@@ -35,58 +36,64 @@ var (
 	stopAll bool
 )
 
-var stopCmd=&cobra.Command {
+var stopCmd = &cobra.Command{
 
-		Use:   "stop [PLUGIN_ID] [OPTIONS]",
-		Short: "Stop plugin's or plugins' execution",
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s ", err)
-				return
+	Use:   "stop [PLUGIN_ID] [OPTIONS]",
+	Short: "Stop plugin's or plugins' execution",
+	Run: func(cmd *cobra.Command, args []string) {
+
+		cmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
+
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s ", err)
+			return
+		}
+
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+
+		reply, err := client.PluginStopCommand(context.Background(), &protoGenerated.PluginStopRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+			FlagAll: stopAll,
+		})
+		defer close(closeCh)
+		if err != nil {
+			fmt.Println("%s", err)
+			common.UI.PluginStopFailure(pluginId)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetCode(),
+					Message: reply.GetMessage(),
+				})
 			}
+		}
 
-			if len(args) == 0 {
-				fmt.Println("PLUGIN_ID required!")
-				return
-			}
+		common.UI.PluginStopSuccess(pluginId)
 
-			pluginId := args[0]
-
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
-			}
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-
-			reply, err := client.PluginStopCommand(context.Background(), &protoGenerated.PluginStopRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-				FlagAll: stopAll,
-			})
-			defer close(closeCh)
-			if err != nil {
-				fmt.Println("%s", err)
-				common.UI.PluginStopFailure(pluginId)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.GetCode(),
-						Message: reply.GetMessage(),
-					})
-				}
-			}
-
-			common.UI.PluginStopSuccess(pluginId)
-			cmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
-
-		},
+	},
 }

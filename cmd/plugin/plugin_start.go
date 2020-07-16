@@ -36,63 +36,64 @@ var (
 	startAll bool
 )
 
-var startCmd=&cobra.Command {
+var startCmd = &cobra.Command{
 
-		Use:   "start [PLUGIN_ID] [OPTIONS]",
-		Short: "Start one plugin or all plugins.",
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
+	Use:   "start [PLUGIN_ID] [OPTIONS]",
+	Short: "Start one plugin or all plugins.",
+	Run: func(cmd *cobra.Command, args []string) {
+
+		cmd.Flags().BoolVarP(&startAll, "all", "a", false, "Start all plugins")
+
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
+
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+
+		reply, err := client.PluginStartCommand(context.Background(), &protoGenerated.PluginStartRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+			FlagAll: startAll,
+		})
+		defer close(closeCh)
+		if err != nil {
+			fmt.Println("%s", err)
+			common.UI.PluginStartFailure(pluginId)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetCode(),
+					Message: reply.GetMessage(),
+				})
 				return
 			}
-
-			if len(args) == 0 {
-				errors.ErrorEmptyPluginId()
-				return
-			}
-
-			pluginId := args[0]
-
-			pluginIdSplit := strings.Split(pluginId, ":")
-			if len(pluginIdSplit) != 2 {
-				errors.ErrorFormatPluginId()
-				return
-			}
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				errors.ErrorFormatPluginVersion(err)
-				return
-			}
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-
-			reply, err := client.PluginStartCommand(context.Background(), &protoGenerated.PluginStartRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-				FlagAll: startAll,
-			})
-			defer close(closeCh)
-			if err != nil {
-				fmt.Println("%s", err)
-				common.UI.PluginStartFailure(pluginId)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.GetCode(),
-						Message: reply.GetMessage(),
-					})
-					return
-				}
-				return
-			}
-			common.UI.PluginStartSuccess(pluginId)
-			cmd.Flags().BoolVarP(&startAll, "all", "a", false, "Start all plugins")
-		},
+			return
+		}
+		common.UI.PluginStartSuccess(pluginId)
+	},
 }

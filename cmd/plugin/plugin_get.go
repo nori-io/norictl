@@ -98,4 +98,3 @@ var getCmd = &cobra.Command{
 		}
 	},
 }
-

@@ -36,59 +36,62 @@ var (
 	listStopped     bool
 )
 
-var lsCmd=&cobra.Command {
+var lsCmd = &cobra.Command{
 
-		Use:     "ls [OPTIONS]",
-		Aliases: []string{"list"},
-		Short:   "Shows list of plugins on remote Nori node.",
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
+	Use:     "ls [OPTIONS]",
+	Aliases: []string{"list"},
+	Short:   "Shows list of plugins on remote Nori node.",
+	Run: func(cmd *cobra.Command, args []string) {
+
+		cmd.Flags().BoolVarP(&listError, "error", "e", false, "Show plugins with errors (not implement)")
+		cmd.Flags().BoolVarP(&listInstallable, "installable", "", false, "Show plugins that need to install") // TODO
+		cmd.Flags().BoolVarP(&listInstalled, "installed", "i", false, "Show only installed plugins")
+		cmd.Flags().BoolVarP(&listRunning, "running", "r", false, "Show only running plugins")
+		cmd.Flags().BoolVarP(&listStopped, "stopped", "s", false, "Show plugins that are not running")
+
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+		}
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
+
+		reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
+			FlagError:       listError,
+			FlagInstalled:   listInstalled,
+			FlagInstallable: listInstallable,
+			FlagRunning:     listRunning,
+			FlagStopped:     listStopped,
+		})
+
+		if err != nil {
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.Error.GetCode(),
+					Message: reply.Error.GetMessage(),
+				})
 			}
+			fmt.Println("%s", err)
+		}
 
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-			defer close(closeCh)
-
-			reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
-				FlagError:       listError,
-				FlagInstalled:   listInstalled,
-				FlagInstallable: listInstallable,
-				FlagRunning:     listRunning,
-				FlagStopped:     listStopped,
-			})
-
-			if err != nil {
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.Error.GetCode(),
-						Message: reply.Error.GetMessage(),
-					})
-				}
-				fmt.Println("%s", err)
+		list := reply.Plugin
+		var plugins [][]string
+		for _, l := range list {
+			var licenses, dependecies string
+			for _, license := range l.Meta.Licenses {
+				licenses = licenses + license.String() + "\n"
 			}
-
-			list := reply.Plugin
-			var plugins [][]string
-			for _, l := range list {
-				var licenses, dependecies string
-				for _, license := range l.Meta.Licenses {
-					licenses = licenses + license.String() + "\n"
-				}
-				for _, dependency := range l.Meta.Dependencies {
-					dependecies = dependecies + dependency.String() + "\n"
-				}
-				plugins = append(plugins, []string{l.Meta.Id.PluginId + ":" + l.Meta.Id.Version, l.Meta.Author.String(), l.Meta.Interface, licenses, dependecies})
+			for _, dependency := range l.Meta.Dependencies {
+				dependecies = dependecies + dependency.String() + "\n"
 			}
-			common.UI.PluginsList(plugins)
-			cmd.Flags().BoolVarP(&listError, "error", "e", false, "Show plugins with errors (not implement)")
-			cmd.Flags().BoolVarP(&listInstallable, "installable", "", false, "Show plugins that need to install") // TODO
-			cmd.Flags().BoolVarP(&listInstalled, "installed", "i", false, "Show only installed plugins")
-			cmd.Flags().BoolVarP(&listRunning, "running", "r", false, "Show only running plugins")
-			cmd.Flags().BoolVarP(&listStopped, "stopped", "s", false, "Show plugins that are not running")
-		},
+			plugins = append(plugins, []string{l.Meta.Id.PluginId + ":" + l.Meta.Id.Version, l.Meta.Author.String(), l.Meta.Interface, licenses, dependecies})
+		}
+		common.UI.PluginsList(plugins)
+
+	},
 }

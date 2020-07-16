@@ -19,6 +19,7 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
 	"github.com/nori-io/nori-common/v2/version"
@@ -31,59 +32,62 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-var rmCmd=&cobra.Command {
+var rmCmd = &cobra.Command{
 
-		Use:   "rm [PLUGIN_ID] [OPTIONS]",
-		Short: "remove plugin",
-		Long:  `Remove plugin from local machine.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
+	Use:   "rm [PLUGIN_ID] [OPTIONS]",
+	Short: "remove plugin",
+	Long:  `Remove plugin from local machine.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
+
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+
+		reply, err := client.PluginRemoveCommand(context.Background(), &protoGenerated.PluginRemoveRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+		})
+
+		close(closeCh)
+		if err != nil {
+			common.UI.PluginRmFailure(pluginId)
+			fmt.Println("%s", err)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.Code,
+					Message: reply.Message,
+				})
 				return
 			}
-
-			if len(args) == 0 {
-				fmt.Println("PLUGIN_ID required!")
-				return
-			}
-
-			pluginId := args[0]
-
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
-			}
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-
-			reply, err := client.PluginRemoveCommand(context.Background(), &protoGenerated.PluginRemoveRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-			})
-
-			close(closeCh)
-			if err != nil {
-				common.UI.PluginRmFailure(pluginId)
-				fmt.Println("%s", err)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.Code,
-						Message: reply.Message,
-					})
-					return
-				}
-				return
-			} else {
-				common.UI.PluginRmSuccess(pluginId)
-			}
-		},
+			return
+		} else {
+			common.UI.PluginRmSuccess(pluginId)
+		}
+	},
 }

@@ -36,72 +36,71 @@ var (
 	installAll bool
 )
 
-var installCmd=&cobra.Command {
-		Use:   "install [PLUGIN_ID] [OPTIONS]",
-		Short: "Install downloaded plugin or plugins.",
-		Run: func(cmd *cobra.Command, args []string) {
+var installCmd = &cobra.Command{
+	Use:   "install [PLUGIN_ID] [OPTIONS]",
+	Short: "Install downloaded plugin or plugins.",
+	Run: func(cmd *cobra.Command, args []string) {
 
-			cmd.Flags().BoolVarP(&installAll, "all", "a", false, "Install all installable plugins")
+		cmd.Flags().BoolVarP(&installAll, "all", "a", false, "Install all installable plugins")
 
-			fmt.Println(cmd.Flags())
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
+		fmt.Println(cmd.Flags())
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+		}
+
+		flagAll, err := cmd.Flags().GetBool("all")
+		if err != nil {
+			fmt.Println("ERR IS", err)
+			return
+		}
+
+		fmt.Println("ALL", flagAll)
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
+
+		reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+			FlagAll: installAll,
+		})
+
+		fmt.Println("i", installAll)
+		if err != nil {
+			fmt.Println("%s", err)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetCode(),
+					Message: reply.GetMessage(),
+				})
 			}
+			common.UI.PluginInstallFailure(pluginId)
+		}
+		common.UI.PluginInstallSuccess(pluginId)
 
-			flagAll, err := cmd.Flags().GetBool("all")
-			if err != nil {
-				fmt.Println("ERR IS", err)
-				return
-			}
-
-			fmt.Println("ALL", flagAll)
-			if len(args) == 0 {
-				errors.ErrorEmptyPluginId()
-				return
-			}
-
-			pluginId := args[0]
-			pluginIdSplit := strings.Split(pluginId, ":")
-			if len(pluginIdSplit) != 2 {
-				errors.ErrorFormatPluginId()
-				return
-			}
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				errors.ErrorFormatPluginVersion(err)
-				return
-			}
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-			defer close(closeCh)
-
-			reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-				FlagAll: installAll,
-			})
-
-			fmt.Println("i", installAll)
-			if err != nil {
-				fmt.Println("%s", err)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.GetCode(),
-						Message: reply.GetMessage(),
-					})
-				}
-				common.UI.PluginInstallFailure(pluginId)
-			}
-			common.UI.PluginInstallSuccess(pluginId)
-
-		},
+	},
 }
-
