@@ -25,26 +25,24 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	listError       func() bool
-	listInstallable func() bool
-	listInstalled   func() bool
-	listRunning     func() bool
-	listStopped     func() bool
+	listError       bool
+	listInstallable bool
+	listInstalled   bool
+	listRunning     bool
+	listStopped     bool
 )
 
 func lsCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:=&cobra.Command{
 		Use:     "ls [OPTIONS]",
 		Aliases: []string{"list"},
 		Short:   "Shows list of plugins on remote Nori node.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsLs()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -58,11 +56,11 @@ func lsCmd() *cobra.Command {
 			defer close(closeCh)
 
 			reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
-				FlagError:       listError(),
-				FlagInstalled:   listInstalled(),
-				FlagRunning:     listRunning(),
-				FlagInstallable: listInstallable(),
-				FlagStopped:     listStopped(),
+				FlagError:       listError,
+				FlagInstalled:   listInstalled,
+				FlagInstallable: listInstallable,
+				FlagRunning:     listRunning,
+				FlagStopped:     listStopped,
 			})
 
 			if err != nil {
@@ -90,13 +88,10 @@ func lsCmd() *cobra.Command {
 			common.UI.PluginsList(plugins)
 		},
 	}
-}
-func setFlagsLs() {
-	flags := utils.NewFlagBuilder(PluginCmd(), lsCmd())
-	flags.Bool(&listError, "error", "e", true, "Show plugins with errors (not implement)")     // TODO
-	flags.Bool(&listInstallable, "installable", "", true, "Show plugins that need to install") // TODO
-	flags.Bool(&listInstalled, "installed", "i", true, "Show only installed plugins")
-	flags.Bool(&listRunning, "running", "r", true, "Show only running plugins")
-	flags.Bool(&listStopped, "stopped", "s", true, "Show plugins that are not running")
-
+	cmd.Flags().BoolVarP(&listError, "error", "e", true, "Show plugins with errors (not implement)")
+	cmd.Flags().BoolVarP(&listInstallable, "installable", "", true, "Show plugins that need to install") // TODO
+	cmd.Flags().BoolVarP(&listInstalled, "installed", "i", true, "Show only installed plugins")
+	cmd.Flags().BoolVarP(&listRunning, "running", "r", true, "Show only running plugins")
+	cmd.Flags().BoolVarP(&listStopped, "stopped", "s", true, "Show plugins that are not running")
+return cmd
 }

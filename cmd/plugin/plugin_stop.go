@@ -28,21 +28,19 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	stopAll func() bool
+	stopAll bool
 )
 
 func stopCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:= &cobra.Command{
 		Use:   "stop [PLUGIN_ID] [OPTIONS]",
 		Short: "Stop plugin's or plugins' execution",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsStop()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s ", err)
@@ -74,7 +72,7 @@ func stopCmd() *cobra.Command {
 					PluginId: pluginIdSplit[0],
 					Version:  pluginIdSplit[1],
 				},
-				FlagAll: stopAll(),
+				FlagAll: stopAll,
 			})
 			defer close(closeCh)
 			if err != nil {
@@ -91,9 +89,6 @@ func stopCmd() *cobra.Command {
 			common.UI.PluginStopSuccess(pluginId)
 		},
 	}
-}
-
-func setFlagsStop() {
-	flags := utils.NewFlagBuilder(PluginCmd(), stopCmd())
-	flags.Bool(&stopAll, "all", "a", true, "Stop all plugins") // TODO
+	cmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
+	return cmd
 }

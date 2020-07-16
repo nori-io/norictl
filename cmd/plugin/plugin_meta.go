@@ -28,24 +28,22 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	metaDeps            func() bool
-	metaDepsStatus      func() bool
-	metaDependent       func() bool
-	metaDependentStatus func() bool
+	metaDeps            bool
+	metaDepsStatus      bool
+	metaDependent       bool
+	metaDependentStatus bool
 )
 
 func metaCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:=&cobra.Command{
 		Use:   "meta [PLUGIN_ID] [OPTIONS]",
 		Short: "Show plugin meta data.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsMeta()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -76,10 +74,10 @@ func metaCmd() *cobra.Command {
 					PluginId: pluginId,
 					Version:  versionPlugin,
 				},
-				FlagDeps:            metaDeps(),
-				FlagDepsStatus:      metaDepsStatus(),
-				FlagDependent:       metaDependent(),
-				FlagDependentStatus: metaDependentStatus(),
+				FlagDeps:            metaDeps,
+				FlagDepsStatus:      metaDepsStatus,
+				FlagDependent:       metaDependent,
+				FlagDependentStatus: metaDependentStatus,
 			}
 
 			reply, err := client.PluginMetaCommand(context.Background(), meta)
@@ -91,12 +89,12 @@ func metaCmd() *cobra.Command {
 			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 		},
 	}
+	cmd.Flags().BoolVarP(&metaDeps, "deps", "d", true, "Show only plugin dependencies")
+	cmd.Flags().BoolVarP(&metaDepsStatus, "deps-status", "", true, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+	cmd.Flags().BoolVarP(&metaDependent, "dependent", "", true, "Show only plugins, that depend on specified plugin")
+	cmd.Flags().BoolVarP(&metaDependentStatus, "dependent-status", "", true, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+
+	return cmd
 }
 
-func setFlagsMeta() {
-	flags := utils.NewFlagBuilder(PluginCmd(), metaCmd())
-	flags.Bool(&metaDeps, "deps", "d", true, "Show only plugin dependencies")
-	flags.Bool(&metaDepsStatus, "deps-status", "", true, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-	flags.Bool(&metaDependent, "dependent", "", true, "Show only plugins, that depend on specified plugin")
-	flags.Bool(&metaDependentStatus, "dependent-status", "", true, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-}
+

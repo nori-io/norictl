@@ -28,22 +28,20 @@ import (
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	uninstallAll       func() bool
-	uninstallDependent func() bool
+	uninstallAll      bool
+	uninstallDependent bool
 )
 
 func uninstallCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:=&cobra.Command{
 		Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
 		Short: "Uninstall plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsUninstall()
 			pluginId := viper.GetString("id")
 			if len(pluginId) == 0 && len(args) > 0 {
 				pluginId = args[0]
@@ -66,8 +64,8 @@ func uninstallCmd() *cobra.Command {
 					PluginId: pluginIdSplit[0],
 					Version:  pluginIdSplit[1],
 				},
-				FlagAll:       uninstallAll(),
-				FlagDependent: uninstallDependent(),
+				FlagAll:       uninstallAll,
+				FlagDependent: uninstallDependent,
 			})
 			defer close(closeCh)
 			if err != nil {
@@ -83,10 +81,10 @@ func uninstallCmd() *cobra.Command {
 			common.UI.PluginUninstallSuccess(pluginId)
 		},
 	}
+	cmd.Flags().BoolVarP(&uninstallAll, "all", "a", true, "Uninstall all installed plugins")
+	cmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", true, "Uninstall plugin and depend plugins")
+	return cmd
 }
 
-func setFlagsUninstall() {
-	flags := utils.NewFlagBuilder(PluginCmd(), uninstallCmd())
-	flags.Bool(&uninstallAll, "all", "a", true, "Uninstall all installed plugins")                 // TODO
-	flags.Bool(&uninstallDependent, "dependent", "d", true, "Uninstall plugin and depend plugins") // TODO
-}
+
+

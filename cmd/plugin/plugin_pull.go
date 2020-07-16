@@ -28,22 +28,20 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	pullDeps func() bool
+	pullDeps bool
 )
 
 func pullCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:= &cobra.Command{
 		Use:   "pull [PLUGIN_ID] [OPTIONS]",
 		Short: "downloading plugin",
 		Long:  `Pull downloads the plugin, with or without it's dependencies.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsPull()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -94,9 +92,8 @@ func pullCmd() *cobra.Command {
 			}
 		},
 	}
+	cmd.Flags().BoolVarP(&pullDeps, "deps", "d", true, "	Download plugin with it's dependencies")
+	return cmd
 }
 
-func setFlagsPull() {
-	flags := utils.NewFlagBuilder(PluginCmd(), pullCmd())
-	flags.Bool(&pullDeps, "deps", "d", true, "	Download plugin with it's dependencies")
-}
+

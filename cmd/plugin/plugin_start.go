@@ -29,21 +29,19 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	startAll func() bool
+	startAll bool
 )
 
 func startCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:= &cobra.Command{
 		Use:   "start [PLUGIN_ID] [OPTIONS]",
 		Short: "Start one plugin or all plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsStart()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -80,7 +78,7 @@ func startCmd() *cobra.Command {
 					PluginId: pluginIdSplit[0],
 					Version:  pluginIdSplit[1],
 				},
-				FlagAll: startAll(),
+				FlagAll: startAll,
 			})
 			defer close(closeCh)
 			if err != nil {
@@ -98,9 +96,7 @@ func startCmd() *cobra.Command {
 			common.UI.PluginStartSuccess(pluginId)
 		},
 	}
+	cmd.Flags().BoolVarP(&startAll, "all", "a", true, "Start all plugins")
+	return cmd
 }
 
-func setFlagsStart() {
-	flags := utils.NewFlagBuilder(PluginCmd(), startCmd())
-	flags.Bool(&startAll, "all", "a", true, "Start all plugins")
-}

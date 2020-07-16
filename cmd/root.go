@@ -24,13 +24,15 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/nori-io/norictl/cmd/certs"
 	"github.com/nori-io/norictl/cmd/connection"
 	"github.com/nori-io/norictl/cmd/plugin"
 	"github.com/nori-io/norictl/internal/client/consts"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	getVerbose bool
+)
 
 //var logLevel func() string
 
@@ -53,13 +55,10 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
-
-	//flags := utils.NewFlagBuilder(nil, rootCmd)
-	//flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
+	rootCmd.PersistentFlags().BoolVarP(&getVerbose, "verbose", "v", false, "verbose output")
 
 	rootCmd.AddCommand(plugin_cmd.PluginCmd())
 	rootCmd.AddCommand(config_cmd.ConfigCmd())
-	rootCmd.AddCommand(certs_cmd.CertsCmd)
 	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }
 

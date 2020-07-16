@@ -42,6 +42,7 @@ func PluginCmd() *cobra.Command {
 	PluginCmd.AddCommand(stopCmd())
 	PluginCmd.AddCommand(uninstallCmd())
 	PluginCmd.AddCommand(uploadCmd())
+
 	return PluginCmd
 }
 

@@ -29,23 +29,22 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	getVerbose func() bool
+	getVerbose  bool
 )
 
 func getCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:= &cobra.Command{
 		Use:   "get [PLUGIN_ID] [OPTIONS]",
 		Short: "downloading plugin",
 		Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsGet()
+			fmt.Println("flags",cmd.Flags().Args())
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -82,7 +81,7 @@ func getCmd() *cobra.Command {
 					PluginId: pluginIdSplit[0],
 					Version:  pluginIdSplit[1],
 				},
-				FlagVerbose: getVerbose(),
+				FlagVerbose: getVerbose,
 			})
 
 			if err != nil {
@@ -100,9 +99,7 @@ func getCmd() *cobra.Command {
 			}
 		},
 	}
+	cmd.Flags().BoolVarP(&getVerbose, "verbose", "v", false, "verbose output")
+	return cmd
 }
 
-func setFlagsGet() {
-	flags := utils.NewFlagBuilder(PluginCmd(), getCmd())
-	flags.Bool(&getVerbose, "verbose", "v", true, "Verbose progress and debug output")
-}

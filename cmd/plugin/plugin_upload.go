@@ -38,7 +38,7 @@ var (
 
 func uploadCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:= &cobra.Command{
 		Use:   "upload [OPTIONS]",
 		Short: "Upload the plugin from local machine.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -95,4 +95,5 @@ func uploadCmd() *cobra.Command {
 			}
 		},
 	}
+	return cmd
 }

@@ -29,23 +29,19 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
-	installVerbose func() bool
-	installDeps    func() bool
-	installAll     func() bool
+	installAll      bool
 )
 
 func installCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:= &cobra.Command{
 		Use:   "install [PLUGIN_ID] [OPTIONS]",
 		Short: "Install downloaded plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsInstall()
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -81,8 +77,7 @@ func installCmd() *cobra.Command {
 					PluginId: pluginIdSplit[0],
 					Version:  pluginIdSplit[1],
 				},
-				FlagVerbose: installVerbose(),
-				FlagAll:     installAll(),
+				FlagAll:     installAll,
 			})
 
 			if err != nil {
@@ -98,10 +93,8 @@ func installCmd() *cobra.Command {
 			common.UI.PluginInstallSuccess(pluginId)
 		},
 	}
+	cmd.Flags().BoolVarP(&installAll, "--all", "a", true, "Install all installable plugins")
+	return cmd
 }
 
-func setFlagsInstall() {
-	flags := utils.NewFlagBuilder(PluginCmd(), installCmd())
-	flags.Bool(&installVerbose, "--verbose", "v", true, "Verbose progress and debug output")
-	flags.Bool(&installAll, "--all", "a", true, "Install all installable plugins")
-}
+

@@ -30,11 +30,11 @@ import (
 
 func interfaceCmd() *cobra.Command {
 
-	return &cobra.Command{
+	cmd:=&cobra.Command{
 		Use:   "interface [InterfaceName]",
 		Short: "Shows list of plugins that implement specify interface.",
 		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsGet()
+
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
@@ -67,4 +67,5 @@ func interfaceCmd() *cobra.Command {
 			}
 		},
 	}
+	return cmd
 }
