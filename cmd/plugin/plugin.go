@@ -31,17 +31,17 @@ func PluginCmd() *cobra.Command {
 		Short: "plugin COMMAND",
 	}
 
-	PluginCmd.AddCommand(getCmd())
-	PluginCmd.AddCommand(installCmd())
-	PluginCmd.AddCommand(interfaceCmd())
-	PluginCmd.AddCommand(lsCmd())
-	PluginCmd.AddCommand(metaCmd())
-	PluginCmd.AddCommand(pullCmd())
-	PluginCmd.AddCommand(rmCmd())
-	PluginCmd.AddCommand(startCmd())
-	PluginCmd.AddCommand(stopCmd())
-	PluginCmd.AddCommand(uninstallCmd())
-	PluginCmd.AddCommand(uploadCmd())
+	PluginCmd.AddCommand(getCmd)
+	PluginCmd.AddCommand(installCmd)
+	PluginCmd.AddCommand(interfaceCmd)
+	PluginCmd.AddCommand(lsCmd)
+	PluginCmd.AddCommand(metaCmd)
+	PluginCmd.AddCommand(pullCmd)
+	PluginCmd.AddCommand(rmCmd)
+	PluginCmd.AddCommand(startCmd)
+	PluginCmd.AddCommand(stopCmd)
+	PluginCmd.AddCommand(uninstallCmd)
+	PluginCmd.AddCommand(uploadCmd)
 
 	return PluginCmd
 }

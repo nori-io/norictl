@@ -32,13 +32,12 @@ import (
 )
 
 var (
-	uninstallAll      bool
+	uninstallAll       bool
 	uninstallDependent bool
 )
 
-func uninstallCmd() *cobra.Command {
+var uninstallCmd=&cobra.Command {
 
-	cmd:=&cobra.Command{
 		Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
 		Short: "Uninstall plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -79,12 +78,7 @@ func uninstallCmd() *cobra.Command {
 				fmt.Println("%s", err)
 			}
 			common.UI.PluginUninstallSuccess(pluginId)
+			cmd.Flags().BoolVarP(&uninstallAll, "all", "a", true, "Uninstall all installed plugins")
+			cmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", true, "Uninstall plugin and depend plugins")
 		},
-	}
-	cmd.Flags().BoolVarP(&uninstallAll, "all", "a", true, "Uninstall all installed plugins")
-	cmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", true, "Uninstall plugin and depend plugins")
-	return cmd
 }
-
-
-

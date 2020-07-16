@@ -33,12 +33,10 @@ import (
 )
 
 var (
-	installAll      bool
+	installAll bool
 )
 
-func installCmd() *cobra.Command {
-
-	cmd:= &cobra.Command{
+var installCmd=&cobra.Command {
 		Use:   "install [PLUGIN_ID] [OPTIONS]",
 		Short: "Install downloaded plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -77,7 +75,7 @@ func installCmd() *cobra.Command {
 					PluginId: pluginIdSplit[0],
 					Version:  pluginIdSplit[1],
 				},
-				FlagAll:     installAll,
+				FlagAll: installAll,
 			})
 
 			if err != nil {
@@ -91,10 +89,8 @@ func installCmd() *cobra.Command {
 				common.UI.PluginInstallFailure(pluginId)
 			}
 			common.UI.PluginInstallSuccess(pluginId)
-		},
-	}
-	cmd.Flags().BoolVarP(&installAll, "--all", "a", true, "Install all installable plugins")
-	return cmd
-}
+			cmd.Flags().BoolVarP(&installAll, "--all", "a", false, "Install all installable plugins")
 
+		},
+}
 

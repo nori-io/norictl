@@ -28,9 +28,8 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-func interfaceCmd() *cobra.Command {
+var interfaceCmd=&cobra.Command{
 
-	cmd:=&cobra.Command{
 		Use:   "interface [InterfaceName]",
 		Short: "Shows list of plugins that implement specify interface.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -66,6 +65,4 @@ func interfaceCmd() *cobra.Command {
 				common.UI.InterfacePluginList(fmt.Sprintf("%s", reply))
 			}
 		},
-	}
-	return cmd
 }

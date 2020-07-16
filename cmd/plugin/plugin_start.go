@@ -36,9 +36,8 @@ var (
 	startAll bool
 )
 
-func startCmd() *cobra.Command {
+var startCmd=&cobra.Command {
 
-	cmd:= &cobra.Command{
 		Use:   "start [PLUGIN_ID] [OPTIONS]",
 		Short: "Start one plugin or all plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -94,9 +93,6 @@ func startCmd() *cobra.Command {
 				return
 			}
 			common.UI.PluginStartSuccess(pluginId)
+			cmd.Flags().BoolVarP(&startAll, "all", "a", true, "Start all plugins")
 		},
-	}
-	cmd.Flags().BoolVarP(&startAll, "all", "a", true, "Start all plugins")
-	return cmd
 }
-

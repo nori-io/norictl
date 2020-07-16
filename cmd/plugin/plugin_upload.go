@@ -36,9 +36,8 @@ var (
 	uploadFile func() string
 )
 
-func uploadCmd() *cobra.Command {
+var uploadCmd=&cobra.Command {
 
-	cmd:= &cobra.Command{
 		Use:   "upload [OPTIONS]",
 		Short: "Upload the plugin from local machine.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -94,6 +93,4 @@ func uploadCmd() *cobra.Command {
 				common.UI.PluginUploadSuccess(path)
 			}
 		},
-	}
-	return cmd
 }

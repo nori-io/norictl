@@ -36,9 +36,8 @@ var (
 	listStopped     bool
 )
 
-func lsCmd() *cobra.Command {
+var lsCmd=&cobra.Command {
 
-	cmd:=&cobra.Command{
 		Use:     "ls [OPTIONS]",
 		Aliases: []string{"list"},
 		Short:   "Shows list of plugins on remote Nori node.",
@@ -86,12 +85,10 @@ func lsCmd() *cobra.Command {
 				plugins = append(plugins, []string{l.Meta.Id.PluginId + ":" + l.Meta.Id.Version, l.Meta.Author.String(), l.Meta.Interface, licenses, dependecies})
 			}
 			common.UI.PluginsList(plugins)
+			cmd.Flags().BoolVarP(&listError, "error", "e", false, "Show plugins with errors (not implement)")
+			cmd.Flags().BoolVarP(&listInstallable, "installable", "", false, "Show plugins that need to install") // TODO
+			cmd.Flags().BoolVarP(&listInstalled, "installed", "i", false, "Show only installed plugins")
+			cmd.Flags().BoolVarP(&listRunning, "running", "r", false, "Show only running plugins")
+			cmd.Flags().BoolVarP(&listStopped, "stopped", "s", false, "Show plugins that are not running")
 		},
-	}
-	cmd.Flags().BoolVarP(&listError, "error", "e", true, "Show plugins with errors (not implement)")
-	cmd.Flags().BoolVarP(&listInstallable, "installable", "", true, "Show plugins that need to install") // TODO
-	cmd.Flags().BoolVarP(&listInstalled, "installed", "i", true, "Show only installed plugins")
-	cmd.Flags().BoolVarP(&listRunning, "running", "r", true, "Show only running plugins")
-	cmd.Flags().BoolVarP(&listStopped, "stopped", "s", true, "Show plugins that are not running")
-return cmd
 }

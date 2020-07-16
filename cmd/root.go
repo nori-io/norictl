@@ -51,8 +51,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().String( "config", "", "config file")
-	RootCmd.PersistentFlags().BoolP( "verbose", "v", false, "verbose output")
+	RootCmd.PersistentFlags().String("config", "", "config file")
+	RootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
 
 	RootCmd.AddCommand(plugin_cmd.PluginCmd())
 	RootCmd.AddCommand(config_cmd.ConfigCmd())

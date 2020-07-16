@@ -32,78 +32,69 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-var (
-	getVerbose  bool
-)
-
-func getCmd() *cobra.Command {
-
-	cmd:= &cobra.Command{
-		Use:   "get [PLUGIN_ID] [OPTIONS]",
-		Short: "downloading plugin",
-		Long: `Get downloads the plugin, along with its dependencies.
+var getCmd = &cobra.Command{
+	Use:   "get [PLUGIN_ID] [OPTIONS]",
+	Short: "downloading plugin",
+	Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
-				return
-			}
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
 
-			if len(args) == 0 {
-				errors.ErrorEmptyPluginId()
-				return
-			}
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
 
-			pluginId := args[0]
-			pluginIdSplit := strings.Split(pluginId, ":")
-			if len(pluginIdSplit) != 2 {
-				errors.ErrorFormatPluginId()
-				return
-			}
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				errors.ErrorFormatPluginVersion(err)
-				return
-			}
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
 
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
 
-			f,e:=cmd.Flags().GetBool("verbose")
-			if e!=nil{
-				fmt.Println(e)
-				return
-			}
-			fmt.Println("fe", f, e)
-			defer close(closeCh)
-			reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
-				Id: &protoGenerated.ID{
-					PluginId: pluginIdSplit[0],
-					Version:  pluginIdSplit[1],
-				},
-				FlagVerbose: f,
-			})
+		flagVerbose, err := cmd.Flags().GetBool("verbose")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer close(closeCh)
+		reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
+			Id: &protoGenerated.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+			FlagVerbose: flagVerbose,
+		})
 
-			if err != nil {
-				fmt.Println("%s", err)
-				common.UI.PluginGetFailure(pluginId)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    reply.GetMessage(),
-						Message: reply.GetCode(),
-					})
-				}
-				return
-			} else {
-				common.UI.PluginGetSuccess(pluginId)
+		if err != nil {
+			fmt.Println("%s", err)
+			common.UI.PluginGetFailure(pluginId)
+			if reply != nil {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetMessage(),
+					Message: reply.GetCode(),
+				})
 			}
-		},
-	}
-	return cmd
+			return
+		} else {
+			common.UI.PluginGetSuccess(pluginId)
+		}
+	},
 }
 

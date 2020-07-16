@@ -35,9 +35,8 @@ var (
 	stopAll bool
 )
 
-func stopCmd() *cobra.Command {
+var stopCmd=&cobra.Command {
 
-	cmd:= &cobra.Command{
 		Use:   "stop [PLUGIN_ID] [OPTIONS]",
 		Short: "Stop plugin's or plugins' execution",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -87,8 +86,7 @@ func stopCmd() *cobra.Command {
 			}
 
 			common.UI.PluginStopSuccess(pluginId)
+			cmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
+
 		},
-	}
-	cmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
-	return cmd
 }

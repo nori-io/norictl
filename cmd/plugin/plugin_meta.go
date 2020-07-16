@@ -38,9 +38,8 @@ var (
 	metaDependentStatus bool
 )
 
-func metaCmd() *cobra.Command {
+var metaCmd=&cobra.Command {
 
-	cmd:=&cobra.Command{
 		Use:   "meta [PLUGIN_ID] [OPTIONS]",
 		Short: "Show plugin meta data.",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -87,14 +86,10 @@ func metaCmd() *cobra.Command {
 				return
 			}
 			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
+			cmd.Flags().BoolVarP(&metaDeps, "deps", "d", true, "Show only plugin dependencies")
+			cmd.Flags().BoolVarP(&metaDepsStatus, "deps-status", "", true, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+			cmd.Flags().BoolVarP(&metaDependent, "dependent", "", true, "Show only plugins, that depend on specified plugin")
+			cmd.Flags().BoolVarP(&metaDependentStatus, "dependent-status", "", true, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+
 		},
-	}
-	cmd.Flags().BoolVarP(&metaDeps, "deps", "d", true, "Show only plugin dependencies")
-	cmd.Flags().BoolVarP(&metaDepsStatus, "deps-status", "", true, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-	cmd.Flags().BoolVarP(&metaDependent, "dependent", "", true, "Show only plugins, that depend on specified plugin")
-	cmd.Flags().BoolVarP(&metaDependentStatus, "dependent-status", "", true, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-
-	return cmd
 }
-
-
