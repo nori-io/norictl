@@ -73,6 +73,7 @@ var getCmd = &cobra.Command{
 			fmt.Println(err)
 			return
 		}
+		fmt.Println(flagVerbose)
 		defer close(closeCh)
 		reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
 			Id: &protoGenerated.ID{

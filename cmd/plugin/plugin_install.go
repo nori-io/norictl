@@ -40,11 +40,22 @@ var installCmd=&cobra.Command {
 		Use:   "install [PLUGIN_ID] [OPTIONS]",
 		Short: "Install downloaded plugin or plugins.",
 		Run: func(cmd *cobra.Command, args []string) {
+
+			cmd.Flags().BoolVarP(&installAll, "all", "a", false, "Install all installable plugins")
+
+			fmt.Println(cmd.Flags())
 			conn, err := connection.CurrentConnection()
 			if err != nil {
 				fmt.Println("%s", err)
 			}
 
+			flagAll, err := cmd.Flags().GetBool("all")
+			if err != nil {
+				fmt.Println("ERR IS", err)
+				return
+			}
+
+			fmt.Println("ALL", flagAll)
 			if len(args) == 0 {
 				errors.ErrorEmptyPluginId()
 				return
@@ -78,6 +89,7 @@ var installCmd=&cobra.Command {
 				FlagAll: installAll,
 			})
 
+			fmt.Println("i", installAll)
 			if err != nil {
 				fmt.Println("%s", err)
 				if reply != nil {
@@ -89,7 +101,6 @@ var installCmd=&cobra.Command {
 				common.UI.PluginInstallFailure(pluginId)
 			}
 			common.UI.PluginInstallSuccess(pluginId)
-			cmd.Flags().BoolVarP(&installAll, "--all", "a", false, "Install all installable plugins")
 
 		},
 }

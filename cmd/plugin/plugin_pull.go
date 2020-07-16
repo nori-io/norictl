@@ -88,6 +88,6 @@ var pullCmd=&cobra.Command {
 			} else {
 				common.UI.PluginPullSuccess(pluginId)
 			}
-			cmd.Flags().BoolVarP(&pullDeps, "deps", "d", true, "	Download plugin with it's dependencies")
+			cmd.Flags().BoolVarP(&pullDeps, "deps", "d", false, "	Download plugin with it's dependencies")
 		},
 }

@@ -78,7 +78,7 @@ var uninstallCmd=&cobra.Command {
 				fmt.Println("%s", err)
 			}
 			common.UI.PluginUninstallSuccess(pluginId)
-			cmd.Flags().BoolVarP(&uninstallAll, "all", "a", true, "Uninstall all installed plugins")
-			cmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", true, "Uninstall plugin and depend plugins")
+			cmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "Uninstall all installed plugins")
+			cmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", false, "Uninstall plugin and depend plugins")
 		},
 }

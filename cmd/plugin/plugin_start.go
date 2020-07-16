@@ -93,6 +93,6 @@ var startCmd=&cobra.Command {
 				return
 			}
 			common.UI.PluginStartSuccess(pluginId)
-			cmd.Flags().BoolVarP(&startAll, "all", "a", true, "Start all plugins")
+			cmd.Flags().BoolVarP(&startAll, "all", "a", false, "Start all plugins")
 		},
 }
