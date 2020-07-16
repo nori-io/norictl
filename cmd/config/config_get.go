@@ -15,9 +15,7 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-func getCmd() *cobra.Command {
-
-	return &cobra.Command{
+var getCmd=&cobra.Command {
 		Use:   "get [PLUGIN_ID]",
 		Short: "get plugin's config",
 		Long:  `Get shows specify plugin's config`,
@@ -76,5 +74,5 @@ func getCmd() *cobra.Command {
 				common.UI.ConfigGetSuccess(reply.Map)
 			}
 		},
-	}
+
 }

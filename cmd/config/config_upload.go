@@ -14,9 +14,7 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-func uploadCmd() *cobra.Command {
-
-	return &cobra.Command{
+var uploadCmd=&cobra.Command {
 		Use:   "upload [PATH]",
 		Short: "upload plugin's config",
 		Long:  `Upload shows config file from specify path.`,
@@ -73,5 +71,4 @@ func uploadCmd() *cobra.Command {
 				common.UI.ConfigUploadSuccess(reply.Map)
 			}
 		},
-	}
 }

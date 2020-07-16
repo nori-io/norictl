@@ -16,9 +16,7 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-func setCmd() *cobra.Command {
-
-	return &cobra.Command{
+var setCmd=&cobra.Command {
 		Use:   "set [PLUGIN_ID][KEY] [VALUE]",
 		Short: "set plugin's config",
 		Long:  `Set sets key's value for specify plugin's config.`,
@@ -86,5 +84,5 @@ func setCmd() *cobra.Command {
 				common.UI.ConfigSetSuccess(pluginId, args[1], args[2])
 			}
 		},
-	}
+
 }

@@ -30,9 +30,9 @@ func ConfigCmd() *cobra.Command {
 		Short: "config command",
 	}
 
-	ConfigCmd.AddCommand(getCmd())
-	ConfigCmd.AddCommand(setCmd())
-	ConfigCmd.AddCommand(uploadCmd())
+	ConfigCmd.AddCommand(getCmd)
+	ConfigCmd.AddCommand(setCmd)
+	ConfigCmd.AddCommand(uploadCmd)
 	return ConfigCmd
 }
 
