@@ -32,9 +32,7 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-var (
-	pullDeps bool
-)
+
 
 var pullCmd = &cobra.Command{
 	Use:   "pull [PLUGIN_ID] [OPTIONS]",
@@ -97,6 +95,3 @@ var pullCmd = &cobra.Command{
 	},
 }
 
-func init(){
-	pullCmd.Flags().BoolVarP(&pullDeps, "deps", "d", false, "	Download plugin with it's dependencies")
-}

@@ -43,8 +43,6 @@ var lsCmd = &cobra.Command{
 	Short:   "Shows list of plugins on remote Nori node.",
 	Run: func(cmd *cobra.Command, args []string) {
 
-
-
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println("%s", err)

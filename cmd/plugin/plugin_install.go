@@ -72,12 +72,20 @@ var installCmd = &cobra.Command{
 		)
 		defer close(closeCh)
 
+		flagVerbose, err := cmd.Flags().GetBool("verbose")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+
 		reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
 			},
 			FlagAll: installAll,
+			FlagVerbose: flagVerbose,
 		})
 
 		fmt.Println("i", installAll)

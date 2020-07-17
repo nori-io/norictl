@@ -34,7 +34,7 @@ import (
 
 var rmCmd = &cobra.Command{
 
-	Use:   "rm [PLUGIN_ID] [OPTIONS]",
+	Use:   "rm [PLUGIN_ID]",
 	Short: "remove plugin",
 	Long:  `Remove plugin from local machine.`,
 	Run: func(cmd *cobra.Command, args []string) {

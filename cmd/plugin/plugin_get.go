@@ -66,6 +66,8 @@ var getCmd = &cobra.Command{
 			conn.CertPath,
 			"",
 		)
+		defer close(closeCh)
+
 
 		flagVerbose, err := cmd.Flags().GetBool("verbose")
 		if err != nil {
@@ -73,7 +75,6 @@ var getCmd = &cobra.Command{
 			return
 		}
 
-		defer close(closeCh)
 		reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
