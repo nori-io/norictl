@@ -43,7 +43,7 @@ var installCmd = &cobra.Command{
 
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 		}
 
 		if len(args) == 0 {
@@ -88,10 +88,10 @@ var installCmd = &cobra.Command{
 
 		if (err != nil) || (reply.GetCode() != "") {
 			if err != nil {
-				fmt.Println("%s", err)
+				fmt.Println(err)
 			}
 			if reply.GetCode() != "" {
-				fmt.Println("%s", protoGenerated.Error{
+				fmt.Println(protoGenerated.Error{
 					Code:    reply.GetMessage(),
 					Message: reply.GetCode(),
 				})

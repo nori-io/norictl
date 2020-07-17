@@ -40,7 +40,7 @@ var rmCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -77,10 +77,10 @@ var rmCmd = &cobra.Command{
 		close(closeCh)
 		if (err != nil) || (reply.GetCode() != "") {
 			if err != nil {
-				fmt.Println("%s", err)
+				fmt.Println(err)
 			}
 			if reply.GetCode() != "" {
-				fmt.Println("%s", protoGenerated.Error{
+				fmt.Println(protoGenerated.Error{
 					Code:    reply.GetMessage(),
 					Message: reply.GetCode(),
 				})

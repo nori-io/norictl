@@ -42,7 +42,7 @@ var uploadCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -63,7 +63,7 @@ var uploadCmd = &cobra.Command{
 
 		f, err := os.Open(path)
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -71,7 +71,7 @@ var uploadCmd = &cobra.Command{
 
 		_, err = ioutil.ReadAll(f)
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 		path = filepath.Base(path)
@@ -79,7 +79,7 @@ var uploadCmd = &cobra.Command{
 		_, err = client.PluginUploadCommand(context.Background())
 		if err != nil {
 			common.UI.PluginUploadFailure(path)
-			fmt.Println("%s", err)
+			fmt.Println( err)
 
 			return
 		} else {

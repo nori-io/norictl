@@ -21,7 +21,7 @@ var uploadCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -41,7 +41,7 @@ var uploadCmd = &cobra.Command{
 
 		f, err := os.Open(path)
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -49,7 +49,7 @@ var uploadCmd = &cobra.Command{
 
 		_, err = ioutil.ReadAll(f)
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 		path = filepath.Base(path)
@@ -59,10 +59,10 @@ var uploadCmd = &cobra.Command{
 		})
 
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			common.UI.ConfigUploadFailure(path)
 			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
+				fmt.Println(protoGenerated.Error{
 					Code:    "",
 					Message: reply.String(),
 				})

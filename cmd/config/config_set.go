@@ -23,7 +23,7 @@ var setCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -72,10 +72,10 @@ var setCmd = &cobra.Command{
 		close(closeCh)
 
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			common.UI.ConfigSetFailure(pluginId, args[1], args[2])
 			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
+				fmt.Println(protoGenerated.Error{
 					Code:    "",
 					Message: reply.String(),
 				})

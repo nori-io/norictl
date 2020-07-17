@@ -47,7 +47,7 @@ var metaCmd = &cobra.Command{
 
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -94,7 +94,7 @@ var metaCmd = &cobra.Command{
 
 		reply, err := client.PluginMetaCommand(context.Background(), meta)
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 		common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))

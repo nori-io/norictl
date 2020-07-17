@@ -36,7 +36,7 @@ var interfaceCmd = &cobra.Command{
 
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			return
 		}
 
@@ -53,9 +53,9 @@ var interfaceCmd = &cobra.Command{
 			Interface: interfaceName,
 		})
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
+				fmt.Println(protoGenerated.Error{
 					Code:    reply.Error.GetCode(),
 					Message: reply.Error.GetMessage(),
 				})

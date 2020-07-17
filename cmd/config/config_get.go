@@ -61,10 +61,10 @@ var getCmd = &cobra.Command{
 		close(closeCh)
 
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 			common.UI.ConfigGetFailure(pluginId)
 			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
+				fmt.Println(protoGenerated.Error{
 					Code:    "",
 					Message: err.Error(),
 				})

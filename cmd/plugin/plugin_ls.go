@@ -45,7 +45,7 @@ var lsCmd = &cobra.Command{
 
 		conn, err := connection.CurrentConnection()
 		if err != nil {
-			fmt.Println("%s", err)
+			fmt.Println(err)
 		}
 
 		client, closeCh := client.NewClient(
@@ -65,12 +65,12 @@ var lsCmd = &cobra.Command{
 
 		if err != nil {
 			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
+				fmt.Println(protoGenerated.Error{
 					Code:    reply.Error.GetCode(),
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			fmt.Println("%s", err)
+			fmt.Println(err)
 		}
 
 		list := reply.Plugin
