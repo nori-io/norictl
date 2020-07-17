@@ -80,15 +80,18 @@ var stopCmd = &cobra.Command{
 			FlagAll: stopAll,
 		})
 		defer close(closeCh)
-		if err != nil {
-			fmt.Println("%s", err)
-			common.UI.PluginStopFailure(pluginId)
-			if reply != nil {
+		if (err != nil) || (reply.GetCode() != "") {
+			if err != nil {
+				fmt.Println("%s", err)
+			}
+			if reply.GetCode() != "" {
 				fmt.Println("%s", protoGenerated.Error{
-					Code:    reply.GetCode(),
-					Message: reply.GetMessage(),
+					Code:    reply.GetMessage(),
+					Message: reply.GetCode(),
 				})
 			}
+			common.UI.PluginStopFailure(pluginId)
+			return
 		}
 
 		common.UI.PluginStopSuccess(pluginId)
@@ -96,6 +99,6 @@ var stopCmd = &cobra.Command{
 	},
 }
 
-func init(){
+func init() {
 	stopCmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
 }

@@ -29,69 +29,61 @@ import (
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
-	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
 	uploadFile func() string
 )
 
-var uploadCmd=&cobra.Command {
+var uploadCmd = &cobra.Command{
 
-		Use:   "upload [OPTIONS]",
-		Short: "Upload the plugin from local machine.",
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				fmt.Println("%s", err)
-				return
-			}
+	Use:   "upload [OPTIONS]",
+	Short: "Upload the plugin from local machine.",
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
 
-			//path := viper.GetString("file")
-			if len(args) == 0 {
-				fmt.Println("Path to plugin's file required")
-				return
-			}
+		//path := viper.GetString("file")
+		if len(args) == 0 {
+			fmt.Println("Path to plugin's file required")
+			return
+		}
 
-			path := args[0]
+		path := args[0]
 
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-			defer close(closeCh)
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
 
-			f, err := os.Open(path)
-			if err != nil {
-				fmt.Println("%s", err)
-				return
-			}
+		f, err := os.Open(path)
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
 
-			defer f.Close()
+		defer f.Close()
 
-			_, err = ioutil.ReadAll(f)
-			if err != nil {
-				fmt.Println("%s", err)
-				return
-			}
-			path = filepath.Base(path)
+		_, err = ioutil.ReadAll(f)
+		if err != nil {
+			fmt.Println("%s", err)
+			return
+		}
+		path = filepath.Base(path)
 
-			reply, err := client.PluginUploadCommand(context.Background())
-			if err != nil {
-				common.UI.PluginUploadFailure(path)
-				fmt.Println("%s", err)
-				if reply != nil {
-					fmt.Println("%s", protoGenerated.Error{
-						Code:    "",
-						Message: "",
-					})
-					return
-				}
-				return
-			} else {
-				common.UI.PluginUploadSuccess(path)
-			}
-		},
+		_, err = client.PluginUploadCommand(context.Background())
+		if err != nil {
+			common.UI.PluginUploadFailure(path)
+			fmt.Println("%s", err)
+
+			return
+		} else {
+			common.UI.PluginUploadSuccess(path)
+		}
+	},
 }
-

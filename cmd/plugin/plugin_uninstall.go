@@ -81,22 +81,25 @@ var uninstallCmd = &cobra.Command{
 			FlagDependent: uninstallDependent,
 		})
 		defer close(closeCh)
-		if err != nil {
-			if reply != nil {
-				common.UI.PluginUninstallFailure(pluginId)
+		if (err != nil) || (reply.GetCode() != "") {
+			if err != nil {
+				fmt.Println("%s", err)
+			}
+			if reply.GetCode() != "" {
 				fmt.Println("%s", protoGenerated.Error{
-					Code:    reply.GetCode(),
-					Message: reply.GetMessage(),
+					Code:    reply.GetMessage(),
+					Message: reply.GetCode(),
 				})
 			}
-			fmt.Println("%s", err)
+			common.UI.PluginGetFailure(pluginId)
+			return
 		}
 		common.UI.PluginUninstallSuccess(pluginId)
 
 	},
 }
 
-func init(){
+func init() {
 	uninstallCmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "Uninstall all installed plugins")
 	uninstallCmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", false, "Uninstall plugin and depend plugins")
 }

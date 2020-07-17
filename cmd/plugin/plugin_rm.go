@@ -75,16 +75,17 @@ var rmCmd = &cobra.Command{
 		})
 
 		close(closeCh)
-		if err != nil {
-			common.UI.PluginRmFailure(pluginId)
-			fmt.Println("%s", err)
-			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
-					Code:    reply.Code,
-					Message: reply.Message,
-				})
-				return
+		if (err != nil) || (reply.GetCode() != "") {
+			if err != nil {
+				fmt.Println("%s", err)
 			}
+			if reply.GetCode() != "" {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetMessage(),
+					Message: reply.GetCode(),
+				})
+			}
+			common.UI.PluginRmFailure(pluginId)
 			return
 		} else {
 			common.UI.PluginRmSuccess(pluginId)

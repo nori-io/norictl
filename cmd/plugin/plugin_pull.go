@@ -32,8 +32,6 @@ import (
 	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
-
-
 var pullCmd = &cobra.Command{
 	Use:   "pull [PLUGIN_ID] [OPTIONS]",
 	Short: "downloading plugin",
@@ -78,20 +76,20 @@ var pullCmd = &cobra.Command{
 		})
 
 		close(closeCh)
-		if err != nil {
-			fmt.Println("%s", err)
-			common.UI.PluginPullFailure(pluginId)
-			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
-					Code:    reply.GetCode(),
-					Message: reply.GetMessage(),
-				})
-				return
+		if (err != nil) || (reply.GetCode() != "") {
+			if err != nil {
+				fmt.Println("%s", err)
 			}
+			if reply.GetCode() != "" {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetMessage(),
+					Message: reply.GetCode(),
+				})
+			}
+			common.UI.PluginPullFailure(pluginId)
 			return
 		} else {
 			common.UI.PluginPullSuccess(pluginId)
 		}
 	},
 }
-

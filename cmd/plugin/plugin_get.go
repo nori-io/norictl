@@ -32,7 +32,7 @@ import (
 )
 
 var getCmd = &cobra.Command{
-	Use:   "get [PLUGIN_ID] [OPTIONS]",
+	Use:   "get [PLUGIN_ID]",
 	Short: "downloading plugin",
 	Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
@@ -68,7 +68,6 @@ var getCmd = &cobra.Command{
 		)
 		defer close(closeCh)
 
-
 		flagVerbose, err := cmd.Flags().GetBool("verbose")
 		if err != nil {
 			fmt.Println(err)
@@ -83,15 +82,17 @@ var getCmd = &cobra.Command{
 			FlagVerbose: flagVerbose,
 		})
 
-		if err != nil {
-			fmt.Println("%s", err)
-			common.UI.PluginGetFailure(pluginId)
-			if reply != nil {
+		if (err != nil) || (reply.GetCode() != "") {
+			if err != nil {
+				fmt.Println("%s", err)
+			}
+			if reply.GetCode() != "" {
 				fmt.Println("%s", protoGenerated.Error{
 					Code:    reply.GetMessage(),
 					Message: reply.GetCode(),
 				})
 			}
+			common.UI.PluginGetFailure(pluginId)
 			return
 		} else {
 			common.UI.PluginGetSuccess(pluginId)

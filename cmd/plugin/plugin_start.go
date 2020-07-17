@@ -80,22 +80,23 @@ var startCmd = &cobra.Command{
 			FlagAll: startAll,
 		})
 		defer close(closeCh)
-		if err != nil {
-			fmt.Println("%s", err)
-			common.UI.PluginStartFailure(pluginId)
-			if reply != nil {
-				fmt.Println("%s", protoGenerated.Error{
-					Code:    reply.GetCode(),
-					Message: reply.GetMessage(),
-				})
-				return
+		if (err != nil) || (reply.GetCode() != "") {
+			if err != nil {
+				fmt.Println("%s", err)
 			}
+			if reply.GetCode() != "" {
+				fmt.Println("%s", protoGenerated.Error{
+					Code:    reply.GetMessage(),
+					Message: reply.GetCode(),
+				})
+			}
+			common.UI.PluginStartFailure(pluginId)
 			return
 		}
 		common.UI.PluginStartSuccess(pluginId)
 	},
 }
 
-func init(){
+func init() {
 	startCmd.Flags().BoolVarP(&startAll, "all", "a", false, "Start all plugins")
 }

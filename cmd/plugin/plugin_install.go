@@ -78,32 +78,33 @@ var installCmd = &cobra.Command{
 			return
 		}
 
-
 		reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
 			},
-			FlagAll: installAll,
+			FlagAll:     installAll,
 			FlagVerbose: flagVerbose,
 		})
 
-		fmt.Println("i", installAll)
-		if err != nil {
-			fmt.Println("%s", err)
-			if reply != nil {
+		if (err != nil) || (reply.GetCode() != "") {
+			if err != nil {
+				fmt.Println("%s", err)
+			}
+			if reply.GetCode() != "" {
 				fmt.Println("%s", protoGenerated.Error{
-					Code:    reply.GetCode(),
-					Message: reply.GetMessage(),
+					Code:    reply.GetMessage(),
+					Message: reply.GetCode(),
 				})
 			}
 			common.UI.PluginInstallFailure(pluginId)
+			return
 		}
 		common.UI.PluginInstallSuccess(pluginId)
 
 	},
 }
 
-func init(){
+func init() {
 	installCmd.Flags().BoolVarP(&installAll, "all", "a", false, "Install all installable plugins")
 }
