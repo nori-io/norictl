@@ -99,11 +99,6 @@ func (u *UI) PluginUploadFailure(path string) {
 	Red("UPLOAD FAILURE: Path: %s\n", path)
 }
 
-func (u *UI) InterfacePluginList(plugins string) {
-	Green("PLUGINS WITH INTERFACE:  %s\n", plugins)
-
-}
-
 func (u *UI) ConfigGetSuccess(keyValueMap map[string]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Key", "Value"})

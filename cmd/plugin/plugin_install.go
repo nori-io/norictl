@@ -41,7 +41,6 @@ var installCmd = &cobra.Command{
 	Short: "Install downloaded plugin or plugins.",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		fmt.Println(cmd.Flags())
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println("%s", err)

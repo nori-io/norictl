@@ -82,7 +82,8 @@ var getCmd = &cobra.Command{
 			FlagVerbose: flagVerbose,
 		})
 
-		if (err != nil) || (reply.GetCode() != "") {
+		fmt.Println("reply", reply.GetCode() !="")
+		if (err != nil) || (reply.GetCode() !="") {
 			if err != nil {
 				fmt.Println("%s", err)
 			}

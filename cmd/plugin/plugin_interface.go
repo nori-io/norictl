@@ -62,7 +62,19 @@ var interfaceCmd = &cobra.Command{
 			}
 			return
 		} else {
-			common.UI.InterfacePluginList(fmt.Sprintf("%s", reply))
+			list := reply.Plugin
+			var plugins [][]string
+			for _, l := range list {
+				var licenses, dependecies string
+				for _, license := range l.Meta.Licenses {
+					licenses = licenses + license.String() + "\n"
+				}
+				for _, dependency := range l.Meta.Dependencies {
+					dependecies = dependecies + dependency.String() + "\n"
+				}
+				plugins = append(plugins, []string{l.Meta.Id.PluginId + ":" + l.Meta.Id.Version, l.Meta.Author.String(), l.Meta.Interface, licenses, dependecies})
+			}
+			common.UI.PluginsList(plugins)
 		}
 	},
 }
