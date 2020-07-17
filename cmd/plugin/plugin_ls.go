@@ -43,11 +43,7 @@ var lsCmd = &cobra.Command{
 	Short:   "Shows list of plugins on remote Nori node.",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		cmd.Flags().BoolVarP(&listError, "error", "e", false, "Show plugins with errors (not implement)")
-		cmd.Flags().BoolVarP(&listInstallable, "installable", "", false, "Show plugins that need to install") // TODO
-		cmd.Flags().BoolVarP(&listInstalled, "installed", "i", false, "Show only installed plugins")
-		cmd.Flags().BoolVarP(&listRunning, "running", "r", false, "Show only running plugins")
-		cmd.Flags().BoolVarP(&listStopped, "stopped", "s", false, "Show plugins that are not running")
+
 
 		conn, err := connection.CurrentConnection()
 		if err != nil {
@@ -94,4 +90,12 @@ var lsCmd = &cobra.Command{
 		common.UI.PluginsList(plugins)
 
 	},
+}
+
+func init() {
+	lsCmd.Flags().BoolVarP(&listError, "error", "e", false, "Show plugins with errors (not implement)")
+	lsCmd.Flags().BoolVarP(&listInstallable, "installable", "", false, "Show plugins that need to install") // TODO
+	lsCmd.Flags().BoolVarP(&listInstalled, "installed", "i", false, "Show only installed plugins")
+	lsCmd.Flags().BoolVarP(&listRunning, "running", "r", false, "Show only running plugins")
+	lsCmd.Flags().BoolVarP(&listStopped, "stopped", "s", false, "Show plugins that are not running")
 }

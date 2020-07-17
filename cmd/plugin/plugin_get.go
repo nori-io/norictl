@@ -19,12 +19,11 @@ package plugin_cmd
 
 import (
 	"fmt"
-	"github.com/nori-io/norictl/internal/errors"
-	"strings"
-
 	"github.com/nori-io/nori-common/v2/version"
+	"github.com/nori-io/norictl/internal/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
+	"strings"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
@@ -73,7 +72,7 @@ var getCmd = &cobra.Command{
 			fmt.Println(err)
 			return
 		}
-		fmt.Println(flagVerbose)
+
 		defer close(closeCh)
 		reply, err := client.PluginGetCommand(context.Background(), &protoGenerated.PluginGetRequest{
 			Id: &protoGenerated.ID{

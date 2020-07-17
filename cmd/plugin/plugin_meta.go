@@ -45,18 +45,6 @@ var metaCmd = &cobra.Command{
 	Short: "Show plugin meta data.",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		cmd.Flags().BoolVarP(&metaDeps, "deps", "d", false, "Show only plugin dependencies")
-		cmd.Flags().BoolVarP(&metaDepsStatus, "deps-status", "", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-		cmd.Flags().BoolVarP(&metaDependent, "dependent", "", false, "Show only plugins, that depend on specified plugin")
-		cmd.Flags().BoolVarP(&metaDependentStatus, "dependent-status", "", false, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-
-		flagDeps, err := cmd.Flags().GetBool("deps")
-		if err != nil {
-			fmt.Println("ERR IS", err)
-			return
-		}
-
-		fmt.Println("deps", flagDeps)
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println("%s", err)
@@ -91,6 +79,7 @@ var metaCmd = &cobra.Command{
 			conn.CertPath,
 			"",
 		)
+		defer close(closeCh)
 
 		meta := &protoGenerated.PluginMetaRequest{
 			Id: &protoGenerated.ID{
@@ -104,7 +93,6 @@ var metaCmd = &cobra.Command{
 		}
 
 		reply, err := client.PluginMetaCommand(context.Background(), meta)
-		defer close(closeCh)
 		if err != nil {
 			fmt.Println("%s", err)
 			return
@@ -112,4 +100,11 @@ var metaCmd = &cobra.Command{
 		common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
 
 	},
+}
+
+func init() {
+	metaCmd.Flags().BoolVarP(&metaDeps, "deps", "d", false, "Show only plugin dependencies")
+	metaCmd.Flags().BoolVarP(&metaDepsStatus, "deps-status", "", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+	metaCmd.Flags().BoolVarP(&metaDependent, "dependent", "", false, "Show only plugins, that depend on specified plugin")
+	metaCmd.Flags().BoolVarP(&metaDependentStatus, "dependent-status", "", false, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
 }

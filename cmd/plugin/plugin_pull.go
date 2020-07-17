@@ -42,8 +42,6 @@ var pullCmd = &cobra.Command{
 	Long:  `Pull downloads the plugin, with or without it's dependencies.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		cmd.Flags().BoolVarP(&pullDeps, "deps", "d", false, "	Download plugin with it's dependencies")
-
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println("%s", err)
@@ -97,4 +95,8 @@ var pullCmd = &cobra.Command{
 			common.UI.PluginPullSuccess(pluginId)
 		}
 	},
+}
+
+func init(){
+	pullCmd.Flags().BoolVarP(&pullDeps, "deps", "d", false, "	Download plugin with it's dependencies")
 }

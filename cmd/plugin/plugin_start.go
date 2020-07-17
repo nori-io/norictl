@@ -42,8 +42,6 @@ var startCmd = &cobra.Command{
 	Short: "Start one plugin or all plugins.",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		cmd.Flags().BoolVarP(&startAll, "all", "a", false, "Start all plugins")
-
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println("%s", err)
@@ -96,4 +94,8 @@ var startCmd = &cobra.Command{
 		}
 		common.UI.PluginStartSuccess(pluginId)
 	},
+}
+
+func init(){
+	startCmd.Flags().BoolVarP(&startAll, "all", "a", false, "Start all plugins")
 }

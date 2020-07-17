@@ -94,3 +94,4 @@ var uploadCmd=&cobra.Command {
 			}
 		},
 }
+

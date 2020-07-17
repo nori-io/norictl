@@ -42,8 +42,6 @@ var stopCmd = &cobra.Command{
 	Short: "Stop plugin's or plugins' execution",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		cmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
-
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println("%s ", err)
@@ -96,4 +94,8 @@ var stopCmd = &cobra.Command{
 		common.UI.PluginStopSuccess(pluginId)
 
 	},
+}
+
+func init(){
+	stopCmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
 }
