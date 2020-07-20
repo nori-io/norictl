@@ -25,6 +25,23 @@ func (u *UI) PluginGetFailure(pluginId string) {
 	Red("GET FAILURE: Plugin %q\n", pluginId)
 }
 
+func (u *UI) PluginDisableSuccess(pluginId string) {
+	Green("DISABLE SUCCESSFUL: Plugin %q\n", pluginId)
+}
+
+func (u *UI) PluginDisableFailure(pluginId string) {
+	Red("DISABLE FAILURE: Plugin %q\n", pluginId)
+}
+
+func (u *UI) PluginEnableSuccess(pluginId string) {
+	Green("ENABLE SUCCESSFUL: Plugin %q\n", pluginId)
+}
+
+func (u *UI) PluginEnableFailure(pluginId string) {
+	Red("ENABLE FAILURE: Plugin %q\n", pluginId)
+}
+
+
 func (u *UI) PluginInstallSuccess(pluginId string) {
 	Green("INSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
