@@ -80,7 +80,7 @@ var stopCmd = &cobra.Command{
 			FlagAll: stopAll,
 		})
 		defer close(closeCh)
-		if (err != nil) || (reply.Error.GetCode() !="") {
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
 			}

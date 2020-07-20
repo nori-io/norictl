@@ -41,7 +41,6 @@ func (u *UI) PluginEnableFailure(pluginId string) {
 	Red("ENABLE FAILURE: Plugin %q\n", pluginId)
 }
 
-
 func (u *UI) PluginInstallSuccess(pluginId string) {
 	Green("INSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
@@ -60,8 +59,8 @@ func (u *UI) PluginsList(plugins [][]string) {
 	table.Render() // Send output
 }
 
-func (u *UI) PluginMetaExist(pluginInformation string) {
-	fmt.Printf("EXIST: Plugin  %s \n", pluginInformation)
+func (u *UI) PluginMeta(pluginInformation string) {
+	fmt.Printf("Meta: Plugin  %s \n", pluginInformation)
 }
 
 func (u *UI) PluginMetaNotExist(pluginInformation string) {

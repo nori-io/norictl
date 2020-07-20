@@ -86,7 +86,7 @@ var installCmd = &cobra.Command{
 			FlagVerbose: flagVerbose,
 		})
 
-		if (err != nil) || (reply.Error.GetCode() !="") {
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
 			}

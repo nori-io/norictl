@@ -75,7 +75,7 @@ var rmCmd = &cobra.Command{
 		})
 
 		close(closeCh)
-		if (err != nil) || (reply.Error.GetCode() !="") {
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
 			}

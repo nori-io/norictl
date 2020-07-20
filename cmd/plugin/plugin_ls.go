@@ -64,13 +64,13 @@ var lsCmd = &cobra.Command{
 		})
 
 		if err != nil {
-			if reply != nil {
-				fmt.Println(protoGenerated.Error{
-					Code:    reply.Error.GetCode(),
-					Message: reply.Error.GetMessage(),
-				})
-			}
 			fmt.Println(err)
+			return
+		}
+
+		if reply.Plugin == nil {
+			fmt.Println("Plugins not found")
+			return
 		}
 
 		list := reply.Plugin

@@ -80,7 +80,7 @@ var startCmd = &cobra.Command{
 			FlagAll: startAll,
 		})
 		defer close(closeCh)
-		if (err != nil) || (reply.Error.GetCode() !="") {
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
 			}

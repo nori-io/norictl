@@ -32,6 +32,8 @@ func PluginCmd() *cobra.Command {
 	}
 
 	PluginCmd.AddCommand(getCmd)
+	PluginCmd.AddCommand(disableCmd)
+	PluginCmd.AddCommand(enableCmd)
 	PluginCmd.AddCommand(installCmd)
 	PluginCmd.AddCommand(interfaceCmd)
 	PluginCmd.AddCommand(lsCmd)

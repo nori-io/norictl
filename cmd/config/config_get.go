@@ -63,15 +63,17 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err)
 			common.UI.ConfigGetFailure(pluginId)
-			if reply != nil {
-				fmt.Println(protoGenerated.Error{
-					Code:    "",
-					Message: err.Error(),
-				})
-			}
-		} else {
-			fmt.Println(reply.Map)
-			common.UI.ConfigGetSuccess(reply.Map)
+			return
 		}
+
+		if reply.Map == nil {
+			fmt.Println("Config not found")
+			common.UI.ConfigGetFailure(pluginId)
+
+			return
+		}
+		fmt.Println(reply.Map)
+		common.UI.ConfigGetSuccess(reply.Map)
+
 	},
 }

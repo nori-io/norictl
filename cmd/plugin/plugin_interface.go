@@ -54,12 +54,11 @@ var interfaceCmd = &cobra.Command{
 		})
 		if err != nil {
 			fmt.Println(err)
-			if reply != nil {
-				fmt.Println(protoGenerated.Error{
-					Code:    reply.Error.GetCode(),
-					Message: reply.Error.GetMessage(),
-				})
-			}
+			return
+		}
+
+		if reply.Plugin == nil {
+			fmt.Println("Plugins not found")
 			return
 		} else {
 			list := reply.Plugin

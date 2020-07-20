@@ -17,7 +17,7 @@ import (
 var enableCmd = &cobra.Command{
 	Use:   "enable [PLUGIN_ID]",
 	Short: "enable plugin",
-	Long: `Enable plugin. Plugin must be enabled before it can be initialised and started or be accessible by other plugins.`,
+	Long:  `Enable plugin. Plugin must be enabled before it can be initialised and started or be accessible by other plugins.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
 		if err != nil {
@@ -57,7 +57,7 @@ var enableCmd = &cobra.Command{
 			},
 		})
 
-		if (err != nil) || (reply.Error.GetCode() !="") {
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -74,4 +74,3 @@ var enableCmd = &cobra.Command{
 		}
 	},
 }
-

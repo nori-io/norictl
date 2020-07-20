@@ -79,7 +79,7 @@ var uploadCmd = &cobra.Command{
 		_, err = client.PluginUpload(context.Background())
 		if err != nil {
 			common.UI.PluginUploadFailure(path)
-			fmt.Println( err)
+			fmt.Println(err)
 
 			return
 		} else {

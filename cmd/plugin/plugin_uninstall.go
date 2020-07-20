@@ -81,7 +81,7 @@ var uninstallCmd = &cobra.Command{
 			FlagDependent: uninstallDependent,
 		})
 		defer close(closeCh)
-		if (err != nil) || (reply.Error.GetCode() !="") {
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
 			}

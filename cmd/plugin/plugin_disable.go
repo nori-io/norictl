@@ -17,7 +17,7 @@ import (
 var disableCmd = &cobra.Command{
 	Use:   "disable [PLUGIN_ID]",
 	Short: "disable plugin",
-	Long: `Disable plugin. Disabled plugins are non usable plugins. Nori engine does not init, start, stop or resolve disabled plugins.`,
+	Long:  `Disable plugin. Disabled plugins are non usable plugins. Nori engine does not init, start, stop or resolve disabled plugins.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := connection.CurrentConnection()
 		if err != nil {
@@ -57,7 +57,7 @@ var disableCmd = &cobra.Command{
 			},
 		})
 
-		if (err != nil) || (reply.Error.GetCode() !="") {
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
 			}

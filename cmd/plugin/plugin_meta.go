@@ -93,11 +93,18 @@ var metaCmd = &cobra.Command{
 		}
 
 		reply, err := client.PluginMeta(context.Background(), meta)
+
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
+
+		if reply.Meta == nil {
+			fmt.Println("Plugin not found")
+			return
+		}
+
+		common.UI.PluginMeta(fmt.Sprintf("%s", reply))
 
 	},
 }
