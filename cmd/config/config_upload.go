@@ -54,7 +54,7 @@ var uploadCmd = &cobra.Command{
 		}
 		path = filepath.Base(path)
 
-		reply, err := client.ConfigUploadCommand(context.Background(), &protoGenerated.ConfigUploadRequest{
+		reply, err := client.ConfigUpload(context.Background(), &protoGenerated.ConfigUploadRequest{
 			Config: []byte{},
 		})
 

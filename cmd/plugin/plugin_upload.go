@@ -76,7 +76,7 @@ var uploadCmd = &cobra.Command{
 		}
 		path = filepath.Base(path)
 
-		_, err = client.PluginUploadCommand(context.Background())
+		_, err = client.PluginUpload(context.Background())
 		if err != nil {
 			common.UI.PluginUploadFailure(path)
 			fmt.Println( err)

@@ -77,7 +77,7 @@ var installCmd = &cobra.Command{
 			return
 		}
 
-		reply, err := client.PluginInstallCommand(context.Background(), &protoGenerated.PluginInstallRequest{
+		reply, err := client.PluginInstall(context.Background(), &protoGenerated.PluginInstallRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
@@ -86,14 +86,14 @@ var installCmd = &cobra.Command{
 			FlagVerbose: flagVerbose,
 		})
 
-		if (err != nil) || (reply.GetCode() != "") {
+		if (err != nil) || (reply.Error.GetCode() !="") {
 			if err != nil {
 				fmt.Println(err)
 			}
-			if reply.GetCode() != "" {
+			if reply.Error.GetCode() != "" {
 				fmt.Println(protoGenerated.Error{
-					Code:    reply.GetMessage(),
-					Message: reply.GetCode(),
+					Code:    reply.Error.GetCode(),
+					Message: reply.Error.GetMessage(),
 				})
 			}
 			common.UI.PluginInstallFailure(pluginId)

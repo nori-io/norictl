@@ -49,7 +49,7 @@ var interfaceCmd = &cobra.Command{
 		)
 		defer close(closeCh)
 
-		reply, err := client.PluginInterfaceCommand(context.Background(), &protoGenerated.PluginInterfaceRequest{
+		reply, err := client.PluginInterface(context.Background(), &protoGenerated.PluginInterfaceRequest{
 			Interface: interfaceName,
 		})
 		if err != nil {

@@ -51,7 +51,7 @@ var getCmd = &cobra.Command{
 			"",
 		)
 
-		reply, err := client.ConfigGetCommand(context.Background(), &protoGenerated.ConfigGetRequest{
+		reply, err := client.ConfigGet(context.Background(), &protoGenerated.ConfigGetRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],

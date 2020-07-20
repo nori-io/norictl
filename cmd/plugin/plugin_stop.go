@@ -72,7 +72,7 @@ var stopCmd = &cobra.Command{
 			"",
 		)
 
-		reply, err := client.PluginStopCommand(context.Background(), &protoGenerated.PluginStopRequest{
+		reply, err := client.PluginStop(context.Background(), &protoGenerated.PluginStopRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
@@ -80,14 +80,14 @@ var stopCmd = &cobra.Command{
 			FlagAll: stopAll,
 		})
 		defer close(closeCh)
-		if (err != nil) || (reply.GetCode() != "") {
+		if (err != nil) || (reply.Error.GetCode() !="") {
 			if err != nil {
 				fmt.Println(err)
 			}
-			if reply.GetCode() != "" {
+			if reply.Error.GetCode() != "" {
 				fmt.Println(protoGenerated.Error{
-					Code:    reply.GetMessage(),
-					Message: reply.GetCode(),
+					Code:    reply.Error.GetCode(),
+					Message: reply.Error.GetMessage(),
 				})
 			}
 			common.UI.PluginStopFailure(pluginId)

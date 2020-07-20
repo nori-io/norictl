@@ -55,7 +55,7 @@ var lsCmd = &cobra.Command{
 		)
 		defer close(closeCh)
 
-		reply, err := client.PluginListCommand(context.Background(), &protoGenerated.PluginListRequest{
+		reply, err := client.PluginList(context.Background(), &protoGenerated.PluginListRequest{
 			FlagError:       listError,
 			FlagInstalled:   listInstalled,
 			FlagInstallable: listInstallable,

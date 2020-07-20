@@ -60,7 +60,7 @@ var setCmd = &cobra.Command{
 			"",
 		)
 		fmt.Println("args2 is", args[2])
-		reply, err := client.ConfigSetCommand(context.Background(), &protoGenerated.ConfigSetRequest{
+		reply, err := client.ConfigSet(context.Background(), &protoGenerated.ConfigSetRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],

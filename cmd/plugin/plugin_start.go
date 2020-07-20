@@ -72,7 +72,7 @@ var startCmd = &cobra.Command{
 			"",
 		)
 
-		reply, err := client.PluginStartCommand(context.Background(), &protoGenerated.PluginStartRequest{
+		reply, err := client.PluginStart(context.Background(), &protoGenerated.PluginStartRequest{
 			Id: &protoGenerated.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
@@ -80,14 +80,14 @@ var startCmd = &cobra.Command{
 			FlagAll: startAll,
 		})
 		defer close(closeCh)
-		if (err != nil) || (reply.GetCode() != "") {
+		if (err != nil) || (reply.Error.GetCode() !="") {
 			if err != nil {
 				fmt.Println(err)
 			}
-			if reply.GetCode() != "" {
+			if reply.Error.GetCode() != "" {
 				fmt.Println(protoGenerated.Error{
-					Code:    reply.GetMessage(),
-					Message: reply.GetCode(),
+					Code:    reply.Error.GetCode(),
+					Message: reply.Error.GetMessage(),
 				})
 			}
 			common.UI.PluginStartFailure(pluginId)

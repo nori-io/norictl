@@ -92,7 +92,7 @@ var metaCmd = &cobra.Command{
 			FlagDependentStatus: metaDependentStatus,
 		}
 
-		reply, err := client.PluginMetaCommand(context.Background(), meta)
+		reply, err := client.PluginMeta(context.Background(), meta)
 		if err != nil {
 			fmt.Println(err)
 			return
