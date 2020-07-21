@@ -1,4 +1,3 @@
 [submodule "api/protobuf"]
 	path = api/protobuf
 	url = git@github.com:nori-io/nori-grpc.git
-	branch = dev
