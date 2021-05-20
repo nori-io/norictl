@@ -91,6 +91,14 @@ func (u *UI) PluginRmFailure(pluginId string) {
 	Red("REMOVE FAILURE: Plugin %s\n", pluginId)
 }
 
+func (u *UI) PluginStartAllSuccess() {
+	Green("START SUCCESSFUL")
+}
+
+func (u *UI) PluginStartAllFailure() {
+	Red("START FAILURE")
+}
+
 func (u *UI) PluginStartSuccess(pluginId string) {
 	Green("START SUCCESSFUL: Plugin %s\n", pluginId)
 }
@@ -107,12 +115,28 @@ func (u *UI) PluginStopFailure(pluginId string) {
 	Red("STOP FAILURE: Plugin %s\n", pluginId)
 }
 
+func (u *UI) PluginStopAllSuccess() {
+	Green("STOP SUCCESSFUL")
+}
+
+func (u *UI) PluginStopAllFailure() {
+	Red("STOP FAILURE")
+}
+
 func (u *UI) PluginUninstallSuccess(pluginId string) {
 	Green("UNINSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
 func (u *UI) PluginUninstallFailure(pluginId string) {
 	Red("UNINSTALL FAILURE: Plugin %s\n", pluginId)
+}
+
+func (u *UI) PluginUninstallAllSuccess() {
+	Green("UNINSTALL SUCCESSFUL")
+}
+
+func (u *UI) PluginUninstallAllFailure() {
+	Red("UNINSTALL FAILURE")
 }
 
 func (u *UI) PluginUploadSuccess(path string) {

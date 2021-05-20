@@ -19,9 +19,10 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/nori-io/norictl/internal/errors"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -32,14 +33,13 @@ import (
 )
 
 var (
-	uninstallAll       bool
 	uninstallDependent bool
 )
 
 var uninstallCmd = &cobra.Command{
 
 	Use:   "uninstall [PLUGIN_ID] [OPTIONS]",
-	Short: "Uninstall plugin or plugins.",
+	Short: "Uninstall one plugin",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		conn, err := connection.CurrentConnection()
@@ -71,14 +71,12 @@ var uninstallCmd = &cobra.Command{
 			"",
 		)
 
-
-
 		reply, err := client.PluginUninstall(context.Background(), &proto.PluginUninstallRequest{
 			Id: &proto.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
 			},
-			FlagAll:       uninstallAll,
+			FlagAll:       false,
 			FlagDependent: uninstallDependent,
 		})
 		defer close(closeCh)
@@ -101,6 +99,5 @@ var uninstallCmd = &cobra.Command{
 }
 
 func init() {
-	uninstallCmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "Uninstall all installed plugins")
 	uninstallCmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", false, "Uninstall plugin and depend plugins")
 }

@@ -34,7 +34,7 @@ var (
 
 var installAllCmd = &cobra.Command{
 	Use:   "install-all [OPTIONS]",
-	Short: "Install downloaded plugin or plugins.",
+	Short: "Install all downloaded plugins.",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		conn, err := connection.CurrentConnection()

@@ -19,9 +19,10 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -31,14 +32,10 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 )
 
-var (
-	stopAll bool
-)
-
 var stopCmd = &cobra.Command{
 
 	Use:   "stop [PLUGIN_ID] [OPTIONS]",
-	Short: "Stop plugin's or plugins' execution",
+	Short: "Stop plugin's execution",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		conn, err := connection.CurrentConnection()
@@ -76,7 +73,7 @@ var stopCmd = &cobra.Command{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
 			},
-			FlagAll: stopAll,
+			FlagAll: false,
 		})
 		defer close(closeCh)
 		if (err != nil) || (reply.Error.GetCode() != "") {
@@ -96,8 +93,4 @@ var stopCmd = &cobra.Command{
 		common.UI.PluginStopSuccess(pluginId)
 
 	},
-}
-
-func init() {
-	stopCmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
 }

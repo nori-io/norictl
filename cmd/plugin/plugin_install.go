@@ -33,7 +33,7 @@ import (
 
 var installCmd = &cobra.Command{
 	Use:   "install [PLUGIN_ID] [OPTIONS]",
-	Short: "Install downloaded plugin or plugins.",
+	Short: "Install downloaded plugin",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		conn, err := connection.CurrentConnection()
