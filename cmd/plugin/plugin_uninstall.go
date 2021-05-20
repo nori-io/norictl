@@ -23,7 +23,7 @@ import (
 	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/version"
+	"github.com/nori-io/common/v4/pkg/domain/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 

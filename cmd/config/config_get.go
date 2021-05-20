@@ -6,7 +6,7 @@ import (
 	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/version"
+	"github.com/nori-io/common/v4/pkg/domain/version"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/cmd/common"
@@ -39,6 +39,7 @@ var getCmd = &cobra.Command{
 		}
 
 		versionPlugin := pluginIdSplit[1]
+
 		_, err = version.NewVersion(versionPlugin)
 		if err != nil {
 			errors.ErrorFormatPluginVersion(err)
