@@ -18,11 +18,11 @@ func NewUI() *UI {
 }
 
 func (u *UI) PluginGetSuccess(pluginId string) {
-	Green("GET SUCCESSFUL: Plugin %q\n", pluginId)
+	Green("GET SUCCESSFUL: Plugin %q, \n", pluginId)
 }
 
-func (u *UI) PluginGetFailure(pluginId string) {
-	Red("GET FAILURE: Plugin %q\n", pluginId)
+func (u *UI) PluginGetFailure(pluginId string, err error) {
+	Red("GET FAILURE: Plugin %q, error \n", pluginId)
 }
 
 func (u *UI) PluginDisableSuccess(pluginId string) {

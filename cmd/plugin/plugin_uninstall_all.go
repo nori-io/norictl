@@ -54,7 +54,7 @@ var uninstallAllCmd = &cobra.Command{
 
 		reply, err := client.PluginUninstall(context.Background(), &proto.PluginUninstallRequest{
 			FlagAll:       uninstallAll,
-			FlagDependent: uninstallDependent,
+			FlagDependent: uninstallDependents,
 		})
 		defer close(closeCh)
 		if (err != nil) || (reply.Error.GetCode() != "") {
@@ -77,5 +77,5 @@ var uninstallAllCmd = &cobra.Command{
 
 func init() {
 	uninstallAllCmd.Flags().BoolVarP(&uninstallAll, "all", "a", false, "Uninstall all installed plugins")
-	uninstallAllCmd.Flags().BoolVarP(&uninstallDependent, "dependent", "d", false, "Uninstall plugin and depend plugins")
+	uninstallAllCmd.Flags().BoolVarP(&uninstallDependents, "dependent", "d", false, "Uninstall plugin and depend plugins")
 }
