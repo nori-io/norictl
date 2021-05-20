@@ -19,13 +19,13 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
-	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var interfaceCmd = &cobra.Command{
@@ -49,7 +49,7 @@ var interfaceCmd = &cobra.Command{
 		)
 		defer close(closeCh)
 
-		reply, err := client.PluginInterface(context.Background(), &protoGenerated.PluginInterfaceRequest{
+		reply, err := client.PluginInterface(context.Background(), &proto.PluginInterfaceRequest{
 			Interface: interfaceName,
 		})
 		if err != nil {

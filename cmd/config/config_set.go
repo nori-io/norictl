@@ -3,17 +3,16 @@ package config_cmd
 import (
 	"context"
 	"fmt"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
-	"github.com/nori-io/common/v4/pkg/domain/version"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
 
-	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var setCmd = &cobra.Command{
@@ -47,12 +46,12 @@ var setCmd = &cobra.Command{
 			errors.ErrorFormatPluginId()
 			return
 		}
-		versionPlugin := pluginIdSplit[1]
+		/* @todo versionPlugin := pluginIdSplit[1]
 		_, err = version.NewVersion(versionPlugin)
 		if err != nil {
 			errors.ErrorFormatPluginVersion(err)
 			return
-		}
+		}*/
 
 		client, closeCh := client.NewClient(
 			conn.HostPort(),
@@ -60,8 +59,8 @@ var setCmd = &cobra.Command{
 			"",
 		)
 		fmt.Println("args2 is", args[2])
-		reply, err := client.ConfigSet(context.Background(), &protoGenerated.ConfigSetRequest{
-			Id: &protoGenerated.ID{
+		reply, err := client.ConfigSet(context.Background(), &proto.ConfigSetRequest{
+			Id: &proto.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
 			},
@@ -75,7 +74,7 @@ var setCmd = &cobra.Command{
 			fmt.Println(err)
 			common.UI.ConfigSetFailure(pluginId, args[1], args[2])
 			if reply != nil {
-				fmt.Println(protoGenerated.Error{
+				fmt.Println(proto.Error{
 					Code:    "",
 					Message: reply.String(),
 				})

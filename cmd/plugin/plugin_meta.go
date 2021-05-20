@@ -19,17 +19,16 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
-	"github.com/nori-io/common/v4/pkg/domain/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
@@ -67,12 +66,12 @@ var metaCmd = &cobra.Command{
 			errors.ErrorFormatPluginId()
 			return
 		}
-		versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
+		 versionPlugin := pluginIdSplit[1]
+		/* @todo _, err = version.NewVersion(versionPlugin)
 		if err != nil {
 			errors.ErrorFormatPluginVersion(err)
 			return
-		}
+		}*/
 
 		client, closeCh := client.NewClient(
 			conn.HostPort(),
@@ -81,8 +80,8 @@ var metaCmd = &cobra.Command{
 		)
 		defer close(closeCh)
 
-		meta := &protoGenerated.PluginMetaRequest{
-			Id: &protoGenerated.ID{
+		meta := &proto.PluginMetaRequest{
+			Id: &proto.ID{
 				PluginId: pluginId,
 				Version:  versionPlugin,
 			},

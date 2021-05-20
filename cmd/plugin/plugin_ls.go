@@ -19,13 +19,13 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var (
@@ -55,7 +55,7 @@ var lsCmd = &cobra.Command{
 		)
 		defer close(closeCh)
 
-		reply, err := client.PluginList(context.Background(), &protoGenerated.PluginListRequest{
+		reply, err := client.PluginList(context.Background(), &proto.PluginListRequest{
 			FlagError:       listError,
 			FlagInstalled:   listInstalled,
 			FlagInstallable: listInstallable,

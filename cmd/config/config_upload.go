@@ -3,6 +3,7 @@ package config_cmd
 import (
 	"context"
 	"fmt"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
@@ -11,7 +12,6 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	protoGenerated "github.com/nori-io/norictl/pkg/proto"
 )
 
 var uploadCmd = &cobra.Command{
@@ -54,7 +54,7 @@ var uploadCmd = &cobra.Command{
 		}
 		path = filepath.Base(path)
 
-		reply, err := client.ConfigUpload(context.Background(), &protoGenerated.ConfigUploadRequest{
+		reply, err := client.ConfigUpload(context.Background(), &proto.ConfigUploadRequest{
 			Config: []byte{},
 		})
 
@@ -62,7 +62,7 @@ var uploadCmd = &cobra.Command{
 			fmt.Println(err)
 			common.UI.ConfigUploadFailure(path)
 			if reply != nil {
-				fmt.Println(protoGenerated.Error{
+				fmt.Println(proto.Error{
 					Code:    "",
 					Message: reply.String(),
 				})

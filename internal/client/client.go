@@ -21,11 +21,11 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 
-	protoNori "github.com/nori-io/norictl/pkg/proto"
 )
 
-func NewClient(addr string, caFile string, serverHostOverride string) (protoNori.NoriClient, chan<- struct{}) {
+func NewClient(addr string, caFile string, serverHostOverride string) (proto.NoriClient, chan<- struct{}) {
 	var opts []grpc.DialOption
 	if len(caFile) != 0 && fileExists(caFile) {
 		creds, err := credentials.NewClientTLSFromFile(caFile, serverHostOverride)
@@ -49,7 +49,7 @@ func NewClient(addr string, caFile string, serverHostOverride string) (protoNori
 		conn.Close()
 	}()
 
-	c := protoNori.NewNoriClient(conn)
+	c := proto.NewNoriClient(conn)
 	return c, closeCh
 }
 
