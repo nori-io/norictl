@@ -49,6 +49,14 @@ func (u *UI) PluginInstallFailure(pluginId string) {
 	Red("INSTALL FAILURE: Plugin %s\n", pluginId)
 }
 
+func (u *UI) PluginInstallAllSuccess() {
+	Green("INSTALL SUCCESSFUL")
+}
+
+func (u *UI) PluginInstallAllFailure() {
+	Red("INSTALL FAILURE")
+}
+
 func (u *UI) PluginsList(plugins [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 
