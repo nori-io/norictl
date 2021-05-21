@@ -64,7 +64,7 @@ var startAllCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginStartAllFailure()
+			common.UI.PluginStartAllFailure(err)
 			return
 		}
 		common.UI.PluginStartAllSuccess()

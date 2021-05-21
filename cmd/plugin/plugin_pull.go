@@ -19,9 +19,10 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -29,7 +30,6 @@ import (
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-
 )
 
 var pullCmd = &cobra.Command{
@@ -86,7 +86,7 @@ var pullCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginPullFailure(pluginId)
+			common.UI.PluginPullFailure(pluginId, err)
 			return
 		} else {
 			common.UI.PluginPullSuccess(pluginId)

@@ -19,6 +19,7 @@ package plugin_cmd
 
 import (
 	"fmt"
+
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -70,7 +71,7 @@ var installAllCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginInstallAllFailure()
+			common.UI.PluginInstallAllFailure(err)
 			return
 		}
 		common.UI.PluginInstallAllSuccess()

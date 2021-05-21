@@ -3,8 +3,9 @@ package config_cmd
 import (
 	"context"
 	"fmt"
-	"github.com/nori-io/norictl/internal/errors"
 	"strings"
+
+	"github.com/nori-io/norictl/internal/errors"
 
 	"github.com/spf13/cobra"
 
@@ -37,7 +38,7 @@ var getCmd = &cobra.Command{
 			return
 		}
 
-/*@todo		versionPlugin := pluginIdSplit[1]
+		/*@todo		versionPlugin := pluginIdSplit[1]
 
 
 		_, err = version.NewVersion(versionPlugin)
@@ -45,13 +46,12 @@ var getCmd = &cobra.Command{
 			errors.ErrorFormatPluginVersion(err)
 			return
 		}
-*/
+		*/
 		client, closeCh := client.NewClient(
 			conn.HostPort(),
 			conn.CertPath,
 			"",
 		)
-
 
 		/*reply, err := proto.NoriClient.ConfigGet(context.Background(), &proto.ConfigGetRequest{
 			Id: &proto.ID{
@@ -59,7 +59,6 @@ var getCmd = &cobra.Command{
 				Version:  pluginIdSplit[1],
 			},
 		}, nil)*/
-
 
 		reply, err := client.ConfigGet(context.Background(), &proto.ConfigGetRequest{Id: &proto.ID{
 			PluginId: pluginIdSplit[0],
@@ -70,13 +69,13 @@ var getCmd = &cobra.Command{
 
 		if err != nil {
 			fmt.Println(err)
-			common.UI.ConfigGetFailure(pluginId)
+			common.UI.ConfigGetFailure(pluginId, err)
 			return
 		}
 
 		if reply.Map == nil {
 			fmt.Println("Config not found")
-			common.UI.ConfigGetFailure(pluginId)
+			common.UI.ConfigGetFailure(pluginId, err)
 
 			return
 		}

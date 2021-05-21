@@ -19,9 +19,10 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -52,7 +53,7 @@ var installCmd = &cobra.Command{
 			errors.ErrorFormatPluginId()
 			return
 		}
-/* @todo		versionPlugin := pluginIdSplit[1]
+		/* @todo		versionPlugin := pluginIdSplit[1]
 		_, err = version.NewVersion(versionPlugin)
 		if err != nil {
 			errors.ErrorFormatPluginVersion(err)
@@ -91,11 +92,10 @@ var installCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginInstallFailure(pluginId)
+			common.UI.PluginInstallFailure(pluginId, err)
 			return
 		}
 		common.UI.PluginInstallSuccess(pluginId)
 
 	},
 }
-

@@ -86,7 +86,7 @@ var startCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginStartFailure(pluginId)
+			common.UI.PluginStartFailure(pluginId, err)
 			return
 		}
 		common.UI.PluginStartSuccess(pluginId)

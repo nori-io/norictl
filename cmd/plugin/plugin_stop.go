@@ -86,7 +86,7 @@ var stopCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginStopFailure(pluginId)
+			common.UI.PluginStopFailure(pluginId, err)
 			return
 		}
 

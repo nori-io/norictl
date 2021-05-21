@@ -2,11 +2,12 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
-	"strings"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
@@ -66,7 +67,7 @@ var disableCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginDisableFailure(pluginId)
+			common.UI.PluginDisableFailure(pluginId, err)
 			return
 		} else {
 			common.UI.PluginDisableSuccess(pluginId)

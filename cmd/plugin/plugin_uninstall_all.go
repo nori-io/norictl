@@ -67,7 +67,7 @@ var uninstallAllCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginUninstallAllFailure()
+			common.UI.PluginUninstallAllFailure(err)
 			return
 		}
 		common.UI.PluginUninstallAllSuccess()

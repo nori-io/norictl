@@ -3,16 +3,16 @@ package config_cmd
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
-	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-
 )
 
 var setCmd = &cobra.Command{
@@ -72,7 +72,7 @@ var setCmd = &cobra.Command{
 
 		if err != nil {
 			fmt.Println(err)
-			common.UI.ConfigSetFailure(pluginId, args[1], args[2])
+			common.UI.ConfigSetFailure(pluginId, args[1], args[2], err)
 			if reply != nil {
 				fmt.Println(proto.Error{
 					Code:    "",

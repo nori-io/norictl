@@ -3,11 +3,12 @@ package config_cmd
 import (
 	"context"
 	"fmt"
-	"github.com/nori-io/nori-grpc/pkg/api/proto"
-	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
+	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
@@ -60,7 +61,7 @@ var uploadCmd = &cobra.Command{
 
 		if err != nil {
 			fmt.Println(err)
-			common.UI.ConfigUploadFailure(path)
+			common.UI.ConfigUploadFailure(path, err)
 			if reply != nil {
 				fmt.Println(proto.Error{
 					Code:    "",

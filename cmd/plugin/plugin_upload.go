@@ -19,10 +19,11 @@ package plugin_cmd
 
 import (
 	"fmt"
-	"github.com/nori-io/norictl/internal/client/connection"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/nori-io/norictl/internal/client/connection"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -78,7 +79,7 @@ var uploadCmd = &cobra.Command{
 
 		_, err = client.PluginUpload(context.Background())
 		if err != nil {
-			common.UI.PluginUploadFailure(path)
+			common.UI.PluginUploadFailure(path, err)
 			fmt.Println(err)
 
 			return
