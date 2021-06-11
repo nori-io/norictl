@@ -1,20 +1,3 @@
-// Copyright © 2018 Nori info@nori.io
-//
-// This program is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation, either version 3
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-// Package plugin_cmd implements commands for work with plugins
-//by command prompt*/
 package plugin_cmd
 
 import (
@@ -23,7 +6,6 @@ import (
 
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/internal/errors"
-
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -32,12 +14,11 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 )
 
-var stopCmd = &cobra.Command{
-
-	Use:   "stop [PLUGIN_ID] [OPTIONS]",
-	Short: "Stop plugin's execution",
+var enableCmd = &cobra.Command{
+	Use:   "enable [PLUGIN_ID]",
+	Short: "enable plugin",
+	Long:  `Enable plugin. Plugin must be enabled before it can be initialised and started or be accessible by other plugins.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println(err)
@@ -67,15 +48,15 @@ var stopCmd = &cobra.Command{
 			conn.CertPath,
 			"",
 		)
+		defer close(closeCh)
 
-		reply, err := client.PluginStop(context.Background(), &proto.PluginStopRequest{
+		reply, err := client.PluginEnable(context.Background(), &proto.PluginRequest{
 			Id: &proto.ID{
 				PluginId: pluginIdSplit[0],
 				Version:  pluginIdSplit[1],
 			},
-			FlagAll: false,
 		})
-		defer close(closeCh)
+
 		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
@@ -86,11 +67,10 @@ var stopCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginStopFailure(pluginId, err)
+			common.UI.PluginEnableFailure(pluginId, err)
 			return
+		} else {
+			common.UI.PluginEnableSuccess(pluginId)
 		}
-
-		common.UI.PluginStopSuccess(pluginId)
-
 	},
 }

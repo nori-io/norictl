@@ -19,11 +19,8 @@ package plugin_cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
-	"github.com/nori-io/norictl/internal/errors"
-
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -32,50 +29,38 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 )
 
-var stopCmd = &cobra.Command{
+var (
+	installAll bool
+)
 
-	Use:   "stop [PLUGIN_ID] [OPTIONS]",
-	Short: "Stop plugin's execution",
+var installAllCmd = &cobra.Command{
+	Use:   "install-all [OPTIONS]",
+	Short: "Install all downloaded plugins.",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		conn, err := connection.CurrentConnection()
 		if err != nil {
 			fmt.Println(err)
-			return
 		}
-
-		if len(args) == 0 {
-			errors.ErrorEmptyPluginId()
-			return
-		}
-
-		pluginId := args[0]
-		pluginIdSplit := strings.Split(pluginId, ":")
-		if len(pluginIdSplit) != 2 {
-			errors.ErrorFormatPluginId()
-			return
-		}
-		/* @todo versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			errors.ErrorFormatPluginVersion(err)
-			return
-		}*/
 
 		client, closeCh := client.NewClient(
 			conn.HostPort(),
 			conn.CertPath,
 			"",
 		)
-
-		reply, err := client.PluginStop(context.Background(), &proto.PluginStopRequest{
-			Id: &proto.ID{
-				PluginId: pluginIdSplit[0],
-				Version:  pluginIdSplit[1],
-			},
-			FlagAll: false,
-		})
 		defer close(closeCh)
+
+		flagVerbose, err := cmd.Flags().GetBool("verbose")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		reply, err := client.PluginInstall(context.Background(), &proto.PluginInstallRequest{
+			FlagAll:     installAll,
+			FlagVerbose: flagVerbose,
+		})
+
 		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
 				fmt.Println(err)
@@ -86,11 +71,14 @@ var stopCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginStopFailure(pluginId, err)
+			common.UI.PluginInstallAllFailure(err)
 			return
 		}
-
-		common.UI.PluginStopSuccess(pluginId)
+		common.UI.PluginInstallAllSuccess()
 
 	},
+}
+
+func init() {
+	installAllCmd.Flags().BoolVarP(&installAll, "all", "a", false, "Install all installable plugins")
 }

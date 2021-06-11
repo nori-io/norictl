@@ -19,60 +19,61 @@ package plugin_cmd
 
 import (
 	"fmt"
-
-	"github.com/nori-io/nori-common/v2/logger"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
+	"github.com/nori-io/norictl/internal/client/connection"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-func interfaceCmd(log logger.Logger) *cobra.Command {
+var interfaceCmd = &cobra.Command{
 
-	return &cobra.Command{
-		Use:   "norictl plugin interface [InterfaceName]",
-		Short: "Shows list of plugins that implement specify interface.",
-		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 0 {
-				log.Fatal("InterfaceName required!!!")
-			}
+	Use:   "interface [InterfaceName]",
+	Short: "Shows list of plugins that implement specify interface.",
+	Run: func(cmd *cobra.Command, args []string) {
 
-			interfaceName := args[0]
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-			client, closeCh := client.NewClient(
-				viper.GetString("grpc-address"),
-				viper.GetString("ca"),
-				viper.GetString("ServerHostOverride"),
-			)
-			defer close(closeCh)
+		interfaceName := args[0]
 
-			reply, err := client.PluginInterfaceCommand(context.Background(), &protoNori.PluginInterfaceRequest{
-				InterfaceName:        interfaceName,
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			})
-			if err != nil {
-				log.Fatal("%s", err)
-				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
-					})
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
+
+		reply, err := client.PluginInterface(context.Background(), &proto.PluginInterfaceRequest{
+			Interface: interfaceName,
+		})
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if reply.Plugin == nil {
+			fmt.Println("Plugins not found")
+			return
+		} else {
+			list := reply.Plugin
+			var plugins [][]string
+			for _, l := range list {
+				var licenses, dependecies string
+				for _, license := range l.Meta.Licenses {
+					licenses = licenses + license.String() + "\n"
 				}
-			} else {
-				common.UI.InterfacePluginList(fmt.Sprintf("%s", reply))
+				for _, dependency := range l.Meta.Dependencies {
+					dependecies = dependecies + dependency.String() + "\n"
+				}
+				plugins = append(plugins, []string{l.Meta.Id.PluginId + ":" + l.Meta.Id.Version, l.Meta.Author.String(), l.Meta.Interface, licenses, dependecies})
 			}
-		},
-	}
-}
-
-func init() {
+			common.UI.PluginsList(plugins)
+		}
+	},
 }

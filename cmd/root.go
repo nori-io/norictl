@@ -16,31 +16,25 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 
-	logger "github.com/nori-io/logger"
-	log "github.com/sirupsen/logrus"
-
-	"github.com/nori-io/norictl/cmd/common"
 	config_cmd "github.com/nori-io/norictl/cmd/config"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/nori-io/norictl/cmd/certs"
 	"github.com/nori-io/norictl/cmd/connection"
 	"github.com/nori-io/norictl/cmd/plugin"
 	"github.com/nori-io/norictl/internal/client/consts"
-	"github.com/nori-io/norictl/internal/client/utils"
 )
 
-var cfgFile string
-var logLevel func() string
+var (
+	cfgFile string
+)
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "norictl",
 	Short: "A simple command line client for nori",
 }
@@ -48,7 +42,7 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -56,18 +50,13 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	buf := bytes.Buffer{}
 
-	common.LoggerNoriCtl = logger.New(logger.SetJsonFormatter(""), logger.SetOutWriter(&buf))
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
+	RootCmd.PersistentFlags().String("config", "", "config file")
+	RootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
 
-	flags := utils.NewFlagBuilder(nil, rootCmd)
-	flags.StringP(&logLevel, "verbose", "", "error", "set verbose level (debug info warn error fatal panic)")
-
-	rootCmd.AddCommand(plugin_cmd.PluginCmd(common.LoggerNoriCtl))
-	rootCmd.AddCommand(config_cmd.ConfigCmd(common.LoggerNoriCtl))
-	rootCmd.AddCommand(certs_cmd.CertsCmd)
-	rootCmd.AddCommand(connection_cmd.ConnectionCmd)
+	RootCmd.AddCommand(plugin_cmd.PluginCmd())
+	RootCmd.AddCommand(config_cmd.ConfigCmd())
+	RootCmd.AddCommand(connection_cmd.ConnectionCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -82,12 +71,12 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		lvl, err := log.ParseLevel(logLevel())
+		//lvl, err := log.ParseLevel(logLevel())
 		if err != nil {
-			log.Error(err)
+			fmt.Println(err)
 		} else {
-			log.SetLevel(lvl)
+			//log.SetLevel(lvl)
 		}
-		log.Info("Using config file: ", viper.ConfigFileUsed())
+		fmt.Println("Using config file: ", viper.ConfigFileUsed())
 	}
 }

@@ -24,5 +24,3 @@ var ConnectionCmd = &cobra.Command{
 	Use:   "connection",
 	Short: "Manage connections to remote Nori nodes",
 }
-
-//func init() {}

@@ -16,9 +16,9 @@
 package connection_cmd
 
 import (
+	"fmt"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/internal/client/connection"
@@ -32,22 +32,22 @@ var useCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := os.MkdirAll(consts.ConfigDir, os.ModePerm)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		conn, err := list.FilterByName(name())
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		err = conn.Use(consts.UseFilePath)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 	},
 	DisableFlagsInUseLine: true,

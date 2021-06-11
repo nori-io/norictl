@@ -2,70 +2,74 @@ package config_cmd
 
 import (
 	"context"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/spf13/cobra"
-
-	"github.com/nori-io/nori-common/v2/logger"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 )
 
-func uploadCmd(log logger.Logger) *cobra.Command {
+var uploadCmd = &cobra.Command{
+	Use:   "upload [PATH]",
+	Short: "upload plugin's config",
+	Long:  `Upload shows config file from specify path.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-	return &cobra.Command{
-		Use:   "norictl config upload [PATH]",
-		Short: "upload plugin's config",
-		Long:  `Upload shows config file from specify path.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				log.Fatal("%s", err)
+		if len(args) == 0 {
+			fmt.Println("Path to config's file required")
+			return
+		}
+
+		path := args[0]
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		close(closeCh)
+
+		f, err := os.Open(path)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		defer f.Close()
+
+		_, err = ioutil.ReadAll(f)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		path = filepath.Base(path)
+
+		reply, err := client.ConfigUpload(context.Background(), &proto.ConfigUploadRequest{
+			Config: []byte{},
+		})
+
+		if err != nil {
+			fmt.Println(err)
+			common.UI.ConfigUploadFailure(path, err)
+			if reply != nil {
+				fmt.Println(proto.Error{
+					Code:    "",
+					Message: reply.String(),
+				})
 			}
-
-			if len(args) == 0 {
-				log.Fatal("PLUGIN_ID required!")
-			}
-
-			path := args[0]
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-
-			reply, err := client.ConfigUploadCommand(context.Background(), &config.ConfigUploadRequest{
-				Path:                 path,
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			})
-
-			close(closeCh)
-
-			if err != nil {
-				log.Fatal("%s", err)
-				common.UI.ConfigUploadFailure(path)
-				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
-					})
-				}
-			} else {
-				common.UI.ConfigUploadSuccess(reply.KeyValueMapField.KeyValueMap)
-			}
-		},
-	}
-}
-
-func init() {
-
+		} else {
+			common.UI.ConfigUploadSuccess(reply.Map)
+		}
+	},
 }

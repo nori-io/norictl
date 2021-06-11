@@ -5,82 +5,82 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/version"
+	"github.com/nori-io/norictl/internal/errors"
+
 	"github.com/spf13/cobra"
 
-	"github.com/nori-io/nori-common/v2/logger"
-
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	"github.com/nori-io/norictl/internal/generated/protobuf/config"
 )
 
-func getCmd(log logger.Logger) *cobra.Command {
+var getCmd = &cobra.Command{
+	Use:   "get [PLUGIN_ID]",
+	Short: "get plugin's config",
+	Long:  `Get shows specify plugin's config`,
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-	return &cobra.Command{
-		Use:   "norictl config get [PLUGIN_ID]",
-		Short: "get plugin's config",
-		Long:  `Get shows specify plugin's config.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				log.Fatal("%s", err)
-			}
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
 
-			if len(args) == 0 {
-				log.Fatal("PLUGIN_ID required!")
-			}
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
 
-			pluginId := args[0]
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
-			}
+		/*@todo		versionPlugin := pluginIdSplit[1]
 
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
 
-			reply, err := client.ConfigGetCommand(context.Background(), &config.ConfigGetRequest{
-				Id: &commonProtoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
-				},
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			})
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}
+		*/
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
 
-			close(closeCh)
+		/*reply, err := proto.NoriClient.ConfigGet(context.Background(), &proto.ConfigGetRequest{
+			Id: &proto.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+		}, nil)*/
 
-			if err != nil {
-				log.Fatal("%s", err)
-				common.UI.ConfigGetFailure(pluginId)
-				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
-					})
-				}
-			} else {
-				common.UI.ConfigGetSuccess(reply.KeyValueMapField.KeyValueMap)
-			}
-		},
-	}
-}
+		reply, err := client.ConfigGet(context.Background(), &proto.ConfigGetRequest{Id: &proto.ID{
+			PluginId: pluginIdSplit[0],
+			Version:  pluginIdSplit[1],
+		}})
 
-func init() {
+		close(closeCh)
 
+		if err != nil {
+			fmt.Println(err)
+			common.UI.ConfigGetFailure(pluginId, err)
+			return
+		}
+
+		if reply.Map == nil {
+			fmt.Println("Config not found")
+			common.UI.ConfigGetFailure(pluginId, err)
+
+			return
+		}
+		fmt.Println(reply.Map)
+		common.UI.ConfigGetSuccess(reply.Map)
+
+	},
 }

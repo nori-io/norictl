@@ -19,90 +19,98 @@ package plugin_cmd
 
 import (
 	"fmt"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
+	"github.com/nori-io/norictl/internal/errors"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
-	"github.com/nori-io/nori-common/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
-	metaDeps            func() bool
-	metaDepsStatus      func() bool
-	metaDependent       func() bool
-	metaDependentStatus func() bool
+	metaDeps            bool
+	metaDepsStatus      bool
+	metaDependent       bool
+	metaDependentStatus bool
 )
 
-func metaCmd(log logger.Logger) *cobra.Command {
+var metaCmd = &cobra.Command{
 
-	return &cobra.Command{
-		Use:   "norictl plugin meta [PLUGIN_ID] [OPTIONS]",
-		Short: "Show plugin meta data.",
-		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsMeta(log)
-			conn, err := connection.CurrentConnection()
-			if err != nil {
-				log.Fatal("%s", err)
-			}
+	Use:   "meta [PLUGIN_ID] [OPTIONS]",
+	Short: "Show plugin meta data.",
+	Run: func(cmd *cobra.Command, args []string) {
 
-			if len(args) == 0 {
-				log.Fatal("PLUGIN_ID required!")
-			}
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-			pluginId := args[0]
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
-			}
+		if len(args) == 0 {
+			fmt.Println("PLUGIN_ID required!")
+			return
+		}
 
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
 
-			meta := &protoNori.PluginMetaRequest{
-				ID: &protoNori.PluginID{
-					MetaId:               pluginId,
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
-				},
-				FlagDeps:             metaDeps(),
-				FlagDepsStatus:       metaDepsStatus(),
-				FlagDependent:        metaDependent(),
-				FlagDependentStatus:  metaDependentStatus(),
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			}
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		 versionPlugin := pluginIdSplit[1]
+		/* @todo _, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}*/
 
-			reply, err := client.PluginMetaCommand(context.Background(), meta)
-			defer close(closeCh)
-			if err != nil {
-				log.Fatal("%s", err)
-			}
-			common.UI.PluginMetaExist(fmt.Sprintf("%s", reply))
-		},
-	}
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
+
+		meta := &proto.PluginMetaRequest{
+			Id: &proto.ID{
+				PluginId: pluginId,
+				Version:  versionPlugin,
+			},
+			FlagDeps:            metaDeps,
+			FlagDepsStatus:      metaDepsStatus,
+			FlagDependent:       metaDependent,
+			FlagDependentStatus: metaDependentStatus,
+		}
+
+		reply, err := client.PluginMeta(context.Background(), meta)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if reply.Meta == nil {
+			fmt.Println("Plugin not found")
+			return
+		}
+
+		common.UI.PluginMeta(fmt.Sprintf("%s", reply))
+
+	},
 }
 
 func init() {
-}
-
-func setFlagsMeta(log logger.Logger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), metaCmd(log))
-	flags.Bool(&metaDeps, "deps", "--deps", false, "Show only plugin dependencies")
-	flags.Bool(&metaDepsStatus, "deps-status", "--deps-status", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
-	flags.Bool(&metaDependent, "dependent", "--dependent", false, "Show only plugins, that depend on specified plugin")
-	flags.Bool(&metaDependentStatus, "dependent-status", "--dependent-status", false, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+	metaCmd.Flags().BoolVarP(&metaDeps, "deps", "d", false, "Show only plugin dependencies")
+	metaCmd.Flags().BoolVarP(&metaDepsStatus, "deps-status", "", false, "Show plugin dependencies with dependent plugin status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
+	metaCmd.Flags().BoolVarP(&metaDependent, "dependent", "", false, "Show only plugins, that depend on specified plugin")
+	metaCmd.Flags().BoolVarP(&metaDependentStatus, "dependent-status", "", false, "Show plugins, that depend on specified plugin with their status (downloaded, installed, not found etc, with errors, running, installable,inactive)")
 }

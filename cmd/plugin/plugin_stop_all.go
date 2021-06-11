@@ -19,11 +19,8 @@ package plugin_cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/nori-io/nori-grpc/pkg/api/proto"
-	"github.com/nori-io/norictl/internal/errors"
-
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
@@ -32,10 +29,14 @@ import (
 	"github.com/nori-io/norictl/internal/client/connection"
 )
 
-var stopCmd = &cobra.Command{
+var (
+	stopAll bool
+)
 
-	Use:   "stop [PLUGIN_ID] [OPTIONS]",
-	Short: "Stop plugin's execution",
+var stopAllCmd = &cobra.Command{
+
+	Use:   "stop [OPTIONS]",
+	Short: "Stop plugins' execution",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		conn, err := connection.CurrentConnection()
@@ -44,24 +45,6 @@ var stopCmd = &cobra.Command{
 			return
 		}
 
-		if len(args) == 0 {
-			errors.ErrorEmptyPluginId()
-			return
-		}
-
-		pluginId := args[0]
-		pluginIdSplit := strings.Split(pluginId, ":")
-		if len(pluginIdSplit) != 2 {
-			errors.ErrorFormatPluginId()
-			return
-		}
-		/* @todo versionPlugin := pluginIdSplit[1]
-		_, err = version.NewVersion(versionPlugin)
-		if err != nil {
-			errors.ErrorFormatPluginVersion(err)
-			return
-		}*/
-
 		client, closeCh := client.NewClient(
 			conn.HostPort(),
 			conn.CertPath,
@@ -69,11 +52,7 @@ var stopCmd = &cobra.Command{
 		)
 
 		reply, err := client.PluginStop(context.Background(), &proto.PluginStopRequest{
-			Id: &proto.ID{
-				PluginId: pluginIdSplit[0],
-				Version:  pluginIdSplit[1],
-			},
-			FlagAll: false,
+			FlagAll: stopAll,
 		})
 		defer close(closeCh)
 		if (err != nil) || (reply.Error.GetCode() != "") {
@@ -86,11 +65,15 @@ var stopCmd = &cobra.Command{
 					Message: reply.Error.GetMessage(),
 				})
 			}
-			common.UI.PluginStopFailure(pluginId, err)
+			common.UI.PluginStopAllFailure(err)
 			return
 		}
 
-		common.UI.PluginStopSuccess(pluginId)
+		common.UI.PluginStopAllSuccess()
 
 	},
+}
+
+func init() {
+	stopAllCmd.Flags().BoolVarP(&stopAll, "all", "a", true, "Stop all plugins")
 }

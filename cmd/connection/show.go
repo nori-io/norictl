@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/internal/client/connection"
@@ -36,7 +35,7 @@ var showCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := os.MkdirAll(consts.ConnectionsDir, os.ModePerm)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		var name string
@@ -48,17 +47,17 @@ var showCmd = &cobra.Command{
 
 		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		conn, err := list.FilterByName(name)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		r, err := conn.Render(format())
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		fmt.Println(r)

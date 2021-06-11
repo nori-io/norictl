@@ -21,95 +21,81 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nori-io/nori-common/v2/logger"
-	"github.com/nori-io/nori-common/version"
+	"github.com/nori-io/nori-grpc/pkg/api/proto"
+	"github.com/nori-io/norictl/internal/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
 	"github.com/nori-io/norictl/internal/client/connection"
-	"github.com/nori-io/norictl/internal/client/utils"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
-var (
-	getVerbose func() bool
-)
-
-func getCmd(log logger.Logger) *cobra.Command {
-
-	return &cobra.Command{
-		Use:   "norictl plugin get [PLUGIN_ID] [OPTIONS]",
-		Short: "downloading plugin",
-		Long: `Get downloads the plugin, along with its dependencies.
+var getCmd = &cobra.Command{
+	Use:   "get [PLUGIN_ID]",
+	Short: "downloading plugin",
+	Long: `Get downloads the plugin, along with its dependencies.
 	It then installs the plugin, like norictl plugin install.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsGet(log)
-			conn, err := connection.CurrentConnection()
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if len(args) == 0 {
+			errors.ErrorEmptyPluginId()
+			return
+		}
+
+		pluginId := args[0]
+		pluginIdSplit := strings.Split(pluginId, ":")
+		if len(pluginIdSplit) != 2 {
+			errors.ErrorFormatPluginId()
+			return
+		}
+		/* @todo	versionPlugin := pluginIdSplit[1]
+		_, err = version.NewVersion(versionPlugin)
+		if err != nil {
+			errors.ErrorFormatPluginVersion(err)
+			return
+		}*/
+
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
+
+		flagVerbose, err := cmd.Flags().GetBool("verbose")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		reply, err := client.PluginGet(context.Background(), &proto.PluginRequest{
+			Id: &proto.ID{
+				PluginId: pluginIdSplit[0],
+				Version:  pluginIdSplit[1],
+			},
+			FlagVerbose: flagVerbose,
+		})
+
+		if (err != nil) || (reply.Error.GetCode() != "") {
 			if err != nil {
-				log.Fatal("%s", err)
+				fmt.Println(err)
 			}
-
-			if len(args) == 0 {
-				log.Fatal("PLUGIN_ID required!")
+			if reply.Error.GetCode() != "" {
+				fmt.Println(proto.Error{
+					Code:    reply.Error.GetCode(),
+					Message: reply.Error.GetMessage(),
+				})
 			}
-
-			pluginId := args[0]
-			pluginIdSplit := strings.Split(pluginId, ":")
-			versionPlugin := pluginIdSplit[1]
-			_, err = version.NewVersion(versionPlugin)
-			if err != nil {
-				fmt.Println("Format of plugin's version is incorrect:", err)
-			}
-
-			client, closeCh := client.NewClient(
-				conn.HostPort(),
-				conn.CertPath,
-				"",
-			)
-
-			reply, err := client.PluginGetCommand(context.Background(), &protoNori.PluginGetRequest{
-				Id: &commonProtoGenerated.ID{
-					Id:                   pluginIdSplit[0],
-					Version:              pluginIdSplit[1],
-					XXX_NoUnkeyedLiteral: struct{}{},
-					XXX_unrecognized:     nil,
-					XXX_sizecache:        0,
-				},
-				FlagVerbose:          getVerbose(),
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			})
-
-			close(closeCh)
-
-			if err != nil {
-				log.Fatal("%s", err)
-				common.UI.PluginGetFailure(pluginId)
-				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
-					})
-				}
-			} else {
-				common.UI.PluginGetSuccess(pluginId)
-			}
-		},
-	}
-}
-
-func init() {
-
-}
-
-func setFlagsGet(log logger.Logger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), getCmd(log))
-	flags.Bool(&getVerbose, "verbose", "-v", false, "Verbose progress and debug output")
+			common.UI.PluginGetFailure(pluginId, err)
+			return
+		} else {
+			common.UI.PluginGetSuccess(pluginId)
+		}
+	},
 }

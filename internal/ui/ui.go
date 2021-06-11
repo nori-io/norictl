@@ -18,81 +18,57 @@ func NewUI() *UI {
 }
 
 func (u *UI) PluginGetSuccess(pluginId string) {
-	Green("GET SUCCESSFUL: Plugin %q\n", pluginId)
+	Green("GET SUCCESSFUL: Plugin %q \n", pluginId)
 }
 
-func (u *UI) PluginGetFailure(pluginId string) {
-	Red("GET FAILURE: Plugin %q\n", pluginId)
+func (u *UI) PluginGetFailure(pluginId string, err error) {
+	Red("GET FAILURE: Plugin %q, error %s \n", pluginId, err)
+}
+
+func (u *UI) PluginDisableSuccess(pluginId string) {
+	Green("DISABLE SUCCESSFUL: Plugin %q\n", pluginId)
+}
+
+func (u *UI) PluginDisableFailure(pluginId string, err error) {
+	Red("DISABLE FAILURE: Plugin %q, error %s \n", pluginId, err)
+}
+
+func (u *UI) PluginEnableSuccess(pluginId string) {
+	Green("ENABLE SUCCESSFUL: Plugin %q\n", pluginId)
+}
+
+func (u *UI) PluginEnableFailure(pluginId string, err error) {
+	Red("ENABLE FAILURE: Plugin %q, error %s \n", pluginId, err)
 }
 
 func (u *UI) PluginInstallSuccess(pluginId string) {
 	Green("INSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
-func (u *UI) PluginInstallFailure(pluginId string) {
-	Red("INSTALL FAILURE: Plugin %s\n", pluginId)
+func (u *UI) PluginInstallFailure(pluginId string, err error) {
+	Red("INSTALL FAILURE: Plugin %q, error %s \n", pluginId, err)
 }
 
-func (u *UI) PluginsAll(plugins [][]string) {
+func (u *UI) PluginInstallAllSuccess() {
+	Green("INSTALL SUCCESSFUL")
+}
+
+func (u *UI) PluginInstallAllFailure(err error) {
+	Red("INSTALL FAILURE error %s \n", err)
+}
+
+func (u *UI) PluginsList(plugins [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 
-	table.SetHeader([]string{"Plugin.MetaId", "Author"})
-
+	table.SetHeader([]string{"Plugin.ID", "Author", "Interface", "Licenses", "Dependencies"})
 	for _, v := range plugins {
 		table.Append(v)
 	}
 	table.Render() // Send output
 }
 
-func (u *UI) PluginsError(plugins [][]string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Plugin.MetaId", "Author"})
-	for _, v := range plugins {
-		table.Append(v)
-	}
-	table.Render() // Send output
-}
-
-func (u *UI) PluginsInactive(plugins [][]string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Plugin.MetaId", "Author"})
-	for _, v := range plugins {
-		table.Append(v)
-	}
-	table.Render() // Send output
-}
-
-func (u *UI) PluginsInstallable(plugins [][]string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Plugin.MetaId", "Author"})
-	for _, v := range plugins {
-		table.Append(v)
-	}
-	table.Render() // Send output
-}
-
-func (u *UI) PluginsInstalled(plugins [][]string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Plugin.MetaId", "Author"})
-
-	for _, v := range plugins {
-		table.Append(v)
-	}
-	table.Render() // Send output
-}
-
-func (u *UI) PluginsRunning(plugins [][]string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Plugin.MetaId", "Author"})
-
-	for _, v := range plugins {
-		table.Append(v)
-	}
-	table.Render() // Send output
-}
-
-func (u *UI) PluginMetaExist(pluginInformation string) {
-	fmt.Printf("EXIST: Plugin  %s \n", pluginInformation)
+func (u *UI) PluginMeta(pluginInformation string) {
+	fmt.Printf("Meta: Plugin  %s \n", pluginInformation)
 }
 
 func (u *UI) PluginMetaNotExist(pluginInformation string) {
@@ -103,53 +79,72 @@ func (u *UI) PluginPullSuccess(pluginId string) {
 	Green("PULL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
-func (u *UI) PluginPullFailure(pluginId string) {
-	Red("PULL FAILURE: Plugin %s\n", pluginId)
+func (u *UI) PluginPullFailure(pluginId string, err error) {
+	Red("PULL FAILURE: Plugin %q, error %s \n", pluginId, err)
 }
 
 func (u *UI) PluginRmSuccess(pluginId string) {
 	Green("REMOVE SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
-func (u *UI) PluginRmFailure(pluginId string) {
-	Red("REMOVE FAILURE: Plugin %s\n", pluginId)
+func (u *UI) PluginRmFailure(pluginId string, err error) {
+	Red("REMOVE FAILURE: Plugin %q, error %s \n", pluginId, err)
+}
+
+func (u *UI) PluginStartAllSuccess() {
+	Green("START SUCCESSFUL")
+}
+
+func (u *UI) PluginStartAllFailure(err error) {
+	Red("START FAILURE error %s \n", err)
 }
 
 func (u *UI) PluginStartSuccess(pluginId string) {
 	Green("START SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
-func (u *UI) PluginStartFailure(pluginId string) {
-	Red("START FAILURE: Plugin %s\n", pluginId)
+func (u *UI) PluginStartFailure(pluginId string, err error) {
+	Red("START FAILURE: Plugin %q, error %s \n", pluginId, err)
 }
 
 func (u *UI) PluginStopSuccess(pluginId string) {
 	Green("STOP SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
-func (u *UI) PluginStopFailure(pluginId string) {
-	Red("STOP FAILURE: Plugin %s\n", pluginId)
+func (u *UI) PluginStopFailure(pluginId string, err error) {
+	Red("STOP FAILURE: Plugin %q, error %s \n", pluginId, err)
+}
+
+func (u *UI) PluginStopAllSuccess() {
+	Green("STOP SUCCESSFUL")
+}
+
+func (u *UI) PluginStopAllFailure(err error) {
+	Red("STOP FAILURE error %s \n", err)
 }
 
 func (u *UI) PluginUninstallSuccess(pluginId string) {
 	Green("UNINSTALL SUCCESSFUL: Plugin %s\n", pluginId)
 }
 
-func (u *UI) PluginUninstallFailure(pluginId string) {
-	Red("UNINSTALL FAILURE: Plugin %s\n", pluginId)
+func (u *UI) PluginUninstallFailure(pluginId string, err error) {
+	Red("UNINSTALL FAILURE: Plugin %q, error %s \n", pluginId, err)
+}
+
+func (u *UI) PluginUninstallAllSuccess() {
+	Green("UNINSTALL SUCCESSFUL")
+}
+
+func (u *UI) PluginUninstallAllFailure(err error) {
+	Red("UNINSTALL FAILURE error %s \n", err)
 }
 
 func (u *UI) PluginUploadSuccess(path string) {
 	Green("UPLOAD SUCCESSFUL: Path:  %s\n", path)
 }
 
-func (u *UI) PluginUploadFailure(path string) {
-	Red("UPLOAD FAILURE: Path: %s\n", path)
-}
-
-func (u *UI) InterfacePluginList(plugins string) {
-	Green("PLUGINS WITH INTERFACE:  %s\n", plugins)
-
+func (u *UI) PluginUploadFailure(path string, err error) {
+	Red("UPLOAD FAILURE: Path: %s, error %s\n", path, err)
 }
 
 func (u *UI) ConfigGetSuccess(keyValueMap map[string]string) {
@@ -161,16 +156,16 @@ func (u *UI) ConfigGetSuccess(keyValueMap map[string]string) {
 	table.Render() // Send output
 }
 
-func (u *UI) ConfigGetFailure(pluginId string) {
-	Red("GET FAILURE: Plugin %q\n", pluginId)
+func (u *UI) ConfigGetFailure(pluginId string, err error) {
+	Red("GET FAILURE: Plugin %q, error %s \n", pluginId, err)
 }
 
 func (u *UI) ConfigSetSuccess(pluginId, key, value string) {
-	Green("SET SUCCESSFUL: Plugin %q, key: %s, value, %s,\n", pluginId, key, value)
+	Green("SET SUCCESSFUL: Plugin %q, key: %s, value, %s\n", pluginId, key, value)
 }
 
-func (u *UI) ConfigSetFailure(pluginId, key, value string) {
-	Red("SET FAILURE: Plugin %q, key: %s, value, %s,\n", pluginId, key, value)
+func (u *UI) ConfigSetFailure(pluginId, key, value string, err error) {
+	Red("SET FAILURE: Plugin %q, key: %s, value, %s, error: %s\n", pluginId, key, value, err)
 }
 
 func (u *UI) ConfigUploadSuccess(keyValueMap map[string]string) {
@@ -182,6 +177,6 @@ func (u *UI) ConfigUploadSuccess(keyValueMap map[string]string) {
 	table.Render() // Send output
 }
 
-func (u *UI) ConfigUploadFailure(path string) {
-	Red("Upload FAILURE: Config's path: %q\n", path)
+func (u *UI) ConfigUploadFailure(path string, err error) {
+	Red("Upload FAILURE: Config's Path: %s, error %s\n", path, err)
 }

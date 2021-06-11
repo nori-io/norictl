@@ -18,88 +18,73 @@
 package plugin_cmd
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/nori-io/nori-common/v2/logger"
+	"github.com/nori-io/norictl/internal/client/connection"
+
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
 	"github.com/nori-io/norictl/cmd/common"
 	"github.com/nori-io/norictl/internal/client"
-	"github.com/nori-io/norictl/internal/client/utils"
-	commonProtoGenerated "github.com/nori-io/norictl/internal/generated/protobuf/common"
-	protoNori "github.com/nori-io/norictl/internal/generated/protobuf/plugin"
 )
 
 var (
 	uploadFile func() string
 )
 
-func uploadCmd(log logger.Logger) *cobra.Command {
+var uploadCmd = &cobra.Command{
 
-	return &cobra.Command{
-		Use:   "norictl plugin upload [OPTIONS]",
-		Short: "Upload the plugin from local machine.",
-		Run: func(cmd *cobra.Command, args []string) {
-			setFlagsUpload(log)
-			path := viper.GetString("file")
+	Use:   "upload [OPTIONS]",
+	Short: "Upload the plugin from local machine.",
+	Run: func(cmd *cobra.Command, args []string) {
+		conn, err := connection.CurrentConnection()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-			if len(path) == 0 && len(args) > 0 {
-				path = args[0]
-			}
+		//path := viper.GetString("file")
+		if len(args) == 0 {
+			fmt.Println("Path to plugin's file required")
+			return
+		}
 
-			client, closeCh := client.NewClient(
-				viper.GetString("grpc-address"),
-				viper.GetString("ca"),
-				viper.GetString("ServerHostOverride"),
-			)
-			defer close(closeCh)
+		path := args[0]
 
-			f, err := os.Open(path)
-			if err != nil {
-				log.Fatal("%s", err)
-			}
+		client, closeCh := client.NewClient(
+			conn.HostPort(),
+			conn.CertPath,
+			"",
+		)
+		defer close(closeCh)
 
-			defer f.Close()
+		f, err := os.Open(path)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-			_, err = ioutil.ReadAll(f)
-			if err != nil {
-				log.Fatal("%s", err)
-			}
-			path = filepath.Base(path)
+		defer f.Close()
 
-			reply, err := client.PluginUploadCommand(context.Background(), &protoNori.PluginUploadRequest{
-				Filepath:             path,
-				XXX_NoUnkeyedLiteral: struct{}{},
-				XXX_unrecognized:     nil,
-				XXX_sizecache:        0,
-			})
-			if err != nil {
-				common.UI.PluginUploadFailure(path)
-				log.Fatal("%s", err)
-				if reply != nil {
-					log.Fatal("%s", commonProtoGenerated.ErrorReply{
-						Status:               false,
-						Error:                err.Error(),
-						XXX_NoUnkeyedLiteral: struct{}{},
-						XXX_unrecognized:     nil,
-						XXX_sizecache:        0,
-					})
-				}
-			} else {
-				common.UI.PluginUploadSuccess(path)
-			}
-		},
-	}
-}
+		_, err = ioutil.ReadAll(f)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		path = filepath.Base(path)
 
-func init() {
-}
+		_, err = client.PluginUpload(context.Background())
+		if err != nil {
+			common.UI.PluginUploadFailure(path, err)
+			fmt.Println(err)
 
-func setFlagsUpload(log logger.Logger) {
-	flags := utils.NewFlagBuilder(PluginCmd(log), uploadCmd(log))
-	flags.String(&uploadFile, "file", "--file", "", "Specify path to plugin") // TODO
+			return
+		} else {
+			common.UI.PluginUploadSuccess(path)
+		}
+	},
 }

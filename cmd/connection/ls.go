@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/nori-io/norictl/internal/client/connection"
@@ -42,16 +41,16 @@ var lsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := os.MkdirAll(consts.ConnectionsDir, os.ModePerm)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		list, err := connection.List(consts.ConnectionsDir)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		if insecure() && secureLs() {
-			log.Error("")
+			fmt.Println("")
 			insecure = func() bool { return false }
 			secureLs = func() bool { return false }
 		}
@@ -75,7 +74,7 @@ var lsCmd = &cobra.Command{
 		} else {
 			str, err := list.Render(formatLs())
 			if err != nil {
-				log.Fatal(err)
+				fmt.Println(err)
 			}
 			fmt.Println(str)
 		}
